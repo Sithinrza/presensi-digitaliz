@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -44,5 +45,28 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Role::class,    // Model tujuan
+            'role_user',    // Nama tabel pivot (jembatan)
+            'user_id',      // Foreign key untuk User
+            'role_id'       // Foreign key untuk Role
+        );
+    }
+    
+    public function hasRole(string $roleName): bool
+    {
+        // Loop semua role yang dimiliki user ini
+        foreach ($this->roles as $role) {
+            // Jika salah satu nama role-nya cocok, kembalikan true
+            if ($role->name === $roleName) {
+                return true;
+            }
+        }
+        // Jika tidak ada yang cocok, kembalikan false
+        return false;
     }
 }

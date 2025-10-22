@@ -2,7 +2,8 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Configuration\Middleware; // <--- Pastikan 'use' ini ada
+
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -10,9 +11,19 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
-        //
+    ->withMiddleware(function (Middleware $middleware) {
+
+        // --- TAMBAHKAN BLOK INI ---
+        // Ini adalah pengganti $middlewareAliases
+        $middleware->alias([
+            'role' => \App\Http\Middleware\CekRole::class,
+            'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        ]);
+        // --- BATAS TAMBAHAN ---
+
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
+    ->withExceptions(function (Exceptions $exceptions) {
+        // ...
     })->create();
