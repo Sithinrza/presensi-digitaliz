@@ -27,6 +27,9 @@ class DatabaseSeeder extends Seeder
             PosisiSeeder::class,
             StatusPresensiSeeder::class,
 
+
+            KaryawanSeeder::class
+
         ]);
     }
 }
