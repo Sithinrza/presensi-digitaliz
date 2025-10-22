@@ -37,9 +37,8 @@
                     </button>
                 </form>
             </div>
-            <div class="flex justify-center mt-8">
-                <!-- Nanti ganti src="..." dengan path file logo Anda -->
-                <img src="img/digitaliz-logo-white 1.svg" alt="Company Logo" class="h-10">
+            <div class="flex justify-center mt-8">>
+                <img src="https://digitaliz.net/images/digitaliz-logo-white.png" alt="Company Logo" class="h-10">
             </div>
         </div>
     </section>
