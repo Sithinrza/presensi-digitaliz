@@ -37,7 +37,7 @@
                     </button>
                 </form>
             </div>
-            <div class="flex justify-center mt-8">>
+            <div class="flex justify-center mt-8">
                 <img src="https://digitaliz.net/images/digitaliz-logo-white.png" alt="Company Logo" class="h-10">
             </div>
         </div>

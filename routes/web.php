@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\AdDashController;
 use App\Http\Controllers\Admin\KaryawanController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Karyawan\KarDashController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -22,17 +24,17 @@ Route::middleware(['auth'])->group(function () {
         ->name('admin.')
         ->group(function () {
 
-        Route::get('/dashboard', function () {
-        return 'Ini Dashboard Admin';
-        })->name('dashboard');
+        Route::get('/dashboard', [AdDashController::class, 'index'])->name('dashboard');
         Route::resource('karyawan', KaryawanController::class);
     });
 
     //role karyawan
-    Route::middleware(['role:karyawan'])->group(function () {
-        Route::get('/dashboard/karyawan', function () {
-            return 'Ini Dashboard Karyawan';
-        });
-        
+    Route::middleware(['role:karyawan'])
+     ->prefix('karyawan')
+        ->name('karyawan.')
+        ->group(function () {
+
+        Route::get('/dashboard', [KarDashController::class, 'index'])->name('dashboard');
+
     });
 });

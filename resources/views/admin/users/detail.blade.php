@@ -1,5 +1,5 @@
-<x-app-layout>
+<x layouts.app>
     <x-slot:title>
         User Detail
     </x-slot:title>
-</x-app-layout>
+</x layouts.app>

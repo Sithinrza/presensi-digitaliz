@@ -21,25 +21,23 @@ class KaryawanController extends Controller
     public function index()
     {
         $karyawans = Karyawan::with('user')->latest()->get();
-        return view('components.admin.karyawan.index', compact('karyawans'));
+        return view('admin.karyawan.index', compact('karyawans'));
     }
 
     public function create()
     {
 
-      // 1. Ambil SEMUA data dari tabel master untuk dropdown
         $roles = Role::all();
         $agamas = Agama::all();
-        $jabatans = Jabatan::all(); // <-- Ini yang Kakak butuhkan
+        $jabatans = Jabatan::all();
         $divisis = Divisi::all();
         $posisis = Posisi::all();
         $pendidikans = PendidikanTerakhir::all();
 
-        // 2. Kirim semua data itu ke view
-        return view('components.admin.karyawan.create', compact(
+        return view('admin.karyawan.create', compact(
             'roles',
             'agamas',
-            'jabatans', // <-- Kirim ke view
+            'jabatans',
             'divisis',
             'posisis',
             'pendidikans'
@@ -53,7 +51,7 @@ class KaryawanController extends Controller
             //table users
             'email'=>'required|email|unique:users,email',
             'password'=>'required|string|min:8',
-            'role_name' => 'required|string|exists:roles,name', // <-- Tambahkan validasi role
+            'role_name' => 'required|string|exists:roles,name',
 
             //table karyawana
             'nip'=>'required|string|unique:karyawans,nip',
@@ -66,6 +64,8 @@ class KaryawanController extends Controller
             'status_karyawan'=>'required|in:Aktif,Tidak Aktif',
             'tanggal_bergabung'=>'required|date',
 
+
+            //dropdown fk
             'agama_id' => 'required|exists:agamas,id',
             'jabatan_id' => 'required|exists:jabatans,id',
             'divisi_id' => 'required|exists:divisis,id',
@@ -74,7 +74,6 @@ class KaryawanController extends Controller
         ]);
 
         $selectedRole = Role::where('name', $request->role_name)->first();
-        // ---------------------------------------------
 
         if (!$selectedRole) {
             return back()->with('error', 'Role yang dipilih tidak valid.');

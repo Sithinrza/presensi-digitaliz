@@ -1,4 +1,4 @@
-<x-app-layout>
+<x layouts.app>
     <x-slot:title>
         Karyawan
     </x-slot:title>
@@ -21,7 +21,7 @@
                 </a>
             </div>
         </header>
-        
+
         <main class="p-4 space-y-3">
             <a href="detailpegawai.html" class="flex items-center justify-between p-4 bg-white rounded-xl shadow-md hover:bg-gray-50 transition active:scale-95">
                 <div class="flex items-center space-x-4">
@@ -48,7 +48,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
             </a>
-            
+
             <a href="#" class="flex items-center justify-between p-4 bg-white rounded-xl shadow-md hover:bg-gray-50 transition active:scale-95">
                 <div class="flex items-center space-x-4">
                     <img class="w-10 h-10 rounded-full object-cover bg-gray-200" src="img/user.svg" alt="Foto Profil Hoshi">
@@ -62,4 +62,4 @@
                 </svg>
             </a>
         </main>
-</x-app-layout>
+</x layouts.app>

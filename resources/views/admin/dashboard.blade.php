@@ -1,8 +1,8 @@
-<x-app-layouts>
+<x-admin-layout>
     <x-slot:title>
         Dashboard Admin
     </x-slot:title>
-    <div class="relative pb-24"> >
+    <div class="relative pb-24">
         <div class="bg-white p-4 shadow-sm sticky top-0 z-20">
             <div class="flex items-center space-x-3">
                 <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/40x40" alt="Foto Admin">
@@ -33,10 +33,10 @@
             </div>
         </div>
 
-        <main class="p-4 -mt-8 relative z-10">
+        <div class="p-4 -mt-8 relative z-10">
              <div class="bg-white p-5 rounded-2xl shadow-lg">
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Menu</h2>
-                
+
                 <div class="grid grid-cols-3 md:grid-cols-4 gap-4 text-center">
                     <a href="#" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition aspect-square">
                         <svg class="w-8 h-8 mb-1 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -66,7 +66,7 @@
                     </a>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 
-</x-app-layout>
+</x-admin-layout>
