@@ -1,4 +1,4 @@
-<x-app-layout>
+<x layouts.app>
     <x-slot:title>
         detail
     </x-slot:title>
@@ -54,4 +54,4 @@
         </section>
 
     </main>
-</x-app-layout>
+</x layouts.app>

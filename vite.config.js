@@ -8,6 +8,17 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
-        tailwindcss(),
+        tailwindcss({
+            // --- PASTIKAN BAGIAN INI ADA DAN LENGKAP ---
+            config: {
+                content: [
+                    "./resources/**/*.blade.php",
+
+                    "./resources/**/*.js",
+                    "./node_modules/flowbite/**/*.js"
+                ],
+            }
+            // --- BATAS ---
+        }),
     ],
 });

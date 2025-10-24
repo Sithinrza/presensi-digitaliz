@@ -1,9 +1,9 @@
-<x-app-layout>
-    <x-solt:title>
+<x layouts.app>
+    <x-slot:title>
         Dashboard Karyawan
-    </x-solt:title>
-    
-    <div class="relative min-h-screen pb-24"> 
+    </x-slot:title>
+
+    <div class="relative min-h-screen pb-24">
         <header class="bg-white p-4 shadow-sm sticky top-0 z-20">
             <div class="flex items-center space-x-3">
                 <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/40x40" alt="Foto Profil Karyawan">
@@ -106,4 +106,4 @@
 
         </main>
     </div>
-</x-app-layout>
+</x layouts.app>

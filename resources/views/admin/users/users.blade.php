@@ -1,6 +1,6 @@
-<x-app-layout>
+<x layouts.app>
     <x-slot:title>
         user
     </x-slot:title>
-    
-</x-app-layout>
+
+</x layouts.app>

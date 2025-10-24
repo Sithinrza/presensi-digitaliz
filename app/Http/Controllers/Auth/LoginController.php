@@ -8,17 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    /**
-     * Menampilkan halaman form login.
-     */
+
     public function index()
     {
         return view('auth.login');
     }
 
-    /**
-     * Memproses data login.
-     */
     public function login(Request $request)
     {
         $request->validate([
@@ -35,26 +30,23 @@ class LoginController extends Controller
             $userRoles = $user->roles->pluck('name');
 
             if ($userRoles->contains('admin')) {
-                return redirect()->intended('/dashboard/admin');
+                return redirect()->intended('/admin/dashboard');
 
             } elseif ($userRoles->contains('karyawan')) {
-                return redirect()->intended('/dashboard/karyawan');
+                return redirect()->intended('/karyawan/dashboard');
 
             } else {
                 Auth::logout();
                 return redirect('/')->withErrors('Role tidak dikenal.');
             }
-            // --- BATAS BYPASS ---
+
         }
 
         return back()->withErrors([
             'email' => 'Email atau password yang Anda masukkan salah.',
         ])->onlyInput('email');
     }
-
-    /**
-     * Memproses logout.
-     */
+    
     public function logout(Request $request)
     {
         Auth::logout();
