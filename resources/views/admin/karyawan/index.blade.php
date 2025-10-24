@@ -1,4 +1,4 @@
-<x layouts.app>
+<x-admin-layout>
     <x-slot:title>
         Karyawan
     </x-slot:title>
@@ -62,4 +62,4 @@
                 </svg>
             </a>
         </main>
-</x layouts.app>
+</x-admin-layout>

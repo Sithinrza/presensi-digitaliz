@@ -1,4 +1,4 @@
-<x layouts.app>
+<x-karyawan-layout>
     <x-slot:title>
         Dashboard Karyawan
     </x-slot:title>
@@ -106,4 +106,4 @@
 
         </main>
     </div>
-</x layouts.app>
+</x-karyawan-layout>

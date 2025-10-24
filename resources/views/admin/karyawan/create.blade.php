@@ -1,4 +1,4 @@
-<x layouts.app>
+<x-admin-layout>
     <x-slot:title>
         Tambah
     </x-slot:title>
@@ -180,4 +180,4 @@
             </button>
         </form>
     </main>
-</x layouts.app>
+</x-admin-layout>

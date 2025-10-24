@@ -1,4 +1,4 @@
-<x layouts.app>
+<x-admin-layout>
     <x-slot:title>
         detail
     </x-slot:title>
@@ -54,4 +54,4 @@
         </section>
 
     </main>
-</x layouts.app>
+</x-admin-layout>
