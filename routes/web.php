@@ -37,4 +37,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [KarDashController::class, 'index'])->name('dashboard');
 
     });
+
+    //buat coba aja
+    Route::get('/karyawan/log', function () {
+    return view('karyawan.log'); // nama file Blade kamu
+});
+
 });
