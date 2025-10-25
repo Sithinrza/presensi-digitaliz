@@ -122,4 +122,131 @@ class KaryawanController extends Controller
         }
     }
 
+    public function show(Karyawan $karyawan)
+    {
+        $karyawan->load(
+            'user',
+            'jabatan',
+            'divisi',
+            'posisi',
+            'agama',
+            'pendidikanTerakhir');
+        return view('admin.karyawan.detail', compact('karyawan'));
+    }
+
+    public function edit(Karyawan $karyawan)
+    {
+        // 1. Ambil semua data master untuk dropdown (sama seperti fungsi create)
+        $roles = Role::all();
+        $agamas = Agama::all();
+        $jabatans = Jabatan::all();
+        $divisis = Divisi::all();
+        $posisis = Posisi::all();
+        $pendidikans = PendidikanTerakhir::all();
+
+        $karyawan->load('user', 'user.roles');
+
+        return view('admin.karyawan.update', compact(
+            'karyawan',
+            'roles',
+            'agamas',
+            'jabatans',
+            'divisis',
+            'posisis',
+            'pendidikans'
+        ));
+    }
+
+    public function update(Request $request, Karyawan $karyawan)
+    {
+        $request->validate([
+            'email' => 'required|email|unique:users,email,'.$karyawan->user_id,
+            'password' => 'nullable|string|min:8', // Password boleh kosong (jika tidak mau diubah)
+            'role_name' => 'required|string|exists:roles,name',
+
+            'nip' => 'required|string|unique:karyawans,nip,'.$karyawan->id,
+            'nama_lengkap' => 'required|string',
+            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
+            'tanggal_bergabung' => 'required|date',
+
+            'alamat' => 'nullable|string',
+            'tempat_lahir' => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
+            'no_telepon' => 'nullable|string|max:20',
+            'agama_id' => 'required|exists:agamas,id',
+        ]);
+
+        $selectedRole = Role::where('name', $request->role_name)->first();
+        if (!$selectedRole) { return back()->with('error', 'Role tidak valid.'); }
+
+        DB::beginTransaction();
+
+        try {
+            $userData = [
+                'name' => $request->nama_lengkap,
+                'email' => $request->email,
+            ];
+
+            // Tambahkan password jika diisi
+            if ($request->filled('password')) {
+                $userData['password'] = Hash::make($request->password);
+            }
+
+            $karyawan->user->update($userData);
+
+            $karyawan->user->roles()->sync([$selectedRole->id]);
+
+
+            $karyawan->update([
+                'nip' => $request->nip,
+                'nama_lengkap' => $request->nama_lengkap,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'tanggal_bergabung' => $request->tanggal_bergabung,
+                'alamat' => $request->alamat,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'no_telepon' => $request->no_telepon,
+                
+                'agama_id' => $request->agama_id,
+                'jabatan_id' => $request->jabatan_id,
+                'divisi_id' => $request->divisi_id,
+                'posisi_id' => $request->posisi_id,
+                'pendidikan_terakhir_id' => $request->pendidikan_terakhir_id,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.karyawan.index')
+                             ->with('success', 'Data karyawan '.$karyawan->nama_lengkap.' berhasil diperbarui.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal memperbarui data: ' . $e->getMessage())
+                         ->withInput();
+        }
+    }
+
+
+    public function destroy(Karyawan $karyawan)
+    {
+        DB::beginTransaction();
+
+        try {
+            if ($karyawan->user) {
+                $karyawan->user->delete();
+            }
+            $karyawan->delete();
+
+            DB::commit();
+
+            return redirect()->route('admin.karyawan.index')
+                             ->with('success', 'Data karyawan dan akun login berhasil dihapus.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+        }
+    }
+
 }

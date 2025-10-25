@@ -17,29 +17,30 @@
         </div>
     </header>
     <main class="p-4 space-y-6 pb-24">
-        <form action="#" class="space-y-6">
+        <form action="{{ route('admin.karyawan.store') }}" method="POST" class="space-y-6">
+            @csrf
             <div class="bg-white p-5 rounded-xl shadow-md">
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Data Pegawai</h2>
                 <div class="space-y-4">
-                    <div>
-                        <label for="id-pegawai" class="block mb-1 text-sm font-medium text-gray-500">ID Pegawai</label>
-                        <input type="text" id="id-pegawai" value="123456789" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
-                    </div>
+                    {{-- <div>
+                        <label for="id" class="block mb-1 text-sm font-medium text-gray-500">ID Pegawai</label>
+                        <input type="text" name="id" id="id" value="" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
+                    </div> --}}
                     <div>
                         <label for="nip" class="block mb-1 text-sm font-medium text-gray-500">NIP</label>
-                        <input type="text" id="nip" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Masukkan NIP">
+                        <input type="text" name="nip" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Masukkan NIP">
                     </div>
                     <div>
-                        <label for="nama-pegawai" class="block mb-1 text-sm font-medium text-gray-500">Nama Pegawai</label>
-                        <input type="text" id="nama-pegawai" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Masukkan Nama">
+                        <label for="nama_lengkap" class="block mb-1 text-sm font-medium text-gray-500">Nama Lengkap</label>
+                        <input type="text" name="nama_lengkap" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Masukkan Nama">
                     </div>
                     <div>
-                        <label for="tempat-lahir" class="block mb-1 text-sm font-medium text-gray-500">Tempat Lahir</label>
-                        <input type="text" id="tempat-lahir" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Masukkan Tempat Lahir">
+                        <label for="tempat_lahir" class="block mb-1 text-sm font-medium text-gray-500">Tempat Lahir</label>
+                        <input type="text" name="tempat_lahir" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Masukkan Tempat Lahir">
                     </div>
                     <div class="relative">
-                         <label for="tanggal-lahir" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Lahir</label>
-                         <input datepicker datepicker-autohide type="text" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Pilih Tanggal">
+                         <label for="tanggal_lahir" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Lahir</label>
+                         <input datepicker datepicker-autohide type="text" id="tanggal_lahir" name="tanggal_lahir" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Pilih Tanggal">
                          <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/>
@@ -49,54 +50,47 @@
                     </div>
                     <div>
                         <label for="agama" class="block mb-1 text-sm font-medium text-gray-500">Agama</label>
-                        <select id="agama" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <select id="agama" name="agama_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                             <option>Pilih Agama</option>
-                            <option>Islam</option>
-                            <option>Kristen Protestan</option>
-                            <option>Katolik</option>
-                            <option>Hindu</option>
-                            <option>Budha</option>
+                            @foreach($agamas as $agama)
+                            <option value="{{ $agama->id }}" {{ old('agama_id') == $agama->id ? 'selected' : '' }}>
+                                {{ $agama->name }}
+                            </option>
+                             @endforeach
                         </select>
                     </div>
                     <div>
                         <label class="block mb-2 text-sm font-medium text-gray-500">Jenis Kelamin</label>
                         <div class="flex items-center space-x-4">
                             <div class="flex items-center">
-                                <input id="perempuan" type="radio" value="" name="jenis-kelamin" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                <input id="perempuan" type="radio" value="Perempuan" name="jenis_kelamin" {{ old('jenis_kelamin') == 'Perempuan' ? 'checked' : '' }} class="w-4 h-4 ..."> {{-- TAMBAH value="Perempuan" dan name="jenis_kelamin" --}}
                                 <label for="perempuan" class="ms-2 text-sm font-medium text-gray-900">Perempuan</label>
                             </div>
                             <div class="flex items-center">
-                                <input checked id="laki-laki" type="radio" value="" name="jenis-kelamin" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                <input id="laki-laki" type="radio" value="Laki-Laki" name="jenis_kelamin" {{ old('jenis_kelamin', 'Laki-Laki') == 'Laki-Laki' ? 'checked' : '' }} class="w-4 h-4 ..."> {{-- TAMBAH value="Laki-Laki" dan name="jenis_kelamin" --}}
                                 <label for="laki-laki" class="ms-2 text-sm font-medium text-gray-900">Laki-Laki</label>
                             </div>
                         </div>
                     </div>
                     <div>
                         <label for="alamat" class="block mb-1 text-sm font-medium text-gray-500">Alamat</label>
-                        <textarea id="alamat" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan Alamat"></textarea>
+                        <textarea id="alamat" rows="3" name="alamat" class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan Alamat">{{ old('alamat') }}</textarea>
                     </div>
                     <div>
                         <label for="pendidikan" class="block mb-1 text-sm font-medium text-gray-500">Pendidikan Terakhir</label>
-                        <select id="pendidikan" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <select id="pendidikan" name="pendidikan_terakhir_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                             <option>Pilih Pendidikan</option>
-                            <option>SMA/SMK</option>
-                            <option>Diploma 3</option>
-                            <option>Diploma 4</option>
-                            <option>Sarjana (S1)</option>
-                            <option>Magister (S2)</option>
+                            @foreach($pendidikans as $pendidikan)
+                            <option value="{{ $pendidikan->id }}" {{ old('pendidikan_id') == $pendidikan->id ? 'selected' : '' }}>
+                                {{ $pendidikan->name }}
+                            </option>
+                             @endforeach
                         </select>
                     </div>
+
                     <div>
-                        <label for="status" class="block mb-1 text-sm font-medium text-gray-500">Status</label>
-                        <select id="status" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <option>Pilih Status</option>
-                            <option>Belum Menikah</option>
-                            <option>Menikah</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="no-telepon" class="block mb-1 text-sm font-medium text-gray-500">No Telepon</label>
-                        <input type="tel" id="no-telepon" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="08xxxxxxxxxx">
+                        <label for="no_telepon" class="block mb-1 text-sm font-medium text-gray-500">No Telepon</label>
+                        <input type="tel" id="no_telepon" name="no_telepon" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                     </div>
                 </div>
             </div>
@@ -104,19 +98,23 @@
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Akun Pegawai</h2>
                  <div class="space-y-4">
                     <div>
-                        <label for="username" class="block mb-1 text-sm font-medium text-gray-500">Username</label>
-                        <input type="email" id="username" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="email@contoh.com">
+                        <label for="email" class="block mb-1 text-sm font-medium text-gray-500">Username</label>
+                        <input type="email" name="email" id="email" value="{{ old('email') }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                     </div>
                     <div>
                         <label for="password" class="block mb-1 text-sm font-medium text-gray-500">Password</label>
-                        <input type="password" id="password" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="••••••••">
+                        <input type="password" name="password" id="password" value="{{ old('password') }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="••••••••">
                     </div>
                     <div>
-                        <label for="role" class="block mb-1 text-sm font-medium text-gray-500">Role</label>
-                        <select id="role" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <label for="role_name" class="block mb-1 text-sm font-medium text-gray-500">Role</label>
+                        <select id="role_name" name="role_name" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                             <option>Pilih Role</option>
-                            <option>Admin</option>
-                            <option>Karyawan</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->name }}"
+                                        {{ old('role_name') == $role->name ? 'selected' : '' }}>
+                                    {{ $role->name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                  </div>
@@ -127,8 +125,8 @@
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Informasi Pekerjaan</h2>
                 <div class="space-y-4">
                     <div class="relative">
-                         <label for="tanggal-bergabung" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Bergabung</label>
-                         <input datepicker datepicker-autohide type="text" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Pilih Tanggal">
+                         <label for="tanggal_bergabung" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Bergabung</label>
+                         <input datepicker datepicker-autohide type="text" id="tanggal_bergabung" name="tanggal_bergabung" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Pilih Tanggal">
                          <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/>
@@ -137,40 +135,50 @@
                          </div>
                     </div>
                     <div>
-                        <label for="status-karyawan" class="block mb-1 text-sm font-medium text-gray-500">Status Karyawan</label>
-                        <select id="status-karyawan" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <option>Pilih Status</option>
-                            <option>Aktif</option>
-                            <option>Tidak Aktif</option>
+                        <label for="status_karyawan" class="block mb-1 text-sm font-medium text-gray-500">Status</label>
+                        <select id="status_karyawan" name="status_karyawan" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="Aktif" {{ old('status_karyawan', 'Aktif') == 'Aktif' ? 'selected' : '' }}>
+                                Aktif
+                            </option>
+                            <option value="Tidak Aktif" {{ old('status_karyawan') == 'Tidak Aktif' ? 'selected' : '' }}>
+                                Tidak Aktif
+                            </option>
                         </select>
                     </div>
                     <div>
                         <label for="jabatan" class="block mb-1 text-sm font-medium text-gray-500">Jabatan</label>
-                        <select id="jabatan" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <select id="jabatan" name="jabatan_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                             <option>Pilih Jabatan</option>
-                            <option>Manager</option>
-                            <option>Supervisor</option>
-                            <option>Staff</option>
-                            <option>Karyawan</option>
+                            @foreach ($jabatans as $jabatan )
+                            <option value="{{ $jabatan->id }} {{ old('jabatan_id') == $jabatan->id ? 'selected' : '' }}">
+                                {{ $jabatan->name }}
+                            </option>
+
+                            @endforeach
                         </select>
                     </div>
                     <div>
                         <label for="divisi" class="block mb-1 text-sm font-medium text-gray-500">Divisi</label>
-                        <select id="divisi" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <select id="divisi" name="divisi_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                             <option>Pilih Divisi</option>
-                            <option>Marketing</option>
-                            <option>Programmer</option>
-                            <option>UI/UX</option>
-                            <option>HRD</option>
+                            @foreach ($divisis as $divisi )
+                            <option value="{{ $divisi->id }} {{ old('divisi_id') == $divisi->id ? 'selected' : '' }}">
+                                {{ $divisi->name }}
+                            </option>
+
+                            @endforeach
                         </select>
                     </div>
                     <div>
                         <label for="posisi" class="block mb-1 text-sm font-medium text-gray-500">Posisi</label>
-                        <select id="posisi" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <select id="posisi" name="posisi_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                             <option>Pilih Posisi</option>
-                            <option>Front-End</option>
-                            <option>Back-End</option>
-                            <option>Full-Stack</option>
+                            @foreach ($posisis as $posisi )
+                            <option value="{{ $posisi->id }} {{ old('posisi_id') == $posisi->id ? 'selected' : '' }}">
+                                {{ $posisi->name }}
+                            </option>
+
+                            @endforeach
                         </select>
                     </div>
                 </div>
