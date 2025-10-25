@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('status_id')->constrained('status_presensis')->onDelete('restrict');
             $table->date('tanggal');
 
+            $table->unique(['karyawan_id', 'tanggal']);
+
             $table->dateTime('waktu_ci')->nullable();
             $table->string('foto_ci')->nullable();
             $table->decimal('latitude_ci', 10, 8)->nullable();

@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('no_telepon', 20)->nullable();
 
             $table->date('tanggal_bergabung');
+            $table->string('foto_profil', 255)->nullable();
             $table->enum('status_karyawan', ['Aktif', 'Tidak Aktif'])->default('Aktif');
 
             // Timestamps
