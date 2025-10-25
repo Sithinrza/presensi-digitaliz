@@ -25,14 +25,14 @@ class Karyawan extends Model
     ];
 
     protected $casts = [
-        'tanggal_lahir' => 'date',
-        'tanggal_bergabung' => 'date',
+        'tanggal_lahir' => 'date:d-m-Y',
+        'tanggal_bergabung' => 'date:d-m-Y',
     ];
 
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     /**
@@ -48,7 +48,7 @@ class Karyawan extends Model
      */
     public function jabatan()
     {
-        return $this->belongsTo(Jabatan::class);
+        return $this->belongsTo(Jabatan::class, 'jabatan_id', 'id');
     }
 
     /**
@@ -89,7 +89,7 @@ class Karyawan extends Model
 {
     return $this->belongsToMany(
         JadwalKerja::class,
-        'jadwal_pegawai',  
+        'jadwal_pegawai',
         'id_karyawan',
         'id_jadwal_kerja'
     );
