@@ -42,7 +42,7 @@ Route::middleware(['auth'])->group(function () {
 
     //buat coba aja
     Route::get('/karyawan/log', function () {
-    return view('karyawan.log'); // nama file Blade kamu
+    return view('karyawan.log.log'); // nama file Blade kamu
 });
 
 });
