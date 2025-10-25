@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdDashController;
+use App\Http\Controllers\Admin\AdPresensiController;
 use App\Http\Controllers\Admin\KaryawanController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Karyawan\KarDashController;
@@ -26,6 +27,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard', [AdDashController::class, 'index'])->name('dashboard');
         Route::resource('karyawan', KaryawanController::class);
+        Route::resource('presensi', AdPresensiController::class);
     });
 
     //role karyawan
