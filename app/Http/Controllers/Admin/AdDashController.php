@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Karyawan;
 use Illuminate\Http\Request;
 
 class AdDashController extends Controller
 {
      public function index(){
-        return view('admin.dashboard');
+
+        $totalKaryawan = Karyawan::count();
+        return view('admin.dashboard', compact('totalKaryawan'));
     }
 }

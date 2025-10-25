@@ -22,7 +22,7 @@ class KaryawanSeeder extends Seeder
             Karyawan::create([
 
                 // --- Kolom Wajib (Foreign Keys) ---
-                'user_id' => $adminUser->id, 
+                'user_id' => $adminUser->id,
                 'agama_id' => 1,
                 'jabatan_id' => 1,
                 'divisi_id' => 1,
@@ -35,6 +35,8 @@ class KaryawanSeeder extends Seeder
                 'jenis_kelamin' => 'Laki-Laki',
                 'tanggal_bergabung' => '2022-01-01',
                 'status_karyawan' => 'Aktif',
+
+                'foto_profil' => null,
 
                 // --- Kolom Opsional (Boleh NULL) ---
                 'alamat' => 'Alamat Dummy',

@@ -64,7 +64,6 @@ class KaryawanController extends Controller
             'status_karyawan'=>'required|in:Aktif,Tidak Aktif',
             'tanggal_bergabung'=>'required|date',
 
-
             //dropdown fk
             'agama_id' => 'required|exists:agamas,id',
             'jabatan_id' => 'required|exists:jabatans,id',
@@ -98,6 +97,8 @@ class KaryawanController extends Controller
                 'tanggal_bergabung' => $request->tanggal_bergabung,
                 'status_karyawan' => $request->status_karyawan,
 
+                'foto_profil' => null,
+
                 'agama_id' => $request->agama_id,
                 'jabatan_id' => $request->jabatan_id,
                 'divisi_id' => $request->divisi_id,
@@ -117,8 +118,9 @@ class KaryawanController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
-                         ->withInput();
+            dd("Transaksi Gagal! Error: " . $e->getMessage(), $e->getTrace());
+            // return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+            //              ->withInput();
         }
     }
 
@@ -169,6 +171,7 @@ class KaryawanController extends Controller
             'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'tanggal_bergabung' => 'required|date',
 
+
             'alamat' => 'nullable|string',
             'tempat_lahir' => 'nullable|string|max:100',
             'tanggal_lahir' => 'nullable|date',
@@ -206,7 +209,7 @@ class KaryawanController extends Controller
                 'tempat_lahir' => $request->tempat_lahir,
                 'tanggal_lahir' => $request->tanggal_lahir,
                 'no_telepon' => $request->no_telepon,
-                
+
                 'agama_id' => $request->agama_id,
                 'jabatan_id' => $request->jabatan_id,
                 'divisi_id' => $request->divisi_id,

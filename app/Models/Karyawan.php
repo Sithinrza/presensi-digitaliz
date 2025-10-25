@@ -18,6 +18,7 @@ class Karyawan extends Model
         'alamat',
         'jenis_kelamin',
         'tempat_lahir',
+        'foto_profil',
         'tanggal_lahir',
         'no_telepon',
         'tanggal_bergabung',
@@ -25,8 +26,8 @@ class Karyawan extends Model
     ];
 
     protected $casts = [
-        'tanggal_lahir' => 'date:d-m-Y',
-        'tanggal_bergabung' => 'date:d-m-Y',
+        'tanggal_lahir' => 'date',
+        'tanggal_bergabung' => 'date',
     ];
 
 
@@ -86,12 +87,17 @@ class Karyawan extends Model
     }
 
     public function jadwalKerja()
-{
-    return $this->belongsToMany(
-        JadwalKerja::class,
-        'jadwal_pegawai',
-        'id_karyawan',
-        'id_jadwal_kerja'
-    );
-}
+    {
+        return $this->belongsToMany(
+            JadwalKerja::class,
+            'jadwal_pegawai',
+            'id_karyawan',
+            'id_jadwal_kerja'
+        );
+    }
+
+    public function agenda()
+    {
+        return $this->belongsToMany(Agenda::class);
+    }
 }
