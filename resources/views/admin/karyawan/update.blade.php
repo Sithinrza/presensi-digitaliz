@@ -51,76 +51,100 @@
                     </div>
                     <div>
                         <label class="block mb-1 text-sm font-medium text-gray-500">Jenis Kelamin</label>
-                        <input type="text" value="{{ old('jenis_kelamin', '$karyawan->jenis_kelamin') }}" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
+                        <input type="text" value="{{ old('jenis_kelamin', $karyawan->jenis_kelamin) }}" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
                     </div>
                     <div>
                         <label for="agama" class="block mb-1 text-sm font-medium text-gray-500">Agama</label>
-                        <select id="agama" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <option>Kristen Protestan</option>
-                            <option>Islam</option>
-                            <option>Katolik</option>
-                            <option>Hindu</option>
-                            <option>Budha</option>
+                        <select id="agama" name="agama_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">Pilih Agama</option>
+                            @foreach($agamas as $agama)
+                                <option value="{{ $agama->id }}"
+                                    @if(old('agama_id', $karyawan->agama_id) == $agama->id)
+                                        selected
+                                    @endif
+                                >
+                                {{ $agama->name }} {{-- Tampilkan nama agama (sesuaikan 'name' jika nama kolom berbeda) --}}
+                                </option>
+                            @endforeach
                         </select>
+                        @error('agama_id')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label for="alamat" class="block mb-1 text-sm font-medium text-gray-500">Alamat</label>
-                        <textarea id="alamat" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan Alamat">Jln. Adhyaksa Raya .....</textarea>
+                        <textarea id="alamat" name="alamat" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan Alamat">
+                            {{ old('alamat', $karyawan->alamat ?? '') }}
+                        </textarea>
+                        @error('alamat')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label for="pendidikan" class="block mb-1 text-sm font-medium text-gray-500">Pendidikan Terakhir</label>
-                        <select id="pendidikan" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <option>Diploma 4</option>
-                            <option>SMA/SMK</option>
-                            <option>Diploma 3</option>
-                            <option>Sarjana (S1)</option>
-                            <option>Magister (S2)</option>
+                        <select id="pendidikan" name="pendidikan_terakhir_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">Pilih Pendidikan Terakhir</option> 
+                            @foreach($pendidikans as $pendidikan) 
+                                <option value="{{ $pendidikan->id }}"
+                                    @if(old('pendidikan_terakhir_id', $karyawan->pendidikan_terakhir_id) == $pendidikan->id) 
+                                        selected
+                                    @endif
+                                >
+                                    {{ $pendidikan->name }} 
+                                </option>
+                            @endforeach
                         </select>
-                    </div>
-                    <div>
-                        <label for="status" class="block mb-1 text-sm font-medium text-gray-500">Status</label>
-                        <select id="status" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <option>Belum Menikah</option>
-                            <option>Menikah</option>
-                        </select>
+                        @error('pendidikan_terakhir_id') 
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label for="no-telepon" class="block mb-1 text-sm font-medium text-gray-500">No Telepon</label>
-                        <input type="tel" id="no-telepon" value="085274196387" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="08xxxxxxxxxx">
+                        <input type="tel" id="no_telepon" value="{{ old('no_telepon', $karyawan->no_telepon) }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="08xxxxxxxxxx">
                     </div>
                 </div>
             </div>
-
             <div class="bg-white p-5 rounded-xl shadow-md">
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Akun Pegawai</h2>
                  <div class="space-y-4">
                     <div>
                         <label for="username" class="block mb-1 text-sm font-medium text-gray-500">Username</label>
-                        <input type="email" id="username" value="abadi@gmail.com" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
+                        <input type="email" id="username" value="{{ old('email', $karyawan->user?->email) }}" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
                     </div>
                     <div>
                         <label for="password" class="block mb-1 text-sm font-medium text-gray-500">Password</label>
-                        <input type="password" id="password" value="123456789" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
+                        <input type="password" id="password" value="{{ old('password', $karyawan->user?->password) }}" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
                     </div>
                     <div>
-                        <label for="role" class="block mb-1 text-sm font-medium text-gray-500">Role</label>
-                        <input type="text" id="role" value="Karyawan" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
+                        <label for="role_display" class="block mb-1 text-sm font-medium text-gray-500">Role</label>
+                        @php
+                            $currentRoleName = $karyawan->user->roles->first()->name ?? 'N/A';
+                            $currentRoleId = $karyawan->user->roles->first()->id ?? '';
+                        @endphp
+
+                        <input type="text" id="role_display" 
+                            value="{{ $currentRoleName }}" 
+                            class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+                            readonly> {{-- Set Readonly --}}
+                        <input type="hidden" name="role_name" value="{{ $currentRoleName }}"> 
+                        
                     </div>
                  </div>
             </div>
-
             <div class="bg-white p-5 rounded-xl shadow-md">
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Informasi Pekerjaan</h2>
                 <div class="space-y-4">
                     <div class="relative">
-                         <label for="tanggal-bergabung" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Bergabung</label>
-                         <input type="text" value="05-05-2025" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
-                         <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
+                        <label for="tanggal-bergabung" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Bergabung</label>
+                        <input type="text" id="tanggal_bergabung" name="tanggal_bergabung" 
+                            value="{{ old('tanggal_bergabung', $karyawan->tanggal_bergabung ? \Carbon\Carbon::parse($karyawan->tanggal_bergabung)->format('Y-m-d') : '') }}" 
+                            class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
+                        <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/>
                                 <path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
                             </svg>
-                         </div>
+                        </div>
                     </div>
                     <div>
                         <label for="status-karyawan" class="block mb-1 text-sm font-medium text-gray-500">Status Karyawan</label>
@@ -131,34 +155,62 @@
                     </div>
                     <div>
                         <label for="jabatan" class="block mb-1 text-sm font-medium text-gray-500">Jabatan</label>
-                        <select id="jabatan" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <option>Karyawan</option>
-                            <option>Manager</option>
-                            <option>Supervisor</option>
-                            <option>Staff</option>
+                        <select id="jabatan" name="jabatan_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">Pilih Jabatan</option> 
+                            @foreach($jabatans as $jabatan)
+                                <option value="{{ $jabatan->id }}"
+                                    @if(old('jabatan_id', $karyawan->jabatan_id) == $jabatan->id)
+                                        selected
+                                    @endif
+                                >
+                                    {{ $jabatan->name }} 
+                                </option>
+                            @endforeach
                         </select>
+                        @error('jabatan_id')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label for="divisi" class="block mb-1 text-sm font-medium text-gray-500">Divisi</label>
-                        <select id="divisi" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <option>Programmer</option>
-                            <option>Marketing</option>
-                            <option>UI/UX</option>
-                            <option>HRD</option>
+                        <select id="divisi" name="divisi_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">Pilih Divisi</option>
+                            @foreach($divisis as $divisi)
+                                <option value="{{ $divisi->id }}"
+                                    @if(old('divisi_id', $karyawan->divisi_id) == $divisi->id)
+                                        selected
+                                    @endif
+                                >
+                                    {{ $divisi->name }} 
+                                </option>
+                            @endforeach
                         </select>
+                        @error('divisi_id')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label for="posisi" class="block mb-1 text-sm font-medium text-gray-500">Posisi</label>
-                        <select id="posisi" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <option>Front-End</option>
-                            <option>Back-End</option>
-                            <option>Full-Stack</option>
+                        <select id="posisi" name="posisi_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">Pilih Posisi</option> 
+                            @foreach($posisis as $posisi)
+                                <option value="{{ $posisi->id }}"
+                                    @if(old('posisi_id', $karyawan->posisi_id) == $posisi->id)
+                                        selected
+                                    @endif
+                                >
+                                    {{ $posisi->name }} 
+                                </option>
+                            @endforeach
                         </select>
+                        @error('posisi_id')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </div>
 
-            <button type="submit" class="w-full text-white bg-indigo-950 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-3 text-center">
+            <button type="submit" class="btn-indi">
                 Edit Data
             </button>
         </form>
