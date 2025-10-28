@@ -13,12 +13,17 @@
 
     <main class="pb-24"> <!-- padding-bottom agar konten tidak tertutup nav -->
         {{ $slot }}
+
+        @unless (Route::is('admin.karyawan.show'))
+            {{-- Panggil partial navigasi admin DI DALAM @unless --}}
             @include('layouts.partials.adminnav')
-    @stack('scripts')
+        @endunless
+        
+        @stack('scripts')
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite-datepicker@1.4.2/dist/datepicker.min.js"></script>
-
     </main>
+   
 </body>
 </html>
