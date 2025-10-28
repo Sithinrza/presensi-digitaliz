@@ -10,4 +10,8 @@ class AdPresensiController extends Controller
     public function index(){
         return view('admin.presensi.riwayat');
     }
+
+    public function rekap(){
+        return view('admin.presensi.rekap');
+    }
 }

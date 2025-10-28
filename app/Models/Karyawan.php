@@ -76,11 +76,11 @@ class Karyawan extends Model
         return $this->belongsTo(PendidikanTerakhir::class);
     }
 
-    public function presensiKaryawan()
+   public function presensiKaryawans()
     {
-        return $this->belongsTo(PresensiKaryawan::class);
+        // foreign key di tabel presensi_karyawans adalah 'karyawan_id'
+        return $this->hasMany(\App\Models\PresensiKaryawan::class, 'karyawan_id');
     }
-
     public function statusPresensi()
     {
         return $this->belongsTo(StatusPresensi::class);

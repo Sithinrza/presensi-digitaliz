@@ -1,7 +1,7 @@
  <div class="fixed bottom-0 left-0 right-0 p-4 z-50">
         <div class="w-full max-w-screen-lg mx-auto bg-indigo-950 rounded-full shadow-lg">
             <div id="bottom-nav-container" class="flex items-center justify-around p-2">
-                <a href="#">
+                <a href="{{ route('karyawan.dashboard') }}">
                     <button type="button" class="nav-button p-2 text-indigo-950 bg-white rounded-full">
                         <svg class="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12.71 2.29a1 1 0 0 0-1.42 0l-9 9a1 1 0 0 0 0 1.42A1 1 0 0 0 3 13h1v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7h1a1 1 0 0 0 1-1a1 1 0 0 0-.29-.71z"/>
@@ -22,7 +22,7 @@
                         </svg>
                     </button>
                 </a>
-                <a href="#">
+                <a href="{{ route('karyawan.log.index') }}">
                     <button type="button" class="nav-button p-2 text-white rounded-full">
                         <svg class="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-3 5h3m-6 0h.01M12 16h3m-6 0h.01M10 3v4h4V3h-4Z"/>

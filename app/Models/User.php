@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -56,7 +57,7 @@ class User extends Authenticatable
             'role_id'       // Foreign key untuk Role
         );
     }
-    
+
     public function hasRole(string $roleName): bool
     {
         // Loop semua role yang dimiliki user ini
@@ -68,5 +69,12 @@ class User extends Authenticatable
         }
         // Jika tidak ada yang cocok, kembalikan false
         return false;
+    }
+
+    public function karyawan(): HasOne
+    {
+        // Asumsi: foreign key di tabel karyawans adalah 'user_id'
+        // dan primary key di tabel users adalah 'id'
+        return $this->hasOne(Karyawan::class, 'user_id', 'id');
     }
 }

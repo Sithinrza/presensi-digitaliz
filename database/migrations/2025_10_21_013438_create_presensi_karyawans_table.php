@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('presensi_karyawans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('karyawan_id')->constrained('karyawans')->onDelete('cascade');
-            $table->foreignId('status_id')->constrained('status_presensis')->onDelete('restrict');
+            $table->foreignId('status_presensi_id')->constrained('status_presensis')->onDelete('restrict');
             $table->date('tanggal');
 
             $table->unique(['karyawan_id', 'tanggal']);

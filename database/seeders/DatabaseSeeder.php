@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
             StatusPresensiSeeder::class,
 
 
-            KaryawanSeeder::class
+            KaryawanSeeder::class,
+            PresensiKaryawanSeeder::class,
 
         ]);
     }

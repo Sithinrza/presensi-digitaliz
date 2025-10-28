@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('log_harians', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('presensi_id')->constrained('presensi_karyawans')->onDelete('cascade');
+            $table->foreignId('presensi_karyawan_id')->constrained('presensi_karyawans')->onDelete('cascade');
             $table->text('catatan_log')->nullable();
             $table->timestamps();
         });
