@@ -35,7 +35,8 @@ Route::middleware(['auth'])->group(function () {
          Route::get('/presensi/rekap', [AdPresensiController::class, 'rekap'])->name('presensi.rekap');
         Route::resource('presensi', AdPresensiController::class);
 
-        Route::get('/profile', [AdProfileController::class, 'index']);
+        Route::get('/profile', [AdProfileController::class, 'index'])->name('profile.index');
+        Route::get('/profile/detail', [AdProfileController::class, 'detail'])->name('profile.detail');
     });
 
     //role karyawan

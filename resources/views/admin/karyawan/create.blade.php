@@ -120,7 +120,6 @@
                  </div>
             </div>
 
-
             <div class="bg-white p-5 rounded-xl shadow-md">
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Informasi Pekerjaan</h2>
                 <div class="space-y-4">
@@ -183,7 +182,7 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="w-full text-white bg-indigo-950 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-3 text-center">
+            <button type="submit" class="btn-indi">
                 Simpan
             </button>
         </form>

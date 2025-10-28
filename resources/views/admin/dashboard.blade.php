@@ -15,19 +15,27 @@
         <div class="bg-indigo-950 p-4 pt-8 pb-12 -mt-1 rounded-t-[3rem] relative z-10">
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-white p-4 h-20 rounded-xl shadow relative flex items-end">
-                    <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white font-bold text-sm border-2 border-indigo-950">{{ $totalKaryawan }}</span>
+                    <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white font-bold text-sm border-2 border-indigo-950">
+                        {{ $totalKaryawan }}
+                    </span>
                     <p class="font-semibold text-gray-800">Total Karyawan</p>
                 </div>
                 <div class="bg-white p-4 h-20 rounded-xl shadow relative flex items-end">
-                    <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white font-bold text-sm border-2 border-indigo-950">33</span>
+                    <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white font-bold text-sm border-2 border-indigo-950">
+                        33
+                    </span>
                     <p class="font-semibold text-gray-800">Hadir Hari ini</p>
                 </div>
                 <div class="bg-white p-4 h-20 rounded-xl shadow relative flex items-end">
-                    <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-yellow-500 text-white font-bold text-sm border-2 border-indigo-950">4</span>
+                    <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-yellow-500 text-white font-bold text-sm border-2 border-indigo-950">
+                        4
+                    </span>
                     <p class="font-semibold text-gray-800">Terlambat</p>
                 </div>
                 <div class="bg-white p-4 h-20 rounded-xl shadow relative flex items-end">
-                     <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white font-bold text-sm border-2 border-indigo-950">3</span>
+                    <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white font-bold text-sm border-2 border-indigo-950">
+                        3
+                    </span>
                     <p class="font-semibold text-gray-800">Laporan Report Baru</p>
                 </div>
             </div>

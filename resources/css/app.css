@@ -10,4 +10,30 @@
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
 
+/* Style untuk tombol edit di foto profil */
+.profile-edit-button {
+    position: absolute; 
+    bottom: 0; 
+    right: 0; 
+    background-color: white;
+    border-radius: 50%; 
+    padding: 4px; 
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb; /* gray-200 */
+    transform: translate(10%, 10%);
+} 
 
+.btn-indi{
+    @apply w-full text-white bg-indigo-950 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-3 text-center transition ease-in-out duration-150;
+}
+
+.profile-verified-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 50%;
+    padding: 2px; /* Anda bisa sesuaikan padding ini */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transform: translate(15%, 15%); /* Sedikit keluar */
+}
