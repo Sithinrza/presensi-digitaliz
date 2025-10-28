@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Karyawan extends Model
 {
@@ -96,8 +97,8 @@ class Karyawan extends Model
         );
     }
 
-    public function agenda()
+    public function agendas(): BelongsToMany
     {
-        return $this->belongsToMany(Agenda::class);
+        return $this->belongsToMany(\App\Models\Agenda::class, 'agenda_karyawan', 'karyawan_id', 'agenda_id');
     }
 }

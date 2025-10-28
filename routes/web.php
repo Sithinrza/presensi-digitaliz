@@ -32,10 +32,13 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard', [AdDashController::class, 'index'])->name('dashboard');
         Route::resource('karyawan', KaryawanController::class);
-         Route::get('/presensi/rekap', [AdPresensiController::class, 'rekap'])->name('presensi.rekap');
+
+        Route::get('/presensi/rekap', [AdPresensiController::class, 'rekap'])->name('presensi.rekap');
+        Route::get('/presensi/detail', [AdPresensiController::class, 'detail'])->name('presensi.detail');
         Route::resource('presensi', AdPresensiController::class);
 
-        Route::get('/profile', [AdProfileController::class, 'index']);
+        Route::get('/profile', [AdProfileController::class, 'index'])->name('profile.index');
+        Route::get('/profile/detail', [AdProfileController::class, 'detail'])->name('profile.detail');
     });
 
     //role karyawan
@@ -48,8 +51,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/log-harian', [LogHarianController::class, 'index'])->name('log.index');
         Route::post('/log-harian', [LogHarianController::class, 'store'])->name('log.store');
 
-        Route::get('/jadwal', [KarJadwalController::class, 'index']);
-        Route::get('/profile', [KarProfileController::class, 'index']);
+        Route::get('/jadwal', [KarJadwalController::class, 'index'])->name('jadwal.index');
+
+        Route::get('/profile', [KarProfileController::class, 'index'])->name('profile.index');
 
 
     });

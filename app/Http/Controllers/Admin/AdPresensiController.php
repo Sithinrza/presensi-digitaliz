@@ -14,4 +14,8 @@ class AdPresensiController extends Controller
     public function rekap(){
         return view('admin.presensi.rekap');
     }
+    
+    public function detail(){
+        return view('admin.presensi.detail');
+    }
 }
