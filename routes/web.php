@@ -2,9 +2,14 @@
 
 use App\Http\Controllers\Admin\AdDashController;
 use App\Http\Controllers\Admin\AdPresensiController;
+use App\Http\Controllers\Admin\AdProfileController;
 use App\Http\Controllers\Admin\KaryawanController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Karyawan\KarDashController;
+use App\Http\Controllers\Karyawan\KarJadwalController;
+use App\Http\Controllers\Karyawan\KarProfileController;
+use App\Http\Controllers\Karyawan\LogAkController;
+use App\Http\Controllers\Karyawan\LogHarianController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -27,7 +32,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard', [AdDashController::class, 'index'])->name('dashboard');
         Route::resource('karyawan', KaryawanController::class);
+         Route::get('/presensi/rekap', [AdPresensiController::class, 'rekap'])->name('presensi.rekap');
         Route::resource('presensi', AdPresensiController::class);
+
+        Route::get('/profile', [AdProfileController::class, 'index']);
     });
 
     //role karyawan
@@ -37,12 +45,14 @@ Route::middleware(['auth'])->group(function () {
         ->group(function () {
 
         Route::get('/dashboard', [KarDashController::class, 'index'])->name('dashboard');
+        Route::get('/log-harian', [LogHarianController::class, 'index'])->name('log.index');
+        Route::post('/log-harian', [LogHarianController::class, 'store'])->name('log.store');
+
+        Route::get('/jadwal', [KarJadwalController::class, 'index']);
+        Route::get('/profile', [KarProfileController::class, 'index']);
+
 
     });
 
-    //buat coba aja
-    Route::get('/karyawan/log', function () {
-    return view('karyawan.log.log'); // nama file Blade kamu
-});
 
 });
