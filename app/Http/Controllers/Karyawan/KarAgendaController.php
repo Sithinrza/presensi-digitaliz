@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Karyawan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Agenda;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-use App\Models\Karyawan; // Pastikan ini di-use
-use App\Models\Agenda; // Pastikan ini di-use
 
-class KarJadwalController extends Controller
+class KarAgendaController extends Controller
 {
     public function index(Request $request)
     {
@@ -20,11 +19,11 @@ class KarJadwalController extends Controller
         $agendaHariIni = Agenda::whereHas('karyawans', function ($query) use ($karyawan) {
             $query->where('karyawan_id', $karyawan->id);
         })
-        ->whereDate('tanggal_agenda', $date) 
+        ->whereDate('tanggal_agenda', $date)
         ->orderBy('waktu_mulai')
         ->get();
 
         // 4. Kirim data ke view
-        return view('karyawan.jadwal.index', compact('agendaHariIni', 'date'));
+        return view('karyawan.agenda.index', compact('agendaHariIni', 'date'));
     }
 }
