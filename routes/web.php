@@ -1,15 +1,21 @@
 <?php
 
+use App\Http\Controllers\Admin\AdAgendaController;
 use App\Http\Controllers\Admin\AdDashController;
+use App\Http\Controllers\Admin\AdLogHarianController;
 use App\Http\Controllers\Admin\AdPresensiController;
 use App\Http\Controllers\Admin\AdProfileController;
 use App\Http\Controllers\Admin\KaryawanController;
+
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Karyawan\KarAgendaController;
 use App\Http\Controllers\Karyawan\KarDashController;
 use App\Http\Controllers\Karyawan\KarJadwalController;
+use App\Http\Controllers\Karyawan\KarPresensiController;
 use App\Http\Controllers\Karyawan\KarProfileController;
 use App\Http\Controllers\Karyawan\LogAkController;
 use App\Http\Controllers\Karyawan\LogHarianController;
+use App\Models\Agenda;
 use Illuminate\Support\Facades\Route;
 
 
@@ -32,11 +38,25 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/dashboard', [AdDashController::class, 'index'])->name('dashboard');
         Route::resource('karyawan', KaryawanController::class);
-         Route::get('/presensi/rekap', [AdPresensiController::class, 'rekap'])->name('presensi.rekap');
+
+        Route::get('/presensi/rekap', [AdPresensiController::class, 'rekap'])->name('presensi.rekap');
+        Route::get('/presensi/detail', [AdPresensiController::class, 'detail'])->name('presensi.detail');
         Route::resource('presensi', AdPresensiController::class);
 
         Route::get('/profile', [AdProfileController::class, 'index'])->name('profile.index');
+        Route::put('/profile/update', [AdProfileController::class, 'update'])->name('profile.update');
         Route::get('/profile/detail', [AdProfileController::class, 'detail'])->name('profile.detail');
+
+        Route::get('/log-harian', [AdLogHarianController::class, 'index'])->name('log.index');
+
+        Route::resource('agenda', AdAgendaController::class);
+
+        // 2. Proses Update Profile (Target form action)
+        // Menggunakan metode PUT tanpa parameter ID
+
+        // Route::get('/profile', [AdProfileController::class, 'index'])->name('profile.index');
+        // Route::put('/profile', [AdProfileController::class, 'update'])->name('profile.update');
+        // Route::get('/profile/detail', [AdProfileController::class, 'show'])->name('profile.show');
     });
 
     //role karyawan
@@ -49,9 +69,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/log-harian', [LogHarianController::class, 'index'])->name('log.index');
         Route::post('/log-harian', [LogHarianController::class, 'store'])->name('log.store');
 
-        Route::get('/jadwal', [KarJadwalController::class, 'index']);
-        Route::get('/profile', [KarProfileController::class, 'index']);
+        Route::get('/agenda', [KarAgendaController::class, 'index'])->name('agenda.index');
 
+        Route::get('/profile', [KarProfileController::class, 'index'])->name('profile.index');
+        Route::put('/profile/update', [KarProfileController::class, 'update'])->name('profile.update');
+        Route::get('/profile/detail', [KarProfileController::class, 'detail'])->name('profile.detail');
+
+        Route::resource('presensi', KarPresensiController::class);
 
     });
 

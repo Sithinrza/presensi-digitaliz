@@ -9,6 +9,6 @@ class Agenda extends Model
 {
     public function karyawans(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\Karyawan::class);
+        return $this->belongsToMany(\App\Models\Karyawan::class, 'agenda_karyawan', 'agenda_id', 'karyawan_id');
     }
 }

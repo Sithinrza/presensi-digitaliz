@@ -15,7 +15,7 @@
 
         <header class="bg-indigo-950 p-4 pb-16 rounded-b-[2.5rem] shadow-lg relative z-10 -mt-1">
             <div class="flex items-center space-x-3 text-white mb-4">
-                <a href="{{ route('admin.dashboard') }}"> 
+                <a href="{{ route('admin.dashboard') }}">
                     <button class="p-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -33,7 +33,7 @@
                 </div>
                 <div class="bg-white p-2 rounded-xl shadow relative">
                     <span class="absolute -top-2 -left-2 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white font-bold text-xs border-2 border-indigo-950">
-                        50 
+                        50
                     </span>
                     <p class="text-xs font-semibold text-gray-700 mt-5">Presensi Tepat Waktu</p>
                 </div>

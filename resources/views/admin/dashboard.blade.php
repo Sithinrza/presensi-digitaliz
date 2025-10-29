@@ -46,11 +46,11 @@
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Menu</h2>
 
                 <div class="grid grid-cols-3 md:grid-cols-4 gap-4 text-center">
-                    <a href="#" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition aspect-square">
+                    <a href="{{ route('admin.agenda.index') }}" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition aspect-square">
                         <svg class="w-8 h-8 mb-1 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16m-8-3V4M7 7h10M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"/>
                         </svg>
-                        <span class="text-xs font-semibold text-gray-700 mt-1">Jadwal</span>
+                        <span class="text-xs font-semibold text-gray-700 mt-1">Agenda</span>
                     </a>
                     <a href="{{ route('admin.presensi.index') }}" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition aspect-square">
                          <svg class="w-8 h-8 mb-1 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -64,7 +64,7 @@
                         </svg>
                         <span class="text-xs font-semibold text-gray-700 mt-1">Laporan Report</span>
                     </a>
-                    <a href="#" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition aspect-square">
+                    <a href="{{ route('admin.log.index') }}" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition aspect-square">
                         <svg class="w-8 h-8 mb-1 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m-4-6h8"/>
                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3H8a1 1 0 0 0-1 1v2m10-3h2a1 1 0 0 1 1 1v2m-2 14h2a1 1 0 0 0 1-1v-2M4 19h2a1 1 0 0 0 1-1v-2"/>

@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Karyawan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class KarJadwalController extends Controller
+class KarPresensiController extends Controller
 {
     public function index(){
-        return view('karyawan.jadwal.index');
+        return view('karyawan.presensi.presensi');
     }
 }

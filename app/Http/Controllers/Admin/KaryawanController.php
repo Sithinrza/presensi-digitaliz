@@ -11,6 +11,7 @@ use App\Models\PendidikanTerakhir;
 use App\Models\Posisi;
 use App\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -70,6 +71,7 @@ class KaryawanController extends Controller
             'divisi_id' => 'required|exists:divisis,id',
             'posisi_id' => 'required|exists:posisis,id',
             'pendidikan_terakhir_id' => 'required|exists:pendidikan_terakhirs,id',
+
         ]);
 
         $selectedRole = Role::where('name', $request->role_name)->first();
@@ -161,22 +163,40 @@ class KaryawanController extends Controller
 
     public function update(Request $request, Karyawan $karyawan)
     {
+        $tglBergabung = Carbon::createFromFormat('d-m-Y', $request->tanggal_bergabung)->format('d-m-Y');
+        $tglLahir = $request->filled('tanggal_lahir')
+        ? Carbon::createFromFormat('d-m-Y', $request->tanggal_lahir)->format('Y-m-d')
+        : $karyawan->tanggal_lahir;
+
+
+
+
         $request->validate([
-            'email' => 'required|email|unique:users,email,'.$karyawan->user_id,
-            'password' => 'nullable|string|min:8', // Password boleh kosong (jika tidak mau diubah)
-            'role_name' => 'required|string|exists:roles,name',
-
-            'nip' => 'required|string|unique:karyawans,nip,'.$karyawan->id,
-            'nama_lengkap' => 'required|string',
-            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
-            'tanggal_bergabung' => 'required|date',
+            //'nip' => 'required|string|unique:karyawans,nip,'.$karyawan->id,
+           'nama_lengkap' => 'nullable|string',
+            //'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
+            //'tanggal_bergabung' => 'required|date',
+            'alamat' => 'required|string',
 
 
-            'alamat' => 'nullable|string',
-            'tempat_lahir' => 'nullable|string|max:100',
-            'tanggal_lahir' => 'nullable|date',
-            'no_telepon' => 'nullable|string|max:20',
+            //'tempat_lahir' => 'nullable|string|max:100',
+            //'tanggal_lahir' => 'nullable|date',
+            'no_telepon' => 'required|string|max:20',
+            'status_karyawan'=>'required|in:Aktif,Tidak Aktif',
+
+            //'email' => 'required|email|unique:users,email,'.$karyawan->user_id,
+            //'password' => 'nullable|string|min:8', // Password boleh kosong (jika tidak mau diubah)
+            //'role_name' => 'required|string|exists:roles,name',
+
+            //'foto_profil' => null,
+
             'agama_id' => 'required|exists:agamas,id',
+            'jabatan_id' => 'required|exists:jabatans,id',
+            'divisi_id' => 'required|exists:divisis,id',
+            'posisi_id' => 'required|exists:posisis,id',
+            'pendidikan_terakhir_id' => 'required|exists:pendidikan_terakhirs,id',
+
+
         ]);
 
         $selectedRole = Role::where('name', $request->role_name)->first();
@@ -186,7 +206,7 @@ class KaryawanController extends Controller
 
         try {
             $userData = [
-                'name' => $request->nama_lengkap,
+                //'name' => $request->nama_lengkap,
                 'email' => $request->email,
             ];
 
@@ -202,13 +222,15 @@ class KaryawanController extends Controller
 
             $karyawan->update([
                 'nip' => $request->nip,
-                'nama_lengkap' => $request->nama_lengkap,
+                //'nama_lengkap' => $request->nama_lengkap,
                 'jenis_kelamin' => $request->jenis_kelamin,
-                'tanggal_bergabung' => $request->tanggal_bergabung,
+                'tanggal_bergabung' => $tglBergabung,
                 'alamat' => $request->alamat,
+
                 'tempat_lahir' => $request->tempat_lahir,
-                'tanggal_lahir' => $request->tanggal_lahir,
+                'tanggal_lahir' => $tglLahir,
                 'no_telepon' => $request->no_telepon,
+                'status_karyawan' => $request->status_karyawan,
 
                 'agama_id' => $request->agama_id,
                 'jabatan_id' => $request->jabatan_id,
@@ -224,9 +246,9 @@ class KaryawanController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal memperbarui data: ' . $e->getMessage())
-                         ->withInput();
+            dd($e->getMessage()); // 👈 tambahkan ini sementara
         }
+
     }
 
 
