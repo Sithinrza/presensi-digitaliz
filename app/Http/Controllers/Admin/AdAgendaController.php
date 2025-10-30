@@ -10,4 +10,8 @@ class AdAgendaController extends Controller
     public function index(){
         return view('admin.agenda.index');
     }
+
+    public function create(){
+        return view('admin.agenda.create');
+    }
 }

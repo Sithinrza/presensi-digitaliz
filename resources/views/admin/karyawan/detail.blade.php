@@ -5,7 +5,6 @@
 
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div class="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden">
-
             <header class="bg-indigo-950 text-white p-4 flex items-center justify-between">
                 <h2 class="font-semibold">Detail Data Karyawan</h2>
                 <button type="button" class="p-1 rounded-full hover:bg-white/20">

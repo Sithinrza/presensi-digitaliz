@@ -22,30 +22,31 @@
             </div>
         </header>
 
-        <main class="p-4 space-y-3">
-            @forelse ($karyawans as $karyawan)
-                <a href="{{ route('admin.karyawan.show', $karyawan->id) }}"
-                class="flex items-center justify-between p-4 bg-white rounded-xl shadow-md hover:bg-gray-50 transition active:scale-95">
+        <main class="bg-white min-h-screen">
+            <div class="p-4 space-y-3">
+                @forelse ($karyawans as $karyawan)
+                    <a href="{{ route('admin.karyawan.show', $karyawan->id) }}"
+                    class="flex items-center justify-between p-4 bg-white rounded-xl shadow-md hover:bg-gray-50 transition active:scale-95">
 
-                    <div class="flex items-center space-x-4">
-                        <img class="w-10 h-10 rounded-full object-cover bg-gray-200"
-                            src="{{-- $karyawan->foto_profil_url ?? --}} 'img/user.svg'"
-                            alt="Foto Profil {{ $karyawan->nama_lengkap }}">
-                        <div>
-                            <p class="font-semibold text-gray-800">{{ $karyawan->nama_lengkap }}</p>
-                            <p class="text-sm text-gray-500">{{ $karyawan->jabatan?->name ?? 'Jabatan Belum Diatur' }}</p>
+                        <div class="flex items-center space-x-4">
+                            <img class="w-10 h-10 rounded-full object-cover bg-gray-200"
+                                src="{{-- $karyawan->foto_profil_url ?? --}} 'img/user.svg'"
+                                alt="Foto Profil {{ $karyawan->nama_lengkap }}">
+                            <div>
+                                <p class="font-semibold text-gray-800">{{ $karyawan->nama_lengkap }}</p>
+                                <p class="text-sm text-gray-500">{{ $karyawan->jabatan?->name ?? 'Jabatan Belum Diatur' }}</p>
+                            </div>
                         </div>
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                @empty
+                    <div class="p-4 text-center text-gray-500 bg-white rounded-xl shadow-md">
+                        <p>Belum ada data karyawan.</p>
                     </div>
-
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                </a>
-            @empty
-                <div class="p-4 text-center text-gray-500 bg-white rounded-xl shadow-md">
-                    <p>Belum ada data karyawan.</p>
-                </div>
-            @endforelse
-
-</main>
+                @endforelse
+            </div>
+        </main>
 </x-admin-layout>

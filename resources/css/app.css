@@ -10,6 +10,10 @@
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
 
+@plugin "daisyui";
+
+@import 'flowbite/dist/flowbite.css';
+
 /* Style untuk tombol edit di foto profil */
 .profile-edit-button {
     position: absolute; 
@@ -27,6 +31,7 @@
     @apply w-full text-white bg-indigo-950 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-3 text-center transition ease-in-out duration-150;
 }
 
+//profile
 .profile-verified-badge {
     position: absolute;
     bottom: 0;
@@ -37,3 +42,60 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     transform: translate(15%, 15%); /* Sedikit keluar */
 }
+
+//agenda karyawan
+.flatpickr-calendar {
+    background: transparent;
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: none;
+    border: none;
+    width: 100% !important; /* Membuatnya mengisi kartu */
+    max-width: 320px !important; /* Batasi lebar maksimal, bisa disesuaikan */
+    margin: 0 auto; /* Ini yang membuat kalender rata tengah dalam parent-nya */
+}
+.flatpickr-months {
+    background: #eef2ff; /* indigo-50 */
+    border-radius: 0.5rem 0.5rem 0 0;
+    padding-top: 0.5rem;
+}
+.flatpickr-month {
+    color: #312e81; /* indigo-950 */
+    font-weight: 600;
+}
+span.flatpickr-weekday {
+    color: #4338ca; /* indigo-700 */
+    font-weight: 500;
+}
+.flatpickr-day {
+    color: #4b5563; /* gray-600 */ 
+    font-weight: 500;
+    width: 2.5rem; 
+    height: 2.5rem; 
+    line-height: 2.5rem;
+    max-width: 2.5rem;
+}
+.flatpickr-day:hover {
+    background-color: #e0e7ff; /* indigo-100 */
+    border-radius: 50%;
+}
+.flatpickr-day.today {
+    border-color: #4f46e5; /* indigo-600 */
+    color: #312e81; /* indigo-950 */
+    border-width: 2px;
+}
+.flatpickr-day.selected, 
+.flatpickr-day.selected:hover {
+    background-color: #4f46e5; /* indigo-600 */
+    border-color: #4f46e5;
+    color: white;
+    border-radius: 50%;
+}
+.flatpickr-prev-month, .flatpickr-next-month {
+    fill: #4f46e5; 
+}
+
+.flatpickr-innerContainer {
+    display: flex;
+    justify-content: center;
+}
+

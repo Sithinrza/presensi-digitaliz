@@ -23,6 +23,7 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite-datepicker@1.4.2/dist/datepicker.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </main>
    
 </body>
