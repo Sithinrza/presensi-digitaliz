@@ -14,8 +14,8 @@
         </header>
 
         <main class="p-4 space-y-6">
-            <section class="bg-indigo-950 p-6 rounded-2xl shadow-lg text-center text-white">
-                <p class="mb-4">Anda belum presensi hari ini</p>
+            <section class="bg-indigo-950 p-6 rounded-2xl shadow-lg text-center ">
+                <p class="mb-4 text-white">Anda belum presensi hari ini</p>
                 <button class="w-full bg-white text-indigo-950 font-semibold py-3 px-4 rounded-xl hover:bg-gray-200 transition">
                     Presensi
                 </button>

@@ -65,10 +65,8 @@
                         <span class="text-xs font-semibold text-gray-700 mt-1">Laporan Report</span>
                     </a>
                     <a href="{{ route('admin.log.index') }}" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition aspect-square">
-                        <svg class="w-8 h-8 mb-1 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m-4-6h8"/>
-                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3H8a1 1 0 0 0-1 1v2m10-3h2a1 1 0 0 1 1 1v2m-2 14h2a1 1 0 0 0 1-1v-2M4 19h2a1 1 0 0 0 1-1v-2"/>
-                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 3h2a1 1 0 0 1 1 1v2"/>
+                        <svg class="w-8 h-8 mb-1 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M9.255 14.005c.966 0 1.75.783 1.75 1.75v3.498a1.75 1.75 0 0 1-1.75 1.75H3.75A1.75 1.75 0 0 1 2 19.254v-3.498c0-.967.784-1.75 1.75-1.75zm10.995 0c.966 0 1.75.783 1.75 1.75v3.498a1.75 1.75 0 0 1-1.75 1.75h-5.505a1.75 1.75 0 0 1-1.75-1.75v-3.498c0-.967.784-1.75 1.75-1.75zm-10.995 1.5H3.75a.25.25 0 0 0-.25.25v3.498c0 .139.112.25.25.25h5.505a.25.25 0 0 0 .25-.25v-3.498a.25.25 0 0 0-.25-.25m10.995 0h-5.505a.25.25 0 0 0-.25.25v3.498c0 .139.112.25.25.25h5.505a.25.25 0 0 0 .25-.25v-3.498a.25.25 0 0 0-.25-.25M20.25 3c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 20.25 12H3.75A1.75 1.75 0 0 1 2 10.25v-5.5a1.75 1.75 0 0 1 1.606-1.744L3.75 3zm0 1.5H3.75l-.057.007a.25.25 0 0 0-.193.243v5.5c0 .138.112.25.25.25h16.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25"/>
                         </svg>
                         <span class="text-xs font-semibold text-gray-700 mt-1">Log Aktifitas</span>
                     </a>
