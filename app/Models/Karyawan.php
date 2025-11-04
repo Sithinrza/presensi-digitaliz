@@ -97,8 +97,8 @@ class Karyawan extends Model
         );
     }
 
-    public function agendas(): BelongsToMany
+   public function agendas(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\Agenda::class, 'agenda_karyawan', 'karyawan_id', 'agenda_id');
+        return $this->belongsToMany(Agenda::class, 'agenda_karyawan', 'karyawan_id', 'agenda_id');
     }
 }

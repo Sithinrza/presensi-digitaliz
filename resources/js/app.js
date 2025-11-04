@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 import flatpickr from 'flatpickr';
 
 document.addEventListener('DOMContentLoaded', function() {
-    
+
     // Targetkan elemen di halaman jadwal
     const calendarInput = document.getElementById('karyawan-calendar');
     const agendaListContainer = document.getElementById('agenda-list');
@@ -19,13 +19,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Hanya jalankan kode ini JIKA kita berada di halaman jadwal
     // (yaitu, jika elemen kalender dan agenda ditemukan)
     if (calendarInput && agendaListContainer) {
-        
+
         console.log("Halaman Jadwal: Menginisialisasi Flatpickr...");
 
         // Inisialisasi Flatpickr
         flatpickr("#karyawan-calendar", {
             inline: true, // Membuat kalender selalu terlihat
-            dateFormat: "Y-m-d", 
+            dateFormat: "Y-m-d",
             defaultDate: "today",
             onChange: function(selectedDates, dateStr, instance) {
                 // Panggil fungsi untuk memuat agenda saat tanggal berubah
@@ -37,10 +37,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Fungsi untuk mengambil data agenda via AJAX (menggunakan Axios)
         function fetchAndDisplayAgenda(dateISO) {
              agendaListContainer.innerHTML = `<div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 text-center text-gray-500 italic">Memuat agenda...</div>`;
-            
+
              // Ganti URL ini dengan endpoint API Anda yang sebenarnya
-             const apiUrl = `/api/agenda-karyawan/${dateISO}`; 
-             
+             const apiUrl = `/api/agenda-karyawan/${dateISO}`;
+
              // Menggunakan Axios (yang otomatis di-setup oleh bootstrap.js)
              // Ini lebih baik daripada fetch() karena otomatis mengirim header CSRF
              axios.get(apiUrl, {
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
              })
              .then(response => {
                 const agendas = response.data; // Data ada di response.data
-                agendaListContainer.innerHTML = ''; 
+                agendaListContainer.innerHTML = '';
                 if (agendas && agendas.length > 0) {
                     agendas.forEach(agenda => {
                         // Render HTML agenda
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 agendaListContainer.innerHTML = `<div class="bg-red-100 text-red-700 p-4 rounded-xl shadow-md border border-red-200 text-center"> Gagal memuat agenda. </div>`;
              });
         }
-        
+
         // Muat agenda untuk tanggal hari ini saat halaman pertama kali dibuka
         fetchAndDisplayAgenda(new Date().toISOString().split('T')[0]);
     }

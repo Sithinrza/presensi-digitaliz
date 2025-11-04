@@ -51,12 +51,6 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('agenda', AdAgendaController::class);
 
-        // 2. Proses Update Profile (Target form action)
-        // Menggunakan metode PUT tanpa parameter ID
-
-        // Route::get('/profile', [AdProfileController::class, 'index'])->name('profile.index');
-        // Route::put('/profile', [AdProfileController::class, 'update'])->name('profile.update');
-        // Route::get('/profile/detail', [AdProfileController::class, 'show'])->name('profile.show');
     });
 
     //role karyawan
