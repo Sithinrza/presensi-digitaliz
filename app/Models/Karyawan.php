@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Karyawan extends Model
 {
@@ -18,6 +19,7 @@ class Karyawan extends Model
         'alamat',
         'jenis_kelamin',
         'tempat_lahir',
+        'foto_profil',
         'tanggal_lahir',
         'no_telepon',
         'tanggal_bergabung',
@@ -32,7 +34,7 @@ class Karyawan extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     /**
@@ -48,7 +50,7 @@ class Karyawan extends Model
      */
     public function jabatan()
     {
-        return $this->belongsTo(Jabatan::class);
+        return $this->belongsTo(Jabatan::class, 'jabatan_id', 'id');
     }
 
     /**
@@ -75,23 +77,28 @@ class Karyawan extends Model
         return $this->belongsTo(PendidikanTerakhir::class);
     }
 
-    public function presensiKaryawan()
+   public function presensiKaryawans()
     {
-        return $this->belongsTo(PresensiKaryawan::class);
+        // foreign key di tabel presensi_karyawans adalah 'karyawan_id'
+        return $this->hasMany(\App\Models\PresensiKaryawan::class, 'karyawan_id');
     }
-
     public function statusPresensi()
     {
         return $this->belongsTo(StatusPresensi::class);
     }
 
     public function jadwalKerja()
-{
-    return $this->belongsToMany(
-        JadwalKerja::class,
-        'jadwal_pegawai',  
-        'id_karyawan',
-        'id_jadwal_kerja'
-    );
-}
+    {
+        return $this->belongsToMany(
+            JadwalKerja::class,
+            'jadwal_pegawai',
+            'id_karyawan',
+            'id_jadwal_kerja'
+        );
+    }
+
+   public function agendas(): BelongsToMany
+    {
+        return $this->belongsToMany(Agenda::class, 'agenda_karyawan', 'karyawan_id', 'agenda_id');
+    }
 }

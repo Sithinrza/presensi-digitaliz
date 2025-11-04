@@ -27,11 +27,11 @@ class RedirectIfAuthenticated
 
                 if ($userRoles->contains('admin')) {
                     // Jika 'admin' mencoba ke halaman login, tendang ke dashboard admin
-                    return redirect('/dashboard/admin');
+                    return redirect('/admin/dashboard');
 
                 } elseif ($userRoles->contains('karyawan')) {
                     // Jika 'karyawan' mencoba ke halaman login, tendang ke dashboard karyawan
-                    return redirect('/dashboard/karyawan');
+                    return redirect('/karyawan/dashboard');
 
                 } else {
                     // Jika rolenya aneh, tendang ke halaman / (yang akan error)

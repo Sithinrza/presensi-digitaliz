@@ -15,6 +15,6 @@ class Divisi extends Model
      */
     public function karyawans()
     {
-        return $this->hasMany(Karyawan::class);
+        return $this->hasMany(Karyawan::class, 'divisi_id', 'id');
     }
 }

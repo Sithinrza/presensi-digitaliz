@@ -1,0 +1,277 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Agama;
+use App\Models\Divisi;
+use App\Models\Jabatan;
+use App\Models\Karyawan;
+use App\Models\PendidikanTerakhir;
+use App\Models\Posisi;
+use App\Models\Role;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+
+class KaryawanController extends Controller
+{
+
+    public function index()
+    {
+        $karyawans = Karyawan::with('user')->latest()->get();
+        return view('admin.karyawan.index', compact('karyawans'));
+    }
+
+    public function create()
+    {
+
+        $roles = Role::all();
+        $agamas = Agama::all();
+        $jabatans = Jabatan::all();
+        $divisis = Divisi::all();
+        $posisis = Posisi::all();
+        $pendidikans = PendidikanTerakhir::all();
+
+        return view('admin.karyawan.create', compact(
+            'roles',
+            'agamas',
+            'jabatans',
+            'divisis',
+            'posisis',
+            'pendidikans'
+        ));
+    }
+
+    public function store(Request $request)
+    {
+
+        $request->validate([
+            //table users
+            'email'=>'required|email|unique:users,email',
+            'password'=>'required|string|min:8',
+            'role_name' => 'required|string|exists:roles,name',
+
+            //table karyawana
+            'nip'=>'required|string|unique:karyawans,nip',
+            'nama_lengkap'=>'required|string',
+            'alamat' => 'nullable|string',
+            'tempat_lahir' => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
+            'no_telepon' => 'nullable|string|max:20',
+            'jenis_kelamin'=>'required|in:Laki-Laki,Perempuan',
+            'status_karyawan'=>'required|in:Aktif,Tidak Aktif',
+            'tanggal_bergabung'=>'required|date',
+
+            //dropdown fk
+            'agama_id' => 'required|exists:agamas,id',
+            'jabatan_id' => 'required|exists:jabatans,id',
+            'divisi_id' => 'required|exists:divisis,id',
+            'posisi_id' => 'required|exists:posisis,id',
+            'pendidikan_terakhir_id' => 'required|exists:pendidikan_terakhirs,id',
+
+        ]);
+
+        $selectedRole = Role::where('name', $request->role_name)->first();
+
+        if (!$selectedRole) {
+            return back()->with('error', 'Role yang dipilih tidak valid.');
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $newUser = User::create([
+                'name' => $request->nama_lengkap,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            $newUser->roles()->attach($selectedRole->id);
+
+            Karyawan::create([
+                'user_id' => $newUser->id,
+                'nip' => $request->nip,
+                'nama_lengkap' => $request->nama_lengkap,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'tanggal_bergabung' => $request->tanggal_bergabung,
+                'status_karyawan' => $request->status_karyawan,
+
+                'foto_profil' => null,
+
+                'agama_id' => $request->agama_id,
+                'jabatan_id' => $request->jabatan_id,
+                'divisi_id' => $request->divisi_id,
+                'posisi_id' => $request->posisi_id,
+                'pendidikan_terakhir_id' => $request->pendidikan_terakhir_id,
+
+                'alamat' => $request->alamat,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'no_telepon' => $request->no_telepon,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.karyawan.index')
+                             ->with('success', 'Karyawan baru berhasil ditambahkan.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd("Transaksi Gagal! Error: " . $e->getMessage(), $e->getTrace());
+            // return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+            //              ->withInput();
+        }
+    }
+
+    public function show(Karyawan $karyawan)
+    {
+        $karyawan->load(
+            'user',
+            'jabatan',
+            'divisi',
+            'posisi',
+            'agama',
+            'pendidikanTerakhir');
+        return view('admin.karyawan.detail', compact('karyawan'));
+    }
+
+    public function edit(Karyawan $karyawan)
+    {
+        // 1. Ambil semua data master untuk dropdown (sama seperti fungsi create)
+        $roles = Role::all();
+        $agamas = Agama::all();
+        $jabatans = Jabatan::all();
+        $divisis = Divisi::all();
+        $posisis = Posisi::all();
+        $pendidikans = PendidikanTerakhir::all();
+
+        $karyawan->load('user', 'user.roles');
+
+        return view('admin.karyawan.update', compact(
+            'karyawan',
+            'roles',
+            'agamas',
+            'jabatans',
+            'divisis',
+            'posisis',
+            'pendidikans'
+        ));
+    }
+
+    public function update(Request $request, Karyawan $karyawan)
+    {
+        $tglBergabung = Carbon::createFromFormat('d-m-Y', $request->tanggal_bergabung)->format('d-m-Y');
+        $tglLahir = $request->filled('tanggal_lahir')
+        ? Carbon::createFromFormat('d-m-Y', $request->tanggal_lahir)->format('Y-m-d')
+        : $karyawan->tanggal_lahir;
+
+
+
+
+        $request->validate([
+            //'nip' => 'required|string|unique:karyawans,nip,'.$karyawan->id,
+           'nama_lengkap' => 'nullable|string',
+            //'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
+            //'tanggal_bergabung' => 'required|date',
+            'alamat' => 'required|string',
+
+
+            //'tempat_lahir' => 'nullable|string|max:100',
+            //'tanggal_lahir' => 'nullable|date',
+            'no_telepon' => 'required|string|max:20',
+            'status_karyawan'=>'required|in:Aktif,Tidak Aktif',
+
+            //'email' => 'required|email|unique:users,email,'.$karyawan->user_id,
+            //'password' => 'nullable|string|min:8', // Password boleh kosong (jika tidak mau diubah)
+            //'role_name' => 'required|string|exists:roles,name',
+
+            //'foto_profil' => null,
+
+            'agama_id' => 'required|exists:agamas,id',
+            'jabatan_id' => 'required|exists:jabatans,id',
+            'divisi_id' => 'required|exists:divisis,id',
+            'posisi_id' => 'required|exists:posisis,id',
+            'pendidikan_terakhir_id' => 'required|exists:pendidikan_terakhirs,id',
+
+
+        ]);
+
+        $selectedRole = Role::where('name', $request->role_name)->first();
+        if (!$selectedRole) { return back()->with('error', 'Role tidak valid.'); }
+
+        DB::beginTransaction();
+
+        try {
+            $userData = [
+                //'name' => $request->nama_lengkap,
+                'email' => $request->email,
+            ];
+
+            // Tambahkan password jika diisi
+            if ($request->filled('password')) {
+                $userData['password'] = Hash::make($request->password);
+            }
+
+            $karyawan->user->update($userData);
+
+            $karyawan->user->roles()->sync([$selectedRole->id]);
+
+
+            $karyawan->update([
+                'nip' => $request->nip,
+                //'nama_lengkap' => $request->nama_lengkap,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'tanggal_bergabung' => $tglBergabung,
+                'alamat' => $request->alamat,
+
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $tglLahir,
+                'no_telepon' => $request->no_telepon,
+                'status_karyawan' => $request->status_karyawan,
+
+                'agama_id' => $request->agama_id,
+                'jabatan_id' => $request->jabatan_id,
+                'divisi_id' => $request->divisi_id,
+                'posisi_id' => $request->posisi_id,
+                'pendidikan_terakhir_id' => $request->pendidikan_terakhir_id,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.karyawan.index')
+                             ->with('success', 'Data karyawan '.$karyawan->nama_lengkap.' berhasil diperbarui.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage()); // 👈 tambahkan ini sementara
+        }
+
+    }
+
+
+    public function destroy(Karyawan $karyawan)
+    {
+        DB::beginTransaction();
+
+        try {
+            if ($karyawan->user) {
+                $karyawan->user->delete();
+            }
+            $karyawan->delete();
+
+            DB::commit();
+
+            return redirect()->route('admin.karyawan.index')
+                             ->with('success', 'Data karyawan dan akun login berhasil dihapus.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+        }
+    }
+
+}
