@@ -1,4 +1,4 @@
-<x-karyawan-layout>
+<x-admin-layout>
     <x-slot:title>
         log
     </x-slot:title>
@@ -149,4 +149,4 @@
             // Anda bisa tambahkan JS lain di sini jika perlu
         });
     </script>
-</x-karyawan-layout>
+</x-admin-layout>

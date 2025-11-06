@@ -9,7 +9,7 @@
                     </button>
                 </a>
                 <a href="{{ route('karyawan.agenda.index') }}">
-                    <button type="button" class="nav-button p-2 text-white rounded-full">
+                    <button type="button" class="nav-button p-2  text-white rounded-full">
                         <svg class="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16m-8-3V4M7 7h10M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"/>
                         </svg>

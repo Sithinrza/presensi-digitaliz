@@ -125,7 +125,7 @@
 
     <!-- MAIN FORM -->
     <main class="p-4 space-y-6 pb-24">
-        <form action="{{ route('admin.agenda.store') }}" method="POST" class="space-y-6">
+        <form id="formTambahAgenda" action="{{ route('admin.agenda.store') }}" method="POST" class="space-y-6">
             @csrf
 
             @if (session('success'))
@@ -251,7 +251,7 @@
             </div>
 
             <button type="submit"
-                class="w-full text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                class="btn-indi">
                 Simpan Agenda
             </button>
         </form>

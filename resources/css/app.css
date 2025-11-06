@@ -44,58 +44,42 @@
 }
 
 //agenda karyawan
-.flatpickr-calendar {
-    background: transparent;
-    border-radius: 0.5rem; /* rounded-lg */
-    box-shadow: none;
-    border: none;
-    width: 100% !important; /* Membuatnya mengisi kartu */
-    max-width: 320px !important; /* Batasi lebar maksimal, bisa disesuaikan */
-    margin: 0 auto; /* Ini yang membuat kalender rata tengah dalam parent-nya */
-}
-.flatpickr-months {
-    background: #eef2ff; /* indigo-50 */
-    border-radius: 0.5rem 0.5rem 0 0;
-    padding-top: 0.5rem;
-}
-.flatpickr-month {
-    color: #312e81; /* indigo-950 */
-    font-weight: 600;
-}
-span.flatpickr-weekday {
-    color: #4338ca; /* indigo-700 */
-    font-weight: 500;
-}
-.flatpickr-day {
-    color: #4b5563; /* gray-600 */ 
-    font-weight: 500;
-    width: 2.5rem; 
-    height: 2.5rem; 
-    line-height: 2.5rem;
-    max-width: 2.5rem;
-}
-.flatpickr-day:hover {
-    background-color: #e0e7ff; /* indigo-100 */
-    border-radius: 50%;
-}
-.flatpickr-day.today {
-    border-color: #4f46e5; /* indigo-600 */
-    color: #312e81; /* indigo-950 */
-    border-width: 2px;
-}
-.flatpickr-day.selected, 
-.flatpickr-day.selected:hover {
-    background-color: #4f46e5; /* indigo-600 */
-    border-color: #4f46e5;
-    color: white;
-    border-radius: 50%;
-}
-.flatpickr-prev-month, .flatpickr-next-month {
-    fill: #4f46e5; 
+ .flatpickr-calendar.inline {
+            box-shadow: none !important;
+            border: none !important;
+        }
+        .flatpickr-day.today {
+            background-color: #4338CA !important;
+            color: white !important;
+        }
+        .flatpickr-day.selected {
+            background-color: #312E81 !important;
+            color: white !important;
+        }
+        .flatpickr-months .flatpickr-month {
+            font-weight: 600;
+            color: #1E1B4B;
+        }
+        .flatpickr-weekday {
+            color: #4338CA !important;
+            font-weight: 600;
+        }
+
+.swal2-popup .swal2-styled.swal2-confirm {
+    /* Ganti warna default Flowbite/SweetAlert dengan warna indigo tema Anda.
+      !important mungkin diperlukan untuk meng-override style inline. 
+    */
+    background-color: #312e81 !important; /* indigo-950 */
+    color: #fff !important;
 }
 
-.flatpickr-innerContainer {
-    display: flex;
-    justify-content: center;
+.swal2-popup .swal2-styled.swal2-cancel {
+    background-color: #6b7280 !important; /* gray-500 */
+    color: #fff !important;
+}
+
+/* Khusus untuk tombol konfirmasi HAPUS (merah) */
+.swal2-popup .swal2-styled.swal2-confirm.swal2-color-danger {
+    background-color: #E11D48 !important; /* Contoh: red-600 */
 }
 

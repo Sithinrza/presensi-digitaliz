@@ -21,7 +21,7 @@
         <h1 class="text-xl font-bold text-black">{{ $karyawan->nama_lengkap }}</h1>
     </section>
     <main class="p-4 space-y-6 pb-24">
-        <form action="{{ route('admin.karyawan.update', $karyawan->id) }}" method="POST" class="space-y-6">
+        <form id="edit-karyawan-form" action="{{ route('admin.karyawan.update', $karyawan->id) }}" method="POST" data-confirm="Apakah Anda yakin ingin mengubah data ini?" class="space-y-6">
             @csrf
             @method('PUT')
             <div class="bg-white p-5 rounded-xl shadow-md">
@@ -44,8 +44,9 @@
                          <input type="text" name="tanggal_lahir" value="{{ old('tanggal_lahir', $karyawan->tanggal_lahir?->format('d-m-Y') ?? '') }}" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
                          <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/>
                                 <path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/>
+                                
                             </svg>
                          </div>
                     </div>
@@ -218,4 +219,24 @@
             </button>
         </form>
     </main>
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                attachFormSubmitConfirm(
+                    'edit-karyawan-form',
+                    'Ubah Data?',
+                    'Apakah Anda yakin ingin mengubah data ini?'
+                );
+
+                // (Script alert session Anda)
+                @if (session('success'))
+                    showSessionAlert({ success: "{{ session('success') }}" });
+                @endif
+                @if (session('error'))
+                    showSessionAlert({ error: "{{ session('error') }}" });
+                @endif
+            });
+        </script>
+    @endpush
 </x-admin-layout>

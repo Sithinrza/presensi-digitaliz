@@ -236,7 +236,7 @@
             </div>
 
             <!-- Tombol Simpan -->
-            <button type="submit" class="btn-indi">
+            <button type="submit" class=" btnEditAgenda btn-indi">
                 Simpan Agenda
             </button>
         </form>
