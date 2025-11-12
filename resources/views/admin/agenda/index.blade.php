@@ -52,7 +52,7 @@
                                         name="tanggal"
                                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
                                         placeholder="Pilih Tanggal Spesifik"
-                                        value="{{ request('tanggal') !== 'all' ? request('tanggal', now()->format('Y-m-d')) : '' }}">
+                                        value="{{ request('tanggal') !== 'all' ? request('tanggal', now()->format('d/m/Y')) : '' }}">
                                 </div>
                             </div>
 
@@ -78,7 +78,13 @@
                         @if (request('tanggal') === 'all')
                             Semua Agenda
                         @else
-                            Agenda Tanggal: {{ \Carbon\Carbon::parse(request('tanggal', now()))->translatedFormat('l, d F Y') }}
+                           Agenda Tanggal: {{
+        \Carbon\Carbon::createFromFormat(
+            'd/m/Y',
+            // Ambil request('tanggal'), gunakan tanggal hari ini dalam format d/m/Y sebagai default
+            trim(request('tanggal', now()->format('d/m/Y')))
+        )->translatedFormat('l, d F Y')
+    }}
                         @endif
                     </h2>
                 </div>
@@ -143,7 +149,12 @@
                             @if (request('tanggal') === 'all')
                                 Belum ada agenda yang pernah dibuat.
                             @else
-                                Tidak ada agenda untuk tanggal ini ({{ \Carbon\Carbon::parse(request('tanggal', now()))->translatedFormat('d F Y') }}).
+                                Tidak ada agenda untuk tanggal ini ({{
+                                    \Carbon\Carbon::createFromFormat(
+                                        'd/m/Y',
+                                        trim(request('tanggal', now()->format('d/m/Y')))
+                                    )->translatedFormat('d F Y')
+                                }}).
                             @endif
                         </div>
                     @endforelse
@@ -164,7 +175,7 @@
             const filterForm = document.getElementById('filter-form');
 
             flatpickr(filterInput, {
-                dateFormat: "Y-m-d", // Format standar YYYY-MM-DD yang dikirim ke server
+                dateFormat: "d/m/Y", // Format standar YYYY-MM-DD yang dikirim ke server
                 altInput: true,
                 altFormat: "j F Y", // Format tampilan
                 // defaultDate hanya diisi jika filter tidak 'all'

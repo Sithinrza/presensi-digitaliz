@@ -14,9 +14,24 @@
             <h1 class="text-lg font-semibold flex-grow text-center">
                 Tambah Data Karyawan
             </h1>
+
         </div>
     </header>
     <main class="p-4 space-y-6 pb-24">
+
+        @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <strong class="font-bold">Gagal Menyimpan!</strong>
+                <span class="block sm:inline">Periksa kembali kesalahan input Anda.</span>
+                <ul class="mt-2 list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+
         <form id="tambah-karyawan-form" action="{{ route('admin.karyawan.store') }}" method="POST" data-confirm="Apakah Anda yakin ingin menyimpan data ini?" class="space-y-6">
             @csrf
             <div class="bg-white p-5 rounded-xl shadow-md">
@@ -40,7 +55,7 @@
                     </div>
                     <div class="relative">
                         <label for="tanggal_lahir" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Lahir</label>
-                        <input 
+                        <input
                             type="text"
                             id="tanggal_lahir"
                             name="tanggal_lahir"
@@ -64,14 +79,14 @@
                         <label class="block mb-2 text-sm font-medium text-gray-500">Jenis Kelamin</label>
                         <div class="flex items-center space-x-4">
                             <div class="flex items-center">
-                                <input id="perempuan" type="radio" value="Perempuan" name="jenis_kelamin" required 
-                                    {{ old('jenis_kelamin') == 'Perempuan' ? 'checked' : '' }} 
+                                <input id="perempuan" type="radio" value="Perempuan" name="jenis_kelamin" required
+                                    {{ old('jenis_kelamin') == 'Perempuan' ? 'checked' : '' }}
                                     class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-indigo-500">
                                 <label for="perempuan" class="ms-2 text-sm font-medium text-gray-900">Perempuan</label>
                             </div>
                             <div class="flex items-center">
-                                <input id="laki-laki" type="radio" value="Laki-Laki" name="jenis_kelamin" required 
-                                    {{ old('jenis_kelamin') == 'Laki-Laki' ? 'checked' : '' }} 
+                                <input id="laki-laki" type="radio" value="Laki-Laki" name="jenis_kelamin" required
+                                    {{ old('jenis_kelamin') == 'Laki-Laki' ? 'checked' : '' }}
                                     class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-indigo-500">
                                 <label for="laki-laki" class="ms-2 text-sm font-medium text-gray-900">Laki-Laki</label>
                             </div>
@@ -79,12 +94,12 @@
                     </div>
                     <div>
                         <label for="alamat" class="block mb-1 text-sm font-medium text-gray-500">Alamat</label>
-                        <textarea 
-                            id="alamat" 
-                            rows="3" 
-                            name="alamat" 
-                            required 
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" 
+                        <textarea
+                            id="alamat"
+                            rows="3"
+                            name="alamat"
+                            required
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Masukkan Alamat">{{ old('alamat') }}</textarea>
                     </div>
                     <div>
@@ -153,7 +168,7 @@
                             <option value="" disabled {{ old('status_karyawan') ? '' : 'selected' }}>
                                 Pilih Status
                             </option>
-                            
+
                             <option value="Aktif" {{ old('status_karyawan') == 'Aktif' ? 'selected' : '' }}>
                                 Aktif
                             </option>

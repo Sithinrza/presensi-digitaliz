@@ -15,6 +15,7 @@ use App\Http\Controllers\Karyawan\KarPresensiController;
 use App\Http\Controllers\Karyawan\KarProfileController;
 use App\Http\Controllers\Karyawan\LogAkController;
 use App\Http\Controllers\Karyawan\LogHarianController;
+use App\Http\Controllers\WebcamController;
 use App\Models\Agenda;
 use Illuminate\Support\Facades\Route;
 
@@ -69,7 +70,14 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/profile/update', [KarProfileController::class, 'update'])->name('profile.update');
         Route::get('/profile/detail', [KarProfileController::class, 'detail'])->name('profile.detail');
 
-        Route::resource('presensi', KarPresensiController::class);
+        //Route::resource('presensi', KarPresensiController::class);
+
+
+        Route::get('/presensi', [KarPresensiController::class, 'index'])->name('presensi.index');
+
+        Route::post('/presensi', [KarPresensiController::class, 'store'])->name('presensi.store');
+
+        Route::get('/presensi/photo/{id}', [KarPresensiController::class, 'photo'])->name('presensi.photo'); // <-- Rute yang hilang/salah nama
 
     });
 
