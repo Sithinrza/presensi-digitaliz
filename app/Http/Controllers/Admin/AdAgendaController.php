@@ -22,8 +22,13 @@ class AdAgendaController extends Controller
 
         if ($filterDate && $filterDate !== 'all') {
             try {
-                if (Carbon::hasFormat($filterDate, 'Y-m-d')) {
-                    $query->whereDate('tanggal_agenda', $filterDate);
+                // KRITIS: HANYA TERIMA FORMAT d/m/Y
+                if (Carbon::hasFormat($filterDate, 'd/m/Y')) {
+                    // Konversi string input d/m/Y menjadi objek Carbon
+                    $dateObj = Carbon::createFromFormat('d/m/Y', $filterDate);
+
+                    // Lalu gunakan format standar DB (Y-m-d) untuk WHERE
+                    $query->whereDate('tanggal_agenda', $dateObj->format('Y-m-d'));
                 }
             } catch (\Exception $e) {
             }
@@ -54,15 +59,17 @@ class AdAgendaController extends Controller
             'judul' => 'required|string|max:255',
             //'deskripsi' => 'required|string',
             'catatan' => 'nullable|string',
-            'tanggal_agenda' => 'required|date_format:m/d/Y',
+            'tanggal_agenda' => 'required|date_format:d/m/Y',
             'waktu_mulai' => 'nullable|date_format:H:i',
             'waktu_selesai' => 'nullable|date_format:H:i',
             'lokasi_alamat' => 'nullable|string',
             'ruang' => 'nullable|string',
 
             // Validasi untuk Peserta (Array ID)
-            'peserta_karyawan' => 'nullable|array',
-            'peserta_divisi' => 'nullable|array',
+           'peserta_karyawan' => 'nullable|array',
+            'peserta_karyawan.*' => 'nullable|exists:karyawans,id',
+           'peserta_divisi' => 'nullable|array',
+            'peserta_divisi.*' => 'nullable|exists:divisis,id',
         ]);
 
         if (empty($request->peserta_karyawan) && empty($request->peserta_divisi)) {
@@ -73,7 +80,7 @@ class AdAgendaController extends Controller
         DB::beginTransaction();
 
         try {
-            $tanggal_agenda_db = Carbon::createFromFormat('m/d/Y', $request->tanggal_agenda)->format('Y-m-d');
+            $tanggal_agenda_db = Carbon::createFromFormat('d/m/Y', $request->tanggal_agenda)->format('Y-m-d');
 
             $agenda = Agenda::create([
                 'judul' => $request->judul,
@@ -164,7 +171,7 @@ class AdAgendaController extends Controller
 
         $request->validate([
             'judul' => 'required|string|max:255',
-            'tanggal_agenda' => 'required|date_format:m/d/Y',
+            'tanggal_agenda' => 'required|date_format:d/m/Y',
             'waktu_mulai' => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
     'waktu_selesai' => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
 
@@ -186,7 +193,7 @@ class AdAgendaController extends Controller
 
         try {
             // KRITIS: Konversi format tanggal dari m/d/Y (input) ke Y-m-d (DB)
-            $tanggal_agenda_db = Carbon::createFromFormat('m/d/Y', $request->tanggal_agenda)->format('Y-m-d');
+            $tanggal_agenda_db = Carbon::createFromFormat('d/m/Y', $request->tanggal_agenda)->format('Y-m-d');
 
             // 1. Update Entri Agenda Utama
             $agenda->update([

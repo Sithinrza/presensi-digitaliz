@@ -45,7 +45,7 @@ class KaryawanController extends Controller
         ));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Karyawan $karyawan)
     {
 
         $request->validate([
@@ -59,11 +59,11 @@ class KaryawanController extends Controller
             'nama_lengkap'=>'required|string',
             'alamat' => 'nullable|string',
             'tempat_lahir' => 'nullable|string|max:100',
-            'tanggal_lahir' => 'nullable|date',
+            'tanggal_lahir' => 'nullable|date_format:d/m/Y',
             'no_telepon' => 'nullable|string|max:20',
             'jenis_kelamin'=>'required|in:Laki-Laki,Perempuan',
             'status_karyawan'=>'required|in:Aktif,Tidak Aktif',
-            'tanggal_bergabung'=>'required|date',
+            'tanggal_bergabung'=>'required|date_format:d/m/Y',
 
             //dropdown fk
             'agama_id' => 'required|exists:agamas,id',
@@ -91,12 +91,19 @@ class KaryawanController extends Controller
 
             $newUser->roles()->attach($selectedRole->id);
 
+            $tglBergabung = Carbon::createFromFormat('d/m/Y', $request->tanggal_bergabung)->format('Y-m-d');
+
+            // Ubah format input d-m-Y ke format database Y-m-d, atau null jika tidak diisi
+            $tglLahir = $request->filled('tanggal_lahir')
+                ? Carbon::createFromFormat('d/m/Y', $request->tanggal_lahir)->format('Y-m-d')
+                : null;
+
             Karyawan::create([
                 'user_id' => $newUser->id,
                 'nip' => $request->nip,
                 'nama_lengkap' => $request->nama_lengkap,
                 'jenis_kelamin' => $request->jenis_kelamin,
-                'tanggal_bergabung' => $request->tanggal_bergabung,
+                'tanggal_bergabung' => $tglBergabung,
                 'status_karyawan' => $request->status_karyawan,
 
                 'foto_profil' => null,
@@ -109,7 +116,7 @@ class KaryawanController extends Controller
 
                 'alamat' => $request->alamat,
                 'tempat_lahir' => $request->tempat_lahir,
-                'tanggal_lahir' => $request->tanggal_lahir,
+                'tanggal_lahir' => $tglLahir,
                 'no_telepon' => $request->no_telepon,
             ]);
 
@@ -161,96 +168,114 @@ class KaryawanController extends Controller
         ));
     }
 
-    public function update(Request $request, Karyawan $karyawan)
-    {
-        $tglBergabung = Carbon::createFromFormat('d-m-Y', $request->tanggal_bergabung)->format('d-m-Y');
+   public function update(Request $request, Karyawan $karyawan)
+{
+    // --- LAKUKAN VALIDASI TERHADAP FIELD YANG AKAN DI-UPDATE/DIPERIKSA ---
+    // Field yang Anda putuskan untuk TIDAK divalidasi/di-update saya biarkan dikomentari
+    $request->validate([
+        // 'nip' => 'required|string|unique:karyawans,nip,'.$karyawan->id, // Jika tidak di-update, HAPUS KOMENTAR INI
+        // 'nama_lengkap' => 'nullable|string', // HAPUS KOMENTAR INI
+        // 'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan', // HAPUS KOMENTAR INI
+
+        'tanggal_bergabung' => 'required|date_format:d/m/Y', // HARUS DIVALIDASI
+        'alamat' => 'required|string', // HARUS DIVALIDASI
+
+        // 'tempat_lahir' => 'nullable|string|max:100', // HAPUS KOMENTAR INI
+        'tanggal_lahir' => 'nullable|date_format:d/m/Y', // HARUS DIVALIDASI JIKA ADA INPUT
+        'no_telepon' => 'required|string|max:20', // HARUS DIVALIDASI
+        'status_karyawan'=>'required|in:Aktif,Tidak Aktif', // HARUS DIVALIDASI
+
+        // 'email' => 'required|email|unique:users,email,'.$karyawan->user_id, // HAPUS KOMENTAR INI
+        // 'password' => 'nullable|string|min:8', // HAPUS KOMENTAR INI
+        // 'role_name' => 'required|string|exists:roles,name', // HAPUS KOMENTAR INI
+
+        'agama_id' => 'required|exists:agamas,id',
+        'jabatan_id' => 'required|exists:jabatans,id',
+        'divisi_id' => 'required|exists:divisis,id',
+        'posisi_id' => 'required|exists:posisis,id',
+        'pendidikan_terakhir_id' => 'required|exists:pendidikan_terakhirs,id',
+    ]);
+
+    // --- PASTIKAN ROLE SUDAH ADA SEBELUM TRANSAKSI ---
+    // Karena 'role_name' dikomentari di validasi, kita harus pastikan 'role_name' dikirim
+    // Jika 'role_name' tidak di-update, baris ini harus dihapus, dan role lama dipertahankan.
+    // Jika Anda ingin update role, aktifkan validasi 'role_name'.
+    $selectedRole = Role::where('name', $request->role_name)->first();
+    // if (!$selectedRole) { return back()->with('error', 'Role tidak valid.'); } // Non-aktifkan jika role tidak di-update
+
+    DB::beginTransaction();
+
+    try {
+        // --- PROSES CARBON SETELAH VALIDASI BERHASIL ---
+        $tglBergabung = Carbon::createFromFormat('d/m/Y', $request->tanggal_bergabung)->format('Y-m-d');
+
+        // Gunakan nilai lama jika field 'tanggal_lahir' kosong (seperti logika awal Anda)
         $tglLahir = $request->filled('tanggal_lahir')
-        ? Carbon::createFromFormat('d-m-Y', $request->tanggal_lahir)->format('Y-m-d')
-        : $karyawan->tanggal_lahir;
+            ? Carbon::createFromFormat('d/m/Y', $request->tanggal_lahir)->format('Y-m-d')
+            : $karyawan->tanggal_lahir;
 
 
+        // 1. UPDATE DATA USER (hanya jika field dikirim/berubah)
+        $userData = [];
 
-
-        $request->validate([
-            //'nip' => 'required|string|unique:karyawans,nip,'.$karyawan->id,
-           'nama_lengkap' => 'nullable|string',
-            //'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
-            //'tanggal_bergabung' => 'required|date',
-            'alamat' => 'required|string',
-
-
-            //'tempat_lahir' => 'nullable|string|max:100',
-            //'tanggal_lahir' => 'nullable|date',
-            'no_telepon' => 'required|string|max:20',
-            'status_karyawan'=>'required|in:Aktif,Tidak Aktif',
-
-            //'email' => 'required|email|unique:users,email,'.$karyawan->user_id,
-            //'password' => 'nullable|string|min:8', // Password boleh kosong (jika tidak mau diubah)
-            //'role_name' => 'required|string|exists:roles,name',
-
-            //'foto_profil' => null,
-
-            'agama_id' => 'required|exists:agamas,id',
-            'jabatan_id' => 'required|exists:jabatans,id',
-            'divisi_id' => 'required|exists:divisis,id',
-            'posisi_id' => 'required|exists:posisis,id',
-            'pendidikan_terakhir_id' => 'required|exists:pendidikan_terakhirs,id',
-
-
-        ]);
-
-        $selectedRole = Role::where('name', $request->role_name)->first();
-        if (!$selectedRole) { return back()->with('error', 'Role tidak valid.'); }
-
-        DB::beginTransaction();
-
-        try {
-            $userData = [
-                //'name' => $request->nama_lengkap,
-                'email' => $request->email,
-            ];
-
-            // Tambahkan password jika diisi
-            if ($request->filled('password')) {
-                $userData['password'] = Hash::make($request->password);
-            }
-
-            $karyawan->user->update($userData);
-
-            $karyawan->user->roles()->sync([$selectedRole->id]);
-
-
-            $karyawan->update([
-                'nip' => $request->nip,
-                //'nama_lengkap' => $request->nama_lengkap,
-                'jenis_kelamin' => $request->jenis_kelamin,
-                'tanggal_bergabung' => $tglBergabung,
-                'alamat' => $request->alamat,
-
-                'tempat_lahir' => $request->tempat_lahir,
-                'tanggal_lahir' => $tglLahir,
-                'no_telepon' => $request->no_telepon,
-                'status_karyawan' => $request->status_karyawan,
-
-                'agama_id' => $request->agama_id,
-                'jabatan_id' => $request->jabatan_id,
-                'divisi_id' => $request->divisi_id,
-                'posisi_id' => $request->posisi_id,
-                'pendidikan_terakhir_id' => $request->pendidikan_terakhir_id,
-            ]);
-
-            DB::commit();
-
-            return redirect()->route('admin.karyawan.index')
-                             ->with('success', 'Data karyawan '.$karyawan->nama_lengkap.' berhasil diperbarui.');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            dd($e->getMessage()); // 👈 tambahkan ini sementara
+        // HANYA update field jika field itu ada dan diisi dalam request
+        if ($request->has('nama_lengkap')) {
+            $userData['name'] = $request->nama_lengkap;
+        }
+        if ($request->has('email')) {
+            $userData['email'] = $request->email;
+        }
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($request->password);
         }
 
-    }
+        // Jalankan update jika ada data yang akan di-update
+        if (!empty($userData)) {
+            $karyawan->user->update($userData);
+        }
 
+        // UPDATE ROLE (Hanya jika 'role_name' dikirim dan valid)
+        if ($request->has('role_name') && $selectedRole) {
+            $karyawan->user->roles()->sync([$selectedRole->id]);
+        }
+        // Jika Anda tidak mengupdate role, baris di atas harus di-skip.
+
+
+        // 2. UPDATE DATA KARYAWAN
+        $karyawanData = [
+            // Field yang selalu di-update karena REQUIRED atau pasti diproses:
+            'tanggal_bergabung' => $tglBergabung,
+            'no_telepon' => $request->no_telepon,
+            'status_karyawan' => $request->status_karyawan,
+            'alamat' => $request->alamat,
+            'tanggal_lahir' => $tglLahir,
+            // Foreign Keys (FK) yang required:
+            'agama_id' => $request->agama_id,
+            'jabatan_id' => $request->jabatan_id,
+            'divisi_id' => $request->divisi_id,
+            'posisi_id' => $request->posisi_id,
+            'pendidikan_terakhir_id' => $request->pendidikan_terakhir_id,
+        ];
+
+        // Field yang optional/dikomentari di validasi, HANYA di-update jika field itu ada di request:
+        if ($request->has('nip')) { $karyawanData['nip'] = $request->nip; }
+        if ($request->has('nama_lengkap')) { $karyawanData['nama_lengkap'] = $request->nama_lengkap; }
+        if ($request->has('jenis_kelamin')) { $karyawanData['jenis_kelamin'] = $request->jenis_kelamin; }
+        if ($request->has('tempat_lahir')) { $karyawanData['tempat_lahir'] = $request->tempat_lahir; }
+
+
+        $karyawan->update($karyawanData);
+
+        DB::commit();
+
+        return redirect()->route('admin.karyawan.index')
+                         ->with('success', 'Data karyawan '.$karyawan->nama_lengkap.' berhasil diperbarui.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        dd("Update Gagal! Error: " . $e->getMessage(), $e->getTrace());
+    }
+}
 
     public function destroy(Karyawan $karyawan)
     {
