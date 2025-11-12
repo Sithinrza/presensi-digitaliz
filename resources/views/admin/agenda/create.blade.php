@@ -125,6 +125,19 @@
 
     <!-- MAIN FORM -->
     <main class="p-4 space-y-6 pb-24">
+
+        @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                <strong class="font-bold">Validasi Gagal!</strong>
+                <span class="block sm:inline">Periksa input berikut:</span>
+                <ul class="mt-2 list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form id="formTambahAgenda" action="{{ route('admin.agenda.store') }}" method="POST" class="space-y-6">
             @csrf
 
@@ -257,26 +270,34 @@
         </form>
     </main>
 
-    <!-- 3. SCRIPT -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+   @push('scripts')
+                <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <script>
-        $(document).ready(function() {
 
-            // Select2
-            $('#peserta_divisi').select2({
-                placeholder: "Cari dan pilih Divisi...",
-                allowClear: true,
-                width: '100%'
-            });
+        <script>
+            $(document).ready(function() {
+                // Select2
+                $('#peserta_divisi').select2({
+                    placeholder: "Cari dan pilih Divisi...",
+                    allowClear: true,
+                    width: '100%'
+                });
 
-            $('#peserta_karyawan').select2({
-                placeholder: "Cari dan pilih Karyawan...",
-                allowClear: true,
-                width: '100%'
-            });
-        });
-    </script>
+                $('#peserta_karyawan').select2({
+                    placeholder: "Cari dan pilih Karyawan...",
+                    allowClear: true,
+                    width: '100%'
+                });
+               
+                // Jika menggunakan Flatpickr untuk tanggal agenda
+                // Flatpickr untuk tanggal agenda (Jika menggunakan Flatpickr, HAPUS atribut 'datepicker' dan 'datepicker-autohide' di input tanggal)
+                // flatpickr("#tanggal_agenda", {
+                //     dateFormat: "d/m/Y",
+                //     // ... opsi lainnya
+                // });
+            });
+        </script>
+    @endpush
 </x-admin-layout>
