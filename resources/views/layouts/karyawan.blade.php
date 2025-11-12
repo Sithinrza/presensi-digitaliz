@@ -17,7 +17,7 @@
     <main class="pb-24"> <!-- padding-bottom agar konten tidak tertutup nav -->
         {{ $slot }}
             @include('layouts.partials.karyawannav')
-    @stack('scripts')
+        @stack('scripts')
         <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
