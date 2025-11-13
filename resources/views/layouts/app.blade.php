@@ -17,6 +17,9 @@
 <body class="bg-gray-100">
 
     <main class="pb-24"> <!-- padding-bottom agar konten tidak tertutup nav -->
+        @unless (Route::is('admin.karyawan.index', 'admin.karyawan.create', 'admin.karyawan.edit', 'admin.profile.index', 'admin.agenda.index'))
+            @include('layouts.partials.adminnavtop')
+        @endunless
         {{ $slot }}
 
         @unless (Route::is('admin.karyawan.show'))

@@ -4,15 +4,6 @@
     </x-slot:title>
 
     <div class="relative min-h-screen pb-24">
-        <header class="bg-white p-4 shadow-sm sticky top-0 z-20">
-            <div class="flex items-center space-x-3">
-                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/40x40" alt="Foto Profil Karyawan">
-                <div>
-                    <h1 class="text-gray-800 font-bold text-lg">{{ Auth::user()->name }}</h1>
-                </div>
-            </div>
-        </header>
-
         <main class="p-4 space-y-6">
             <section class="bg-indigo-950 p-6 rounded-2xl shadow-lg text-center ">
                 <p class="mb-4 text-white">Anda belum presensi hari ini</p>

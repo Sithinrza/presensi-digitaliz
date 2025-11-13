@@ -5,19 +5,6 @@
 
     {{-- Latar belakang abu-abu sekarang ada di body layout atau di sini --}}
     <div class="relative min-h-screen pb-24 bg-gray-100"> 
-        
-        <!-- Header Profil (Putih, Sticky) -->
-        <header class="bg-white p-4 shadow-sm sticky top-0 z-20">
-            <div class="flex items-center space-x-3">
-                <img class="w-10 h-10 rounded-full object-cover" 
-                     src="{{ Auth::user()->profile_photo_url ?? 'https://placehold.co/40x40' }}" 
-                     alt="Foto {{ Auth::user()->name }}">
-                <div>
-                    <h1 class="text-gray-800 font-bold text-lg">{{ Auth::user()->name }}</h1>
-                </div>
-            </div>
-        </header>
-
         <div class="bg-indigo-950 p-4 pt-8 pb-24 -mt-1 rounded-t-[3rem] relative z-10">
         </div>
 

@@ -68,7 +68,7 @@
                         </div>
                         <div class="grid grid-cols-3 gap-2">
                             <span class="text-gray-500 col-span-1">Tanggal Lahir</span>
-                            <span class="text-gray-800 col-span-2">: {{ $karyawan->tanggal_lahir ? \Carbon\Carbon::parse($karyawan->tanggal_lahir)->format('d - m - Y') : '-' }}</span>
+                            <span class="text-gray-800 col-span-2">: {{ $karyawan->tanggal_lahir ? \Carbon\Carbon::parse($karyawan->tanggal_lahir)->format('d  M  Y') : '-' }}</span>
                         </div>
                         <div class="grid grid-cols-3 gap-2">
                             <span class="text-gray-500 col-span-1">Pendidikan</span>
