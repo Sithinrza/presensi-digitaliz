@@ -3,15 +3,6 @@
         Dashboard Admin
     </x-slot:title>
     <div class="relative pb-24">
-        <div class="bg-white p-4 shadow-sm sticky top-0 z-20">
-            <div class="flex items-center space-x-3">
-                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/40x40" alt="Foto Admin">
-                <div>
-                    <h1 class="text-gray-800 font-bold text-lg">Admin</h1>
-                </div>
-            </div>
-        </div>
-
         <div class="bg-indigo-950 p-4 pt-8 pb-12 -mt-1 rounded-t-[3rem] relative z-10">
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-white p-4 h-20 rounded-xl shadow relative flex items-end">

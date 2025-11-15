@@ -4,16 +4,8 @@
     </x-slot:title>
 
     <div class="relative pb-24">
-        <div class="bg-white p-4 shadow-md sticky top-0 z-20">
-            <div class="flex items-center space-x-3">
-                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/40x40" alt="Foto Admin">
-                <div>
-                    <h1 class="text-gray-800 font-bold text-lg">Admin</h1>
-                </div>
-            </div>
-        </div>
 
-        <header class="bg-indigo-950 p-4 pb-16 rounded-b-[2.5rem] shadow-lg relative z-10 -mt-1">
+        <header class="bg-indigo-950 p-4 pb-16 rounded-t-[2.5rem] shadow-lg relative z-10 -mt-1">
             <div class="flex items-center space-x-3 text-white mb-4">
                 <a href="{{ route('admin.dashboard') }}">
                     <button class="p-1">

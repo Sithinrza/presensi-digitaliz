@@ -24,16 +24,26 @@
     <div class="relative flex-grow pb-10">
         <header class="bg-indigo-950 p-4 pb-20 rounded-t-[3rem] shadow-lg relative z-10 text-center text-white">
             <div class="relative inline-block mb-3">
-                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg" src="https://placehold.co/100x100" alt="Foto Profil">
-                <div class="profile-verified-badge">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg" 
+                    src="https://placehold.co/100x100" 
+                    alt="Foto Profil">
+
+                <!-- Badge di pojok kanan bawah -->
+                <div class="absolute bottom-1 right-1 bg-white rounded-full p-[2px] shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" 
+                        class="h-4 w-4 text-green-500" 
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" 
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                            clip-rule="evenodd" />
                     </svg>
                 </div>
             </div>
+
             <h1 class="text-xl font-bold">{{ $karyawan->nama_lengkap ?? Auth::user()->name }}</h1>
             <p class="text-sm text-indigo-300">
-                {{ $karyawan->jabatan?->name ?? 'Jabatan' }} -
+                {{ $karyawan->jabatan?->name ?? 'Jabatan' }} 
+                -
                 {{ $karyawan->posisi?->name ?? 'Posisi' }}
             </p>
         </header>
