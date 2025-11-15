@@ -1,7 +1,4 @@
-<?php
-// File: resources/views/photo.blade.php
-// Halaman Konfirmasi Presensi dengan Peta Lokasi
-?>
+
 <x-karyawan-layout>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         crossorigin=""/>
@@ -24,7 +21,7 @@
                 $waktuPresensi = $presensi->waktu_co ?? $presensi->waktu_ci;
             @endphp
 
-            <img src="{{ $photoPath }}" alt="Foto Presensi" class="w-full h-auto rounded-lg shadow-md border-4 border-green-500/50 object-cover aspect-[4/3]">
+            <img src="{{ $photoPath }}" alt="Foto Presensi" class="w-full h-auto rounded-lg shadow-md border-4 border-green-500/50 object-cover aspect-[3/4]">
 
             <p class="mt-4 text-sm font-semibold text-gray-800">
                 Waktu: {{ \Carbon\Carbon::parse($waktuPresensi)->format('H:i:s') }}
@@ -45,7 +42,7 @@
             <h2 class="text-lg font-semibold mb-3 text-gray-800">Lokasi Terekam</h2>
 
             @if ($latitude != 0 && $longitude != 0)
-                <div id="map" style="height: 250px; border-radius: 0.5rem;"></div>
+                <div id="map" style="height: 250px; z-index: 10; border-radius: 0.5rem;"></div>
                 <p class="text-xs text-gray-500 mt-2">Lat: {{ $latitude }}, Long: {{ $longitude }}</p>
             @else
                 <div class="bg-yellow-100 text-yellow-800 p-3 rounded-lg">

@@ -62,14 +62,21 @@
                  </div>
             </div>
 
-            <div class="mt-auto p-6">
-                <button class="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium text-red-600 bg-red-100 rounded-lg hover:bg-red-200 focus:ring-4 focus:ring-red-300 transition">
+           <div class="mt-auto p-6">
+            {{-- Form ini akan mengirimkan permintaan POST ke rute 'logoutt' --}}
+            <form method="POST" action="{{ route('logoutt') }}">
+
+                {{-- WAJIB: Menyertakan CSRF token untuk keamanan --}}
+                @csrf
+
+                <button type="submit" class="w-full flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium text-red-600 bg-red-100 rounded-lg hover:bg-red-200 focus:ring-4 focus:ring-red-300 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
                         <path fill="currentColor" d="m17 8l-1.41 1.41L17.17 11H9v2h8.17l-1.58 1.58L17 16l4-4zM5 5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2H5z"/>
                     </svg>
                     <span>Logout</span>
                 </button>
-            </div>
+            </form>
+        </div>
         </main>
     </div>
 </x-karyawan-layout>

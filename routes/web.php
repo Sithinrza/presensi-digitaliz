@@ -26,7 +26,7 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/login-proses', [LoginController::class, 'login'])->name('login.proses');
 });
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
-
+Route::post('/logoutt', [LoginController::class, 'logoutt'])->name('logoutt')->middleware('auth');
 
 //role
 Route::middleware(['auth'])->group(function () {

@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
     {
         // Penjadwalan Tugas: Menandai Lupa CO (4) dan Tidak Hadir (5)
         $schedule->command('attendance:daily-check')
-                 ->dailyAt('00:01')
+                 ->dailyAt('23:59')
                  ->timezone('Asia/Makassar'); // Gunakan zona waktu yang sesuai
     }
 
