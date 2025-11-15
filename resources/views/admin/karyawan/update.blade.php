@@ -21,6 +21,19 @@
         <h1 class="text-xl font-bold text-black">{{ $karyawan->nama_lengkap }}</h1>
     </section>
     <main class="p-4 space-y-6 pb-24">
+
+         @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <strong class="font-bold">Gagal Menyimpan!</strong>
+                <span class="block sm:inline">Periksa kembali kesalahan input Anda.</span>
+                <ul class="mt-2 list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form id="edit-karyawan-form" action="{{ route('admin.karyawan.update', $karyawan->id) }}" method="POST" data-confirm="Apakah Anda yakin ingin mengubah data ini?" class="space-y-6">
             @csrf
             @method('PUT')
@@ -138,7 +151,7 @@
                         <label for="tanggal-bergabung" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Bergabung</label>
                         <input type="text" id="tanggal_bergabung" name="tanggal_bergabung"
                             value="{{ old('tanggal_bergabung', $karyawan->tanggal_bergabung ? \Carbon\Carbon::parse($karyawan->tanggal_bergabung)->format('d/m/Y') : '') }}"
-                            class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
+                            class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" readonly>
                         <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/>

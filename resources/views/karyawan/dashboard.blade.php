@@ -43,9 +43,11 @@
                     <h2 class="text-lg font-bold text-gray-800">Daily Report</h2>
                     <p class="text-xs text-gray-500">Rangkum aktifitas hari ini</p>
                 </div>
-                <button class="px-4 py-2 bg-indigo-950 text-white text-sm font-semibold rounded-lg hover:bg-indigo-800 transition whitespace-nowrap">
-                    Buat Laporan
-                </button>
+                 <a href="{{ route('karyawan.report.index') }}">
+                    <button class="px-4 py-2 bg-indigo-950 text-white text-sm font-semibold rounded-lg hover:bg-indigo-800 transition whitespace-nowrap">
+                        Buat Laporan
+                    </button>
+                </a>
             </section>
 
              <section class="bg-white p-5 rounded-2xl shadow-lg">

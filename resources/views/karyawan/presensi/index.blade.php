@@ -40,15 +40,7 @@
     </style>
 
     <div class="relative min-h-screen pb-24">
-        {{-- HEADER --}}
-        <header class="bg-white p-4 shadow-sm sticky top-0 z-20">
-            <div class="flex items-center space-x-3">
-                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/40x40" alt="Foto Profil Karyawan">
-                <div>
-                    <h1 class="text-gray-800 font-bold text-lg">{{ Auth::user()->name ?? 'Karyawan' }}</h1>
-                </div>
-            </div>
-        </header>
+
 
         <main class="p-4 space-y-6">
 
@@ -108,7 +100,7 @@
                         <div class="p-4 bg-green-100 text-green-700 rounded-lg font-semibold mb-4">
                             ✅ Anda sudah Check-In dan Check-Out hari ini.
                         </div>
-                        
+
                     @elseif ($isCiDone && !$isCoDone)
                         <div class="p-4 bg-yellow-100 text-yellow-700 rounded-lg font-semibold mb-4">
                             ⏳ Anda sudah Check-In pukul {{ \Carbon\Carbon::parse($presensiHariIni->waktu_ci)->format('H:i') }}. Lakukan Check-Out setelah {{ \Carbon\Carbon::parse($shiftEnd)->format('H:i') }}.
@@ -241,13 +233,20 @@
                                             {!! $getPill(1, 'Tepat Waktu') !!}
 
                                         @elseif ($statusId == 4)
-                                            {{-- ID 4: Lupa Check-Out (Diatur oleh Cron Job) --}}
+                                            {{-- ID 4: Lupa Check-Out (Tambahkan Terlambat Check-In jika waktu CI menunjukkan keterlambatan) --}}
+
+                                            {{-- Asumsi: Jika status akhir Lupa Check-Out (ID 4),
+                                                dan Check-In-nya memang terlambat (seperti kasus 20:59), tampilkan kedua pill. --}}
+
+                                            {{-- **KRITIS: Tampilkan Pill Terlambat Check-In** --}}
+                                            {!! $getPill(2, 'Terlambat Check-In') !!}
+
+                                            {{-- **KRITIS: Tampilkan Pill Lupa Check-Out** --}}
                                             {!! $getPill(4, 'Lupa Check-Out') !!}
 
                                         @elseif ($statusId == 5)
-                                            {{-- ID 5: Tidak Hadir (Diatur oleh Cron Job) --}}
+                                            {{-- ID 5: Tidak Hadir --}}
                                             {!! $getPill(5, 'Tidak Hadir') !!}
-
                                         @endif
 
                                         {{-- Anda mungkin ingin menambahkan logika untuk status default atau belum lengkap di sini --}}
