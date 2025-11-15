@@ -170,24 +170,22 @@ class KaryawanController extends Controller
 
    public function update(Request $request, Karyawan $karyawan)
 {
-    // --- LAKUKAN VALIDASI TERHADAP FIELD YANG AKAN DI-UPDATE/DIPERIKSA ---
-    // Field yang Anda putuskan untuk TIDAK divalidasi/di-update saya biarkan dikomentari
     $request->validate([
-        // 'nip' => 'required|string|unique:karyawans,nip,'.$karyawan->id, // Jika tidak di-update, HAPUS KOMENTAR INI
+        // 'nip' => 'required|string|unique:karyawans,nip,'.$karyawan->id,
         // 'nama_lengkap' => 'nullable|string', // HAPUS KOMENTAR INI
-        // 'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan', // HAPUS KOMENTAR INI
+        // 'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
 
-        'tanggal_bergabung' => 'required|date_format:d/m/Y', // HARUS DIVALIDASI
+        'tanggal_bergabung' => 'required|date_format:d/m/Y',
         'alamat' => 'required|string', // HARUS DIVALIDASI
 
-        // 'tempat_lahir' => 'nullable|string|max:100', // HAPUS KOMENTAR INI
-        'tanggal_lahir' => 'nullable|date_format:d/m/Y', // HARUS DIVALIDASI JIKA ADA INPUT
-        'no_telepon' => 'required|string|max:20', // HARUS DIVALIDASI
-        'status_karyawan'=>'required|in:Aktif,Tidak Aktif', // HARUS DIVALIDASI
+        // 'tempat_lahir' => 'nullable|string|max:100',
+        //'tanggal_lahir' => 'nullable|date_format:d/m/Y',
+        'no_telepon' => 'required|string|max:20',
+        'status_karyawan'=>'required|in:Aktif,Tidak Aktif',
 
-        // 'email' => 'required|email|unique:users,email,'.$karyawan->user_id, // HAPUS KOMENTAR INI
-        // 'password' => 'nullable|string|min:8', // HAPUS KOMENTAR INI
-        // 'role_name' => 'required|string|exists:roles,name', // HAPUS KOMENTAR INI
+        // 'email' => 'required|email|unique:users,email,'.$karyawan->user_id,
+        // 'password' => 'nullable|string|min:8',
+        // 'role_name' => 'required|string|exists:roles,name',
 
         'agama_id' => 'required|exists:agamas,id',
         'jabatan_id' => 'required|exists:jabatans,id',
@@ -195,30 +193,23 @@ class KaryawanController extends Controller
         'posisi_id' => 'required|exists:posisis,id',
         'pendidikan_terakhir_id' => 'required|exists:pendidikan_terakhirs,id',
     ]);
-
-    // --- PASTIKAN ROLE SUDAH ADA SEBELUM TRANSAKSI ---
-    // Karena 'role_name' dikomentari di validasi, kita harus pastikan 'role_name' dikirim
-    // Jika 'role_name' tidak di-update, baris ini harus dihapus, dan role lama dipertahankan.
-    // Jika Anda ingin update role, aktifkan validasi 'role_name'.
     $selectedRole = Role::where('name', $request->role_name)->first();
-    // if (!$selectedRole) { return back()->with('error', 'Role tidak valid.'); } // Non-aktifkan jika role tidak di-update
+    // if (!$selectedRole) { return back()->with('error', 'Role tidak valid.'); }
 
     DB::beginTransaction();
 
     try {
-        // --- PROSES CARBON SETELAH VALIDASI BERHASIL ---
-        $tglBergabung = Carbon::createFromFormat('d/m/Y', $request->tanggal_bergabung)->format('Y-m-d');
+        
+       $tglBergabung = Carbon::createFromFormat('d/m/Y', $request->tanggal_bergabung)->format('Y-m-d');
 
-        // Gunakan nilai lama jika field 'tanggal_lahir' kosong (seperti logika awal Anda)
-        $tglLahir = $request->filled('tanggal_lahir')
-            ? Carbon::createFromFormat('d/m/Y', $request->tanggal_lahir)->format('Y-m-d')
-            : $karyawan->tanggal_lahir;
+            // Ubah format input d-m-Y ke format database Y-m-d, atau null jika tidak diisi
+        // $tglLahir = $request->filled('tanggal_lahir')
+        //     ? Carbon::createFromFormat('d/m/Y', $request->tanggal_lahir)->format('Y-m-d')
+        //     : null;
 
 
-        // 1. UPDATE DATA USER (hanya jika field dikirim/berubah)
         $userData = [];
 
-        // HANYA update field jika field itu ada dan diisi dalam request
         if ($request->has('nama_lengkap')) {
             $userData['name'] = $request->nama_lengkap;
         }
@@ -248,8 +239,9 @@ class KaryawanController extends Controller
             'no_telepon' => $request->no_telepon,
             'status_karyawan' => $request->status_karyawan,
             'alamat' => $request->alamat,
-            'tanggal_lahir' => $tglLahir,
-            // Foreign Keys (FK) yang required:
+            //'tanggal_lahir' => $tglLahir,
+
+            // Foreign Keys (FK)
             'agama_id' => $request->agama_id,
             'jabatan_id' => $request->jabatan_id,
             'divisi_id' => $request->divisi_id,
