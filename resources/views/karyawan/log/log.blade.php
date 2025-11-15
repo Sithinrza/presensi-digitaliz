@@ -15,20 +15,30 @@
             @if(session('error')) <div class="p-3 bg-red-100 text-red-700 rounded-lg">{{ session('error') }}</div> @endif
 
             {{-- Form Tambah Aktivitas Baru --}}
+            {{-- File: log.blade.php (Di dalam Form Tambah Aktivitas Baru) --}}
+
             <section class="bg-indigo-950 p-6 rounded-2xl shadow-lg">
                 <h2 class="text-lg font-semibold text-white mb-4">Tambah Aktivitas Baru</h2>
 
-                {{-- FORM CREATE (Action ke route store) --}}
+                {{-- KRITIS: Menonaktifkan form jika presensi tidak valid --}}
                 <form action="{{ route('karyawan.log.store') }}" method="POST" class="space-y-4">
                     @csrf
 
-                    {{-- Textarea: Perhatikan name="catatan_log" --}}
                     <textarea name="catatan_log" placeholder="Apa yang dilakukan hari ini ?"
-                              class="w-full p-3 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 mb-4"
-                              rows="4" required>{{ old('catatan_log') }}</textarea>
+                            class="w-full p-3 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 mb-4"
+                            rows="4" @unless($isPresensiValid) disabled @endunless required>{{ old('catatan_log') }}</textarea>
+
+                    {{-- @unless($isPresensiValid)
+                        <div class="p-2 bg-yellow-100 text-yellow-700 text-sm rounded-lg text-center">
+                            Anda harus Check-In terlebih dahulu untuk mencatat aktivitas.
+                        </div>
+                    @endunless --}}
 
                     {{-- Tombol Submit --}}
-                    <button type="submit" class="w-full bg-white text-indigo-950 font-bold py-3 rounded-lg shadow-md hover:bg-gray-200 transition flex items-center justify-center space-x-2">
+                    <button type="submit"
+                            @unless($isPresensiValid) disabled @endunless
+                            class="w-full text-indigo-950 font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center space-x-2
+                                @if($isPresensiValid) bg-white hover:bg-gray-200 @else bg-gray-300 text-gray-500 cursor-not-allowed @endif">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">...</svg>
                         <span>Simpan Aktivitas</span>
                     </button>
