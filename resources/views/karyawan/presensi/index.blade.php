@@ -183,15 +183,19 @@
                         @php
                             $statusId = $presensi->status_presensi_id;
                             $ringColor = 'border-gray-200 bg-gray-50';
+
+                            // Logika Warna Ring Border
                             if ($statusId == 1) { $ringColor = 'border-green-400 bg-green-50/50'; }
                             if ($statusId == 2) { $ringColor = 'border-yellow-400 bg-yellow-50/50'; }
                             if ($statusId == 3) { $ringColor = 'border-orange-400 bg-orange-50/50'; }
                             if ($statusId == 4) { $ringColor = 'border-purple-400 bg-purple-50/50'; }
                             if ($statusId == 5) { $ringColor = 'border-red-400 bg-red-50/50'; }
 
+                            // Logika Status Aktif Hari Ini (Belum CO)
                             $isTodayActive = (\Carbon\Carbon::parse($presensi->tanggal)->isToday() && !$presensi->waktu_co);
                             if ($isTodayActive) { $ringColor = 'border-indigo-600 bg-indigo-50/50'; }
 
+                            // Fungsi Pembantu Status Pill (Pill Logic)
                             $getPill = function($id, $name) {
                                 $classes = [
                                     1 => ['bg' => 'bg-green-200', 'text' => 'text-green-800'],
@@ -203,10 +207,6 @@
                                 $pill = $classes[$id] ?? ['bg' => 'bg-gray-200', 'text' => 'text-gray-800'];
                                 return "<span class='text-xs font-semibold px-2 py-0.5 rounded-full {$pill['bg']} {$pill['text']}'>{$name}</span>";
                             };
-
-                            $isCiTerlambat = ($statusId == 2 || $statusId == 3);
-                            $isCoTerlambat = ($statusId == 3);
-                            $isFinalStatus = ($statusId >= 4 || $statusId == 1);
                         @endphp
 
                         <div class="p-4 rounded-xl border {{ $ringColor }}">
@@ -220,12 +220,12 @@
                                     <div class="flex items-center space-x-2 mt-1 flex-wrap">
 
                                         @if ($statusId == 3)
-                                            {{-- ID 3: Terlambat Check-Out (Implies CI juga sudah Terlambat/Dianggap Terlambat) --}}
+                                            {{-- ID 3: Terlambat Check-Out (Tampilkan CI dan CO Terlambat) --}}
                                             {!! $getPill(2, 'Terlambat Check-In') !!}
                                             {!! $getPill(3, 'Terlambat Check-Out') !!}
 
                                         @elseif ($statusId == 2)
-                                            {{-- ID 2: Terlambat Check-In (Status Akhir jika CO Tepat Waktu) --}}
+                                            {{-- ID 2: Terlambat Check-In (Hanya Terlambat CI) --}}
                                             {!! $getPill(2, 'Terlambat Check-In') !!}
 
                                         @elseif ($statusId == 1)
@@ -233,27 +233,22 @@
                                             {!! $getPill(1, 'Tepat Waktu') !!}
 
                                         @elseif ($statusId == 4)
-                                            {{-- ID 4: Lupa Check-Out (Tambahkan Terlambat Check-In jika waktu CI menunjukkan keterlambatan) --}}
-
-                                            {{-- Asumsi: Jika status akhir Lupa Check-Out (ID 4),
-                                                dan Check-In-nya memang terlambat (seperti kasus 20:59), tampilkan kedua pill. --}}
-
-                                            {{-- **KRITIS: Tampilkan Pill Terlambat Check-In** --}}
+                                            {{-- ID 4: Lupa Check-Out. Tampilkan Terlambat CI + Lupa CO (Sesuai kasus user) --}}
                                             {!! $getPill(2, 'Terlambat Check-In') !!}
-
-                                            {{-- **KRITIS: Tampilkan Pill Lupa Check-Out** --}}
                                             {!! $getPill(4, 'Lupa Check-Out') !!}
 
                                         @elseif ($statusId == 5)
                                             {{-- ID 5: Tidak Hadir --}}
                                             {!! $getPill(5, 'Tidak Hadir') !!}
+
                                         @endif
 
-                                        {{-- Anda mungkin ingin menambahkan logika untuk status default atau belum lengkap di sini --}}
+                                        {{-- Logika untuk status sedang berjalan (jika belum ada CO) --}}
 
                                     </div>
                                 </div>
 
+                                {{-- KANAN: WAKTU CI/CO --}}
                                 <div class="grid grid-cols-2 gap-3 mt-0 flex-shrink-0">
                                     {{-- CI Box --}}
                                     <div class="p-2 rounded-lg bg-white shadow-sm border border-gray-100">
@@ -293,10 +288,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- VARIABEL GEOFENCE ---
-           // const OFFICE_LAT = -3.2289087; GIBS
-            const OFFICE_LAT = -3.2759928;
-           // const OFFICE_LONG = 114.5962882; GIBS
-            const OFFICE_LONG = 114.5969432;
+            const OFFICE_LAT = -3.2289087;
+           // const OFFICE_LAT = -3.2759928;
+           const OFFICE_LONG = 114.5962882;
+           // const OFFICE_LONG = 114.5969432;
             const MAX_DISTANCE_M = 500;
 
             const isCiDone = @json($isCiDone);
