@@ -8,6 +8,8 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
+
+
         tailwindcss({
             // --- PASTIKAN BAGIAN INI ADA DAN LENGKAP ---
             config: {
@@ -21,4 +23,8 @@ export default defineConfig({
             // --- BATAS ---
         }),
     ],
+
+
+    
+
 });

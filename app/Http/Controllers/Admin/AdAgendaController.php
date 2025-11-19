@@ -173,7 +173,7 @@ class AdAgendaController extends Controller
             'judul' => 'required|string|max:255',
             'tanggal_agenda' => 'required|date_format:d/m/Y',
             'waktu_mulai' => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
-    'waktu_selesai' => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
+            'waktu_selesai' => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
 
             'lokasi_alamat' => 'nullable|string',
             'ruang' => 'nullable|string',
@@ -193,12 +193,12 @@ class AdAgendaController extends Controller
 
         try {
             // KRITIS: Konversi format tanggal dari m/d/Y (input) ke Y-m-d (DB)
-            $tanggal_agenda_db = Carbon::createFromFormat('d/m/Y', $request->tanggal_agenda)->format('Y-m-d');
+            $tanggal_agenda = Carbon::createFromFormat('d/m/Y', $request->tanggal_agenda)->format('Y-m-d');
 
             // 1. Update Entri Agenda Utama
             $agenda->update([
                 'judul' => $request->judul,
-                'tanggal_agenda' => $tanggal_agenda_db,
+                'tanggal_agenda' => $tanggal_agenda,
                 'waktu_mulai' => $request->waktu_mulai,
                 'waktu_selesai' => $request->waktu_selesai,
                 'lokasi_alamat' => $request->lokasi_alamat,

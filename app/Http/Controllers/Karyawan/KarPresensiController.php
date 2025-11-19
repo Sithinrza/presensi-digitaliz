@@ -61,30 +61,30 @@ class KarPresensiController extends Controller
 
         // --- KRITIS: 3. LOGIKA ASUMSI STATUS SETELAH JAM KERJA BERAKHIR ---
 
-        $assumptionError = null;
+        // $assumptionError = null;
 
-        if ($isWorkingDay && $shiftEnd) {
-            // Batas Potong Keras (Hard Cutoff): Shift_End + 1 jam toleransi
-            $hardCutoffTime = $shiftEnd->copy()->addHours(1);
+        // if ($isWorkingDay && $shiftEnd) {
+        //     // Batas Potong Keras (Hard Cutoff): Shift_End + 1 jam toleransi
+        //     $hardCutoffTime = $shiftEnd->copy()->addHours(1);
 
-            if ($currentTime->greaterThan($hardCutoffTime)) {
+        //     if ($currentTime->greaterThan($hardCutoffTime)) {
 
-                if (!$presensiHariIni) {
-                    // Skenario A: Sudah lewat jam pulang + 1 jam, tapi BELUM CI
-                    $isCiDone = true;
-                    $isCoDone = true; // Paksa tombol jadi 'Selesai' / Non-aktif
-                    $assumptionError = 'Tidak Hadir. Waktu Check-In terlewat.';
+        //         if (!$presensiHariIni) {
+        //             // Skenario A: Sudah lewat jam pulang + 1 jam, tapi BELUM CI
+        //             $isCiDone = true;
+        //             $isCoDone = true; // Paksa tombol jadi 'Selesai' / Non-aktif
+        //             $assumptionError = 'Tidak Hadir. Waktu Check-In terlewat.';
 
-                } elseif (!$isCoDone) {
-                    // Skenario B: Ada CI tapi BELUM CO (Setelah jam pulang + 1 jam)
-                    $isCoDone = true; // Paksa tombol jadi 'Selesai' / Non-aktif
-                    $assumptionError = 'Lupa Check-Out. Batas Check-Out terlewat.';
-                }
+        //         } elseif (!$isCoDone) {
+        //             // Skenario B: Ada CI tapi BELUM CO (Setelah jam pulang + 1 jam)
+        //             $isCoDone = true; // Paksa tombol jadi 'Selesai' / Non-aktif
+        //             $assumptionError = 'Lupa Check-Out. Batas Check-Out terlewat.';
+        //         }
 
-                // Catatan: Status ID 4 atau 5 akan dikerjakan oleh CRON JOB (dimalam hari).
-            }
-        }
-        // --- AKHIR LOGIKA ASUMSI STATUS ---
+        //         // Catatan: Status ID 4 atau 5 akan dikerjakan oleh CRON JOB (dimalam hari).
+        //     }
+        // }
+        // // --- AKHIR LOGIKA ASUMSI STATUS ---
 
 
         // --- 4. AMBIL RIWAYAT (Untuk Dashboard) ---
@@ -96,7 +96,7 @@ class KarPresensiController extends Controller
             ->get();
 
         // Kirim semua data status dan jadwal ke view
-        return view('karyawan.presensi.index', compact('history', 'isCiDone', 'isCoDone', 'presensiHariIni', 'shiftEnd', 'shiftStart', 'isWorkingDay', 'assumptionError'));
+        return view('karyawan.presensi.index', compact('history', 'isCiDone', 'isCoDone', 'presensiHariIni', 'shiftEnd', 'shiftStart', 'isWorkingDay'));
     }
     /**
      * Menyimpan data presensi (CI atau CO) ke database.
