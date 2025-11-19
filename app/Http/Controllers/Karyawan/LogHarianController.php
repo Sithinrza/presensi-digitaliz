@@ -16,9 +16,12 @@ class LogHarianController extends Controller
      * Tampilkan daftar Log Aktivitas Harian (READ) dan form input.
      * Logika utama tetap sama.
      */
+    // File: LogHarianController.php (Method index)
+
     public function index()
     {
-        $karyawan = Auth::user()->karyawan; // <-- (Asumsi ini sudah benar setelah perbaikan User Model)
+        // ... (Kode setup awal tidak berubah) ...
+        $karyawan = Auth::user()->karyawan;
         $today = Carbon::today()->toDateString();
         $logs = collect([]);
 
@@ -27,14 +30,18 @@ class LogHarianController extends Controller
                                     ->where('tanggal', $today)
                                     ->first();
 
+        // Tentukan apakah presensi valid (sudah CI dan bukan status Tidak Hadir/Lupa CO)
+        // Asumsi: Presensi valid jika ada record dan status bukan 4 atau 5.
+        $isPresensiValid = ($presensi && $presensi->status_presensi_id != 4 && $presensi->status_presensi_id != 5);
+
         if ($presensi) {
-            // 2. AMBIL LOG HARI INI (Menggunakan FK presensi_id)
+            // 2. AMBIL LOG HARI INI (Hanya jika record presensi ada)
             $logs = LogHarian::where('presensi_karyawan_id', $presensi->id)
                             ->orderBy('created_at', 'desc')
                             ->get();
         }
 
-        return view('karyawan.log.log', compact('logs', 'today'));
+        return view('karyawan.log.log', compact('logs', 'today', 'isPresensiValid'));
     }
 
     /**

@@ -166,7 +166,7 @@ class AdAgendaController extends Controller
             'judul' => 'required|string|max:255',
             'tanggal_agenda' => 'required|date_format:m/d/Y',
             'waktu_mulai' => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
-    'waktu_selesai' => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
+             'waktu_selesai' => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
 
             'lokasi_alamat' => 'nullable|string',
             'ruang' => 'nullable|string',

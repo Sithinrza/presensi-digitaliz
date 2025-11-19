@@ -3,15 +3,6 @@
         Dashboard Admin
     </x-slot:title>
     <div class="relative pb-24">
-        <div class="bg-white p-4 shadow-sm sticky top-0 z-20">
-            <div class="flex items-center space-x-3">
-                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/40x40" alt="Foto Admin">
-                <div>
-                    <h1 class="text-gray-800 font-bold text-lg">Admin</h1>
-                </div>
-            </div>
-        </div>
-
         <div class="bg-indigo-950 p-4 pt-8 pb-12 -mt-1 rounded-t-[3rem] relative z-10">
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-white p-4 h-20 rounded-xl shadow relative flex items-end">
@@ -58,7 +49,7 @@
                         </svg>
                         <span class="text-xs font-semibold text-gray-700 mt-1">Riwayat Presensi</span>
                     </a>
-                    <a href="#" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition aspect-square">
+                    <a href="{{ route('admin.report.index') }}" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition aspect-square">
                         <svg class="w-8 h-8 mb-1 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-3 5h3m-6 0h.01M12 16h3m-6 0h.01M10 3v4h4V3h-4Z"/>
                         </svg>

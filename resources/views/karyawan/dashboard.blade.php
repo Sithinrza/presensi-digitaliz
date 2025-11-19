@@ -4,15 +4,6 @@
     </x-slot:title>
 
     <div class="relative min-h-screen pb-24">
-        <header class="bg-white p-4 shadow-sm sticky top-0 z-20">
-            <div class="flex items-center space-x-3">
-                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/40x40" alt="Foto Profil Karyawan">
-                <div>
-                    <h1 class="text-gray-800 font-bold text-lg">Hoshi</h1>
-                </div>
-            </div>
-        </header>
-
         <main class="p-4 space-y-6">
             <section class="bg-indigo-950 p-6 rounded-2xl shadow-lg text-center ">
                 <p class="mb-4 text-white">Anda belum presensi hari ini</p>
@@ -24,26 +15,36 @@
             <section class="bg-white p-5 rounded-2xl shadow-lg">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-800">Agenda Hari Ini</h2>
-                    <button class="flex items-center space-x-1 text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    
+                    {{-- Tombol Lihat Semua mengarah ke halaman agenda lengkap --}}
+                    <a href="{{ route('karyawan.agenda.index') }}" class="flex items-center space-x-1 text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <span>Lihat Semua</span>
-                    </button>
+                    </a>
                 </div>
+
                 <div class="space-y-3">
-                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-950 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-                        </svg>
-                        <p class="text-sm font-medium text-gray-700">Rapat dengan tim</p>
-                    </div>
-                     <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-950 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-                        </svg>
-                        <p class="text-sm font-medium text-gray-700">Mentoring anak magang</p>
-                    </div>
+                    {{-- Looping Data Agenda --}}
+                    @forelse($agendaHariIni as $agenda)
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
+                            {{-- Icon Agenda --}}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-950 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                            </svg>
+                            
+                            {{-- Judul Agenda (Dinamis) --}}
+                            <p class="text-sm font-medium text-gray-700 line-clamp-1">
+                                {{ $agenda->judul }}
+                            </p>
+                        </div>
+                    @empty
+                        {{-- Tampilan jika TIDAK ADA agenda hari ini --}}
+                        <div class="text-center p-4 text-gray-400 italic text-sm border border-dashed border-gray-200 rounded-lg">
+                            Tidak ada agenda hari ini.
+                        </div>
+                    @endforelse
                 </div>
             </section>
 
@@ -52,9 +53,11 @@
                     <h2 class="text-lg font-bold text-gray-800">Daily Report</h2>
                     <p class="text-xs text-gray-500">Rangkum aktifitas hari ini</p>
                 </div>
-                <button class="px-4 py-2 bg-indigo-950 text-white text-sm font-semibold rounded-lg hover:bg-indigo-800 transition whitespace-nowrap">
-                    Buat Laporan
-                </button>
+                 <a href="{{ route('karyawan.report.index') }}">
+                    <button class="px-4 py-2 bg-indigo-950 text-white text-sm font-semibold rounded-lg hover:bg-indigo-800 transition whitespace-nowrap">
+                        Buat Laporan
+                    </button>
+                </a>
             </section>
 
              <section class="bg-white p-5 rounded-2xl shadow-lg">

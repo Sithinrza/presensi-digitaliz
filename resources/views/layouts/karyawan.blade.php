@@ -7,19 +7,29 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <title>Document</title>
+
 </head>
 <body class="bg-gray-100">
 
     <main class="pb-24"> <!-- padding-bottom agar konten tidak tertutup nav -->
+        @unless (Route::is('karyawan.log.index', 'karyawan.profile.index'))
+            {{-- Panggil partial navigasi admin DI DALAM @unless --}}
+            @include('layouts.partials.karyawannavtop')
+        @endunless
         {{ $slot }}
+        @unless (Route::is('karyawan.report.index'))
+            {{-- Panggil partial navigasi admin DI DALAM @unless --}}
             @include('layouts.partials.karyawannav')
-    @stack('scripts')
+        @endunless
+        @stack('scripts')
         <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-        
-    </main>
+        <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
 </body>
 </html>

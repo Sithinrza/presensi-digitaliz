@@ -19,16 +19,18 @@ class PresensiKaryawan extends Model
      */
     protected $fillable = [
         'karyawan_id',
-        'status_id',
+        'status_presensi_id', // <-- PASTIKAN BARIS INI ADA
         'tanggal',
         'waktu_ci',
+        'foto_ci',
         'latitude_ci',
         'longitude_ci',
         'waktu_co',
+        'foto_co',
         'latitude_co',
         'longitude_co',
-        // Tambahkan kolom lain jika ada, seperti foto_ci/co
     ];
+
 
     // --- RELASI ---
 
