@@ -69,7 +69,6 @@
     @endif
 
     <main class="p-4 space-y-6 pb-24">
-\
         <form action="{{ route('admin.agenda.update', $agenda->id) }}" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
@@ -87,15 +86,14 @@
                     </div>
 
                     <div class="relative">
-                        <label for="tanggal_agenda" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Agenda</label>
-                        {{-- PERBAIKAN DI SINI: 
-                             1. datepicker-format="dd M yyyy" (Format JS: 01 Jan 2025)
-                             2. value="..." (Format PHP disamakan: d M Y -> 01 Jan 2025) 
-                        --}}
-                        <input datepicker datepicker-autohide datepicker-format="dd M yyyy" 
-                            type="text" id="tanggal_agenda" name="tanggal_agenda" 
-                            value="{{ old('tanggal_agenda', isset($agenda->tanggal_agenda) ? \Carbon\Carbon::parse($agenda->tanggal_agenda)->format('d M Y') : '') }}" 
-                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+                        <label for="tanggal_agenda_input" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Agenda</label>
+                        {{-- 💡 PERBAIKAN: Gunakan ID baru, Hapus atribut Flowbite, dan set VALUE ke format M/D/Y --}}
+                        <input type="text"
+                            id="tanggal_agenda_input"
+                            name="tanggal_agenda"
+                            {{-- KRITIS: Output format M/D/Y agar Flatpickr mem-parsingnya dengan benar dan sesuai validasi --}}
+                            value="{{ old('tanggal_agenda', $agenda->tanggal_agenda ? \Carbon\Carbon::parse($agenda->tanggal_agenda)->format('m/d/Y') : '') }}"
+                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                             placeholder="Pilih Tanggal">
                         <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -126,7 +124,6 @@
                     <div>
                         <label for="peserta_divisi_hidden" class="block mb-2 text-sm font-medium text-gray-700">1. Berdasarkan Divisi</label>
                         <div class="relative custom-select-wrapper">
-                            {{-- 💡 Perubahan: Tambahkan flex-wrap untuk menampung chip --}}
                             <button type="button" class="flex flex-wrap items-center justify-between w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="dropdownDivisiTrigger">
                                 <span class="text-gray-900 trigger-summary flex-grow" data-placeholder="Pilih Divisi..."></span>
                                 <svg class="w-4 h-4 text-gray-400 self-start mt-1 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -143,15 +140,15 @@
                             <div class="absolute w-full mt-1 dropdown-panel hidden" id="dropdownDivisiPanel">
                                 <div class="p-2">
                                     <input type="text" placeholder="Cari divisi..."
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-                                           id="searchDivisiInput">
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                                            id="searchDivisiInput">
                                 </div>
                                 <ul class="options-list" id="divisiOptionsList">
                                     @foreach ($divisis as $divisi)
                                         <li data-value="{{ $divisi->id }}" data-text="{{ $divisi->name }}">
                                             <input type="checkbox" id="divisi-checkbox-{{ $divisi->id }}" value="{{ $divisi->id }}"
-                                                   class="mr-2 rounded text-blue-600 focus:ring-blue-500"
-                                                   {{ in_array($divisi->id, $selectedDivisi) ? 'checked' : '' }}>
+                                                    class="mr-2 rounded text-blue-600 focus:ring-blue-500"
+                                                    {{ in_array($divisi->id, $selectedDivisi) ? 'checked' : '' }}>
                                             <label for="divisi-checkbox-{{ $divisi->id }}" class="flex-grow">{{ $divisi->name }}</label>
                                         </li>
                                     @endforeach
@@ -165,7 +162,6 @@
                     <div>
                         <label for="peserta_karyawan_hidden" class="block mb-2 text-sm font-medium text-gray-700">2. Perorangan</label>
                         <div class="relative custom-select-wrapper">
-                            {{-- 💡 Perubahan: Tambahkan flex-wrap untuk menampung chip --}}
                             <button type="button" class="flex flex-wrap items-center justify-between w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" id="dropdownKaryawanTrigger">
                                 <span class="text-gray-900 trigger-summary flex-grow" data-placeholder="Cari dan pilih Karyawan..."></span>
                                 <svg class="w-4 h-4 text-gray-400 self-start mt-1 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -185,15 +181,15 @@
                             <div class="absolute w-full mt-1 dropdown-panel hidden" id="dropdownKaryawanPanel">
                                 <div class="p-2">
                                     <input type="text" placeholder="Cari karyawan..."
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-                                           id="searchKaryawanInput">
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                                            id="searchKaryawanInput">
                                 </div>
                                 <ul class="options-list" id="karyawanOptionsList">
                                     @foreach ($karyawans as $karyawan)
                                         <li data-value="{{ $karyawan->id }}" data-text="{{ $karyawan->user->name ?? 'Tanpa Nama' }} @if ($karyawan->divisi) — {{ $karyawan->divisi->name }} @endif">
                                             <input type="checkbox" id="karyawan-checkbox-{{ $karyawan->id }}" value="{{ $karyawan->id }}"
-                                                   class="mr-2 rounded text-blue-600 focus:ring-blue-500"
-                                                   {{ in_array($karyawan->id, $selectedKaryawan) ? 'checked' : '' }}>
+                                                    class="mr-2 rounded text-blue-600 focus:ring-blue-500"
+                                                    {{ in_array($karyawan->id, $selectedKaryawan) ? 'checked' : '' }}>
                                             <label for="karyawan-checkbox-{{ $karyawan->id }}" class="flex-grow">
                                                 {{ $karyawan->user->name ?? 'Tanpa Nama' }}
                                                 @if ($karyawan->divisi)
@@ -246,30 +242,33 @@
             </button>
         </form>
     </main>
-{{-- 
+
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
 
     <script>
-
-        // ... di dalam tag <script> Anda
+        // 💡 PERBAIKAN TANGGAL: Inisialisasi Flatpickr
         document.addEventListener('DOMContentLoaded', function() {
-            // Ambil nilai yang sudah ada dari input (dalam format Y-m-d)
-            const initialDate = document.getElementById('tanggal_agenda_edit').value;
+            // Ambil nilai yang sudah ada dari input
+            const dateInput = document.getElementById('tanggal_agenda_input');
+            const initialDate = dateInput ? dateInput.value : '';
 
-            flatpickr("#tanggal_agenda_edit", {
-                // Format yang dikirim ke server (atau yang Anda inginkan)
-                dateFormat: "d/m/Y",
-                // Ini adalah format yang terlihat di input
+            // Inisialisasi Flatpickr
+            flatpickr("#tanggal_agenda_input", {
+                // Format yang dikirimkan ke SERVER (M/D/Y) -> HARUS SAMA DENGAN VALIDASI LARAVEL
+                dateFormat: "m/d/Y",
+
+                // Aktifkan Alternate Input
                 altInput: true,
+
+                // Format yang DILIHAT PENGGUNA (d M Y)
                 altFormat: "d M Y",
-                // Set defaultDate ke nilai yang sudah ada di database
+
+                // Set defaultDate ke nilai M/D/Y yang sudah diparsing di Blade
                 defaultDate: initialDate || 'today',
             });
         });
-
 
         $(document).ready(function() {
             // Fungsi untuk menginisialisasi custom multi-select

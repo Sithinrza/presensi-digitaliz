@@ -106,14 +106,17 @@
                     </div>
 
                     <div class="relative">
-                         <label for="tanggal_agenda" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Agenda</label>
-                         <input datepicker datepicker-autohide type="text" id="tanggal_bergabung" name="tanggal_agenda" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Pilih Tanggal">
-                         <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
+                        <label for="tanggal_agenda_input" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Agenda</label>
+                        {{-- 💡 PERBAIKAN: Output format M/D/Y untuk Flatpickr dan Controller Sinkron --}}
+                        <input type="text" id="tanggal_agenda_input" name="tanggal_agenda"
+                               value="{{ old('tanggal_agenda', now()->format('m/d/Y')) }}"
+                               class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Pilih Tanggal">
+                        <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/>
                                 <path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
                             </svg>
-                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,15 +131,6 @@
                         $selectedKaryawan = old('peserta_karyawan') ? (array)old('peserta_karyawan') : [];
 
                         // Asumsi data $divisis dan $karyawans tersedia dari controller.
-                        // Jika belum ada, ganti dengan data dummy ini untuk development:
-                        /*
-                        if (!isset($divisis)) {
-                            $divisis = collect([(object)['id' => 1, 'name' => 'Programmer'], (object)['id' => 2, 'name' => 'Graphic Design'], (object)['id' => 3, 'name' => 'UI/UX Designer']]);
-                        }
-                        if (!isset($karyawans)) {
-                            $karyawans = collect([(object)['id' => 10, 'user' => (object)['name' => 'Admin'], 'divisi' => (object)['name' => 'HRD']], (object)['id' => 11, 'user' => (object)['name' => 'Budi'], 'divisi' => (object)['name' => 'Marketing']] );
-                        }
-                        */
                     @endphp
 
                     {{-- Custom Multi-Select untuk Divisi --}}
@@ -279,11 +273,18 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Inisialisasi Flatpickr untuk Tanggal Agenda
             flatpickr("#tanggal_agenda_input", {
-                dateFormat: "Y-m-d", // Format yang dikirim ke server (standar)
+                // 💡 Format yang dikirimkan ke SERVER (M/D/Y) -> COCOK DENGAN VALIDASI CONTROLLER
+                dateFormat: "m/d/Y",
+
+                // Aktifkan Alternate Input
                 altInput: true,
-                altFormat: "d F Y", // Format tampilan
-                minDate: "today", // Tidak bisa memilih tanggal lampau
-                defaultDate: "{{ old('tanggal_agenda', now()->format('Y-m-d')) }}",
+
+                // Format yang DILIHAT PENGGUNA (d M Y)
+                altFormat: "d M Y",
+
+                // Set defaultDate ke nilai M/D/Y yang ada di Blade (atau today)
+                defaultDate: "{{ old('tanggal_agenda', now()->format('m/d/Y')) }}",
+
                 allowInput: true,
             });
         });

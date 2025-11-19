@@ -37,6 +37,7 @@
                 <form action="{{ route('admin.agenda.index') }}" method="GET" id="filter-form" class="space-y-4">
                     <div class="px-5 pb-5">
                         <label for="filter_tanggal" class="block mb-1 text-sm font-medium text-gray-700">Filter Agenda</label>
+
                         <!-- Kontainer Flex untuk Input Tanggal dan Tombol Semua Agenda -->
                         <div class="flex items-end space-x-3">
                             <!-- Input Filter Tanggal -->
@@ -51,7 +52,7 @@
                                         name="tanggal"
                                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
                                         placeholder="Pilih Tanggal Spesifik"
-                                        value="{{ request('tanggal') !== 'all' ? request('tanggal', now()->format('d M Y')) : '' }}">
+                                        value="{{ request('tanggal') !== 'all' ? request('tanggal', now()->format('Y-m-d')) : '' }}">
                                 </div>
                             </div>
 
@@ -77,13 +78,7 @@
                         @if (request('tanggal') === 'all')
                             Semua Agenda
                         @else
-                           Agenda Tanggal: {{
-        \Carbon\Carbon::createFromFormat(
-            'd/m/Y',
-            // Ambil request('tanggal'), gunakan tanggal hari ini dalam format d/m/Y sebagai default
-            trim(request('tanggal', now()->format('d/m/Y')))
-        )->translatedFormat('l, d F Y')
-    }}
+                            Agenda Tanggal: {{ \Carbon\Carbon::parse(request('tanggal', now()))->translatedFormat('l, d F Y') }}
                         @endif
                     </h2>
                 </div>
@@ -131,10 +126,10 @@
                                     </button>
                                 </a>
                                 <!-- Form Delete -->
-                                <form action="{{ route('admin.agenda.destroy', $agenda->id) }}" method="POST" class="formHapusAgenda">
+                                <form action="{{ route('admin.agenda.destroy', $agenda->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus agenda ini? Proses ini tidak dapat dibatalkan.')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="formHapusAgenda flex items-center space-x-1 px-3 py-1 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">
+                                    <button type="submit" class="flex items-center space-x-1 px-3 py-1 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">
                                         <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                         </svg>
@@ -148,12 +143,7 @@
                             @if (request('tanggal') === 'all')
                                 Belum ada agenda yang pernah dibuat.
                             @else
-                                Tidak ada agenda untuk tanggal ini ({{
-                                    \Carbon\Carbon::createFromFormat(
-                                        'd/m/Y',
-                                        trim(request('tanggal', now()->format('d/m/Y')))
-                                    )->translatedFormat('d F Y')
-                                }}).
+                                Tidak ada agenda untuk tanggal ini ({{ \Carbon\Carbon::parse(request('tanggal', now()))->translatedFormat('d F Y') }}).
                             @endif
                         </div>
                     @endforelse
@@ -174,7 +164,7 @@
             const filterForm = document.getElementById('filter-form');
 
             flatpickr(filterInput, {
-                dateFormat: "d/m/Y", // Format standar YYYY-MM-DD yang dikirim ke server
+                dateFormat: "Y-m-d", // Format standar YYYY-MM-DD yang dikirim ke server
                 altInput: true,
                 altFormat: "j F Y", // Format tampilan
                 // defaultDate hanya diisi jika filter tidak 'all'

@@ -97,20 +97,6 @@
                                         <div class="flex justify-between items-start">
                                             <div>
                                                 <p class="text-sm font-semibold text-gray-800">{{ $log->catatan_log }}</p>
-
-                                                {{-- Lampiran/Detail --}}
-                                                <div class="mt-0.5">
-                                                    {{-- Logika lampiran harus disesuaikan dengan field yang Anda miliki di model LogHarian --}}
-                                                    @if (!empty($log->file_attachment))
-                                                         {{-- Ganti dengan asset() atau URL yang sesuai --}}
-                                                        <a href="#" class="text-xs text-green-600 hover:underline inline-flex items-center space-x-1">
-                                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.122 2.122l7.81-7.81" /></svg>
-                                                            <span>Lampiran</span>
-                                                        </a>
-                                                    @else
-                                                        <span class="text-xs text-gray-400 italic">Tidak ada lampiran</span>
-                                                    @endif
-                                                </div>
                                             </div>
 
                                             {{-- Waktu Log --}}
