@@ -179,7 +179,6 @@
                 }
             });
 
-            // Logika untuk membersihkan input tanggal saat tombol "Lihat Semua Agenda" diklik
             const allAgendaLink = document.querySelector('a[href*="tanggal=all"]');
             if (allAgendaLink) {
                 allAgendaLink.addEventListener('click', function(e) {
