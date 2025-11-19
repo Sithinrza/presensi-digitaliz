@@ -131,6 +131,7 @@
     @endif
 
     <main class="p-4 space-y-6 pb-24">
+\
         <form action="{{ route('admin.agenda.update', $agenda->id) }}" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
@@ -146,9 +147,17 @@
                     </div>
 
                     <div class="relative">
-                         <label for="tanggal_agenda" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Agenda</label>
-                         <input datepicker datepicker-autohide type="text" id="tanggal_agenda" name="tanggal_agenda" value="{{ old('tanggal_agenda', $agenda->tanggal_agenda ? \Carbon\Carbon::parse($agenda->tanggal_agenda)->format('m/d/Y') : '') }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Pilih Tanggal">
-                         <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
+                        <label for="tanggal_agenda" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Agenda</label>
+                        {{-- PERBAIKAN DI SINI: 
+                             1. datepicker-format="dd M yyyy" (Format JS: 01 Jan 2025)
+                             2. value="..." (Format PHP disamakan: d M Y -> 01 Jan 2025) 
+                        --}}
+                        <input datepicker datepicker-autohide datepicker-format="dd M yyyy" 
+                            type="text" id="tanggal_agenda" name="tanggal_agenda" 
+                            value="{{ old('tanggal_agenda', isset($agenda->tanggal_agenda) ? \Carbon\Carbon::parse($agenda->tanggal_agenda)->format('d M Y') : '') }}" 
+                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+                            placeholder="Pilih Tanggal">
+                        <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/>
                                 <path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
@@ -241,11 +250,11 @@
             </button>
         </form>
     </main>
-
+{{-- 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
 
      <script>
         $(document).ready(function() {

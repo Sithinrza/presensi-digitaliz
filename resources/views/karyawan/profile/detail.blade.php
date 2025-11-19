@@ -73,12 +73,13 @@
                     <!-- Tempat Lahir -->
                     <div>
                         <label class="block mb-0.5 text-xs font-medium text-gray-500">Tempat Lahir</label>
-                        <input type="text" value="Banjarmasin" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-default" readonly>
+                        <input type="text" value="{{ $karyawan->tempat_lahir ?? 'TEMPAT_LAHIR' }}" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-default" readonly>
                     </div>
                     <!-- Tanggal Lahir -->
                     <div class="relative">
                          <label class="block mb-0.5 text-xs font-medium text-gray-500">Tanggal Lahir</label>
-                         <input type="text" value="08-01-2005" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 cursor-default" readonly>
+                         <input type="text" value="{{ $karyawan->tanggal_lahir ? \Carbon\Carbon::parse($karyawan->tanggal_lahir)->format('d-m-Y') : '-' }}" 
+                         class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 cursor-default" readonly>
                          <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none top-5">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/>
@@ -89,20 +90,16 @@
                     <!-- Jenis Kelamin -->
                     <div>
                         <label class="block mb-0.5 text-xs font-medium text-gray-500">Jenis Kelamin</label>
-                        <input type="text" value="Laki-Laki" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-default" readonly>
+                        <input type="text" value="{{ $karyawan->jenis_kelamin ?? '-' }}" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-default" readonly>
                     </div>
                     <!-- Agama -->
                     <div>
                         <label class="block mb-0.5 text-xs font-medium text-gray-500">Agama</label>
-                        {{-- Select dibuat terlihat seperti input readonly --}}
-                        <div class="relative">
-                             <select class="appearance-none bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-default" disabled>
-                                <option>Kristen Protestan</option>
-                            </select>
-                             <div class="absolute inset-y-0 end-0 flex items-center px-2 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                             </div>
-                        </div>
+                        <input type="text" 
+                            {{-- Mengambil nama agama lewat relasi. Jika kosong tampilkan '-' --}}
+                            value="{{ $karyawan->agama->name ?? '-' }}" 
+                            class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-default" 
+                            readonly>
                     </div>
                     <!-- Alamat -->
                     <div>
