@@ -37,7 +37,6 @@
                 <form action="{{ route('admin.agenda.index') }}" method="GET" id="filter-form" class="space-y-4">
                     <div class="px-5 pb-5">
                         <label for="filter_tanggal" class="block mb-1 text-sm font-medium text-gray-700">Filter Agenda</label>
-
                         <!-- Kontainer Flex untuk Input Tanggal dan Tombol Semua Agenda -->
                         <div class="flex items-end space-x-3">
                             <!-- Input Filter Tanggal -->
@@ -52,7 +51,7 @@
                                         name="tanggal"
                                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
                                         placeholder="Pilih Tanggal Spesifik"
-                                        value="{{ request('tanggal') !== 'all' ? request('tanggal', now()->format('d/m/Y')) : '' }}">
+                                        value="{{ request('tanggal') !== 'all' ? request('tanggal', now()->format('d M Y')) : '' }}">
                                 </div>
                             </div>
 

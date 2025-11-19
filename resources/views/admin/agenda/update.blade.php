@@ -69,6 +69,7 @@
     @endif
 
     <main class="p-4 space-y-6 pb-24">
+\
         <form action="{{ route('admin.agenda.update', $agenda->id) }}" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
@@ -85,14 +86,16 @@
                         @error('judul') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
 
-                   <div class="relative">
+                    <div class="relative">
                         <label for="tanggal_agenda" class="block mb-1 text-sm font-medium text-gray-500">Tanggal Agenda</label>
-                        <input type="text"
-                            id="tanggal_agenda_edit"
-                            name="tanggal_agenda"
-                            {{-- 💡 PERBAIKAN: Set value ke format d/m/Y agar cocok dengan dateFormat Flatpickr dan validasi Laravel --}}
-                            value="{{ old('tanggal_agenda', $agenda->tanggal_agenda ? \Carbon\Carbon::parse($agenda->tanggal_agenda)->format('d/m/Y') : '') }}"
-                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        {{-- PERBAIKAN DI SINI: 
+                             1. datepicker-format="dd M yyyy" (Format JS: 01 Jan 2025)
+                             2. value="..." (Format PHP disamakan: d M Y -> 01 Jan 2025) 
+                        --}}
+                        <input datepicker datepicker-autohide datepicker-format="dd M yyyy" 
+                            type="text" id="tanggal_agenda" name="tanggal_agenda" 
+                            value="{{ old('tanggal_agenda', isset($agenda->tanggal_agenda) ? \Carbon\Carbon::parse($agenda->tanggal_agenda)->format('d M Y') : '') }}" 
+                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
                             placeholder="Pilih Tanggal">
                         <div class="absolute inset-y-0 end-0 top-6 flex items-center pe-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -243,10 +246,11 @@
             </button>
         </form>
     </main>
-
+{{-- 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
 
     <script>
 

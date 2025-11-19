@@ -21,7 +21,10 @@
             @include('layouts.partials.karyawannavtop')
         @endunless
         {{ $slot }}
-        @include('layouts.partials.karyawannav')
+        @unless (Route::is('karyawan.report.index'))
+            {{-- Panggil partial navigasi admin DI DALAM @unless --}}
+            @include('layouts.partials.karyawannav')
+        @endunless
         @stack('scripts')
         <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
