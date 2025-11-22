@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdAgendaController;
+use App\Http\Controllers\Admin\AdDailyReportController;
 use App\Http\Controllers\Admin\AdDashController;
 use App\Http\Controllers\Admin\AdLogHarianController;
 use App\Http\Controllers\Admin\AdPresensiController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Admin\KaryawanController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Karyawan\KarAgendaController;
+use App\Http\Controllers\Karyawan\KarDailyReportController;
 use App\Http\Controllers\Karyawan\KarDashController;
 use App\Http\Controllers\Karyawan\KarJadwalController;
 use App\Http\Controllers\Karyawan\KarPresensiController;
@@ -54,8 +56,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('agenda', AdAgendaController::class);
 
-        Route::get('/report', [AdReportController::class, 'index'])->name('report.index');
-        Route::get('/report/show', [AdReportController::class, 'show'])->name('report.show');
+        Route::get('/report', [AdDailyReportController::class, 'index'])->name('report.index');
 
     });
 
@@ -70,25 +71,19 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/log-harian', [LogHarianController::class, 'store'])->name('log.store');
 
         Route::get('/agenda', [KarAgendaController::class, 'index'])->name('agenda.index');
-        // routes/karyawan.php atau web.php
-        Route::get('/agenda/by-date', [KarAgendaController::class, 'getAgendaByDate'])->name('karyawan.agenda.date');
 
         Route::get('/profile', [KarProfileController::class, 'index'])->name('profile.index');
         Route::put('/profile/update', [KarProfileController::class, 'update'])->name('profile.update');
         Route::get('/profile/detail', [KarProfileController::class, 'detail'])->name('profile.detail');
-
-        //Route::resource('presensi', KarPresensiController::class);
-
 
 
         Route::get('/presensi', [KarPresensiController::class, 'index'])->name('presensi.index');
 
         Route::post('/presensi', [KarPresensiController::class, 'store'])->name('presensi.store');
 
-        Route::get('/presensi/photo/{id}', [KarPresensiController::class, 'photo'])->name('presensi.photo'); // <-- Rute yang hilang/salah nama
+        Route::get('/presensi/photo/{id}', [KarPresensiController::class, 'photo'])->name('presensi.photo');
 
-        Route::get('/report', [KarReportController::class, 'index'])->name('report.index');
-        Route::get('/report/show', [KarReportController::class, 'show'])->name('report.show');
+        Route::resource('report', KarDailyReportController::class)->except(['create', 'show']);
 
     });
 

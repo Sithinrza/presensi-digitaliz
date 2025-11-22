@@ -36,7 +36,8 @@ class JadwalSeeder extends Seeder
             ['id_jadwal_kerja' => 1, 'hari' => 'Jumat', 'jam_masuk' => '08:30:00', 'jam_pulang' => '16:30:00', 'hari_kerja' => 1],
 
             // Sabtu dan Minggu (Hari Libur, hari_kerja = 0)
-            ['id_jadwal_kerja' => 1, 'hari' => 'Sabtu', 'jam_masuk' => null, 'jam_pulang' => null, 'hari_kerja' => 0],
+            //['id_jadwal_kerja' => 1, 'hari' => 'Sabtu', 'jam_masuk' => null, 'jam_pulang' => null, 'hari_kerja' => 0],
+            ['id_jadwal_kerja' => 1, 'hari' => 'Sabtu', 'jam_masuk' => '08:30:00', 'jam_pulang' => '13:30:00', 'hari_kerja' => 1],
 
         ];
 

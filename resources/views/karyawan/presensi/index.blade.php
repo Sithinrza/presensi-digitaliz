@@ -288,9 +288,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- VARIABEL GEOFENCE ---
-            const OFFICE_LAT = -3.2289087;
+           // const OFFICE_LAT = -3.2289087 GIBS;
+            const OFFICE_LAT = -3.3286312;
            // const OFFICE_LAT = -3.2759928;
-           const OFFICE_LONG = 114.5962882;
+           // const OFFICE_LONG = 114.5962882; GIBS
+           const OFFICE_LONG = 114.6075395;
            // const OFFICE_LONG = 114.5969432;
             const MAX_DISTANCE_M = 500;
 
