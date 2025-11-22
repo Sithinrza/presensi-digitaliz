@@ -82,9 +82,21 @@ class Karyawan extends Model
         // foreign key di tabel presensi_karyawans adalah 'karyawan_id'
         return $this->hasMany(\App\Models\PresensiKaryawan::class, 'karyawan_id');
     }
-    public function statusPresensi()
+    // public function statusPresensi()
+    // {
+    //     return $this->belongsTo(StatusPresensi::class);
+    // }
+
+    public function scopeIsKaryawan($query)
     {
-        return $this->belongsTo(StatusPresensi::class);
+        
+
+        // Contoh 2: Jika Karyawan yang 'presensi' memiliki status karyawan tertentu (misal: 'Aktif')
+        return $query->where('status_karyawan', 'Aktif');
+
+        // Untuk memastikan Admin tidak terhitung, kita perlu memfilternya di Controller.
+        // Biarkan scope ini untuk Karyawan Aktif yang seharusnya presensi.
+        return $query;
     }
 
     public function jadwalKerja()

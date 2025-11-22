@@ -49,7 +49,7 @@ class PresensiKaryawan extends Model
      */
     public function status(): BelongsTo
     {
-        return $this->belongsTo(StatusPresensi::class, 'status_id', 'id');
+        return $this->belongsTo(StatusPresensi::class, 'status_presensi_id', 'id');
     }
 
     /**

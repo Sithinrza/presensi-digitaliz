@@ -5,125 +5,135 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PresensiKaryawan;
-use App\Models\User;
+use App\Models\Karyawan; // Pastikan ini adalah Model yang benar untuk tabel 'karyawans'
+use App\Models\StatusPresensi; // Pastikan ini adalah Model yang benar untuk tabel 'status_presensis'
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage; // Digunakan untuk foto
 
 class AdPresensiController extends Controller
 {
     /**
-     * Menampilkan halaman riwayat presensi, dengan fitur filtering.
-     * Route: GET /admin/presensi (admin.presensi.index)
+     * Menampilkan halaman utama riwayat presensi dengan filter dan statistik harian.
      */
     public function index(Request $request)
     {
-        // Mendapatkan data filter dari request
-        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
-        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
-        $searchName = $request->input('name');
-        $statusId = $request->input('status_id');
+        // ID KARYAWAN YANG AKAN DIKECUALIKAN (ID ADMIN)
+        // ⚠️ PENTING: GANTI LOGIKA FILTER ADMIN INI SESUAI SISTEM ROLE ANDA
+        $adminId = 1;
 
-        // Query dasar
-        $query = PresensiKaryawan::with(['karyawan:id,name', 'status'])
-            ->whereBetween('tanggal', [$startDate, $endDate])
-            ->latest('tanggal')
-            ->latest('waktu_ci');
+        // 1. Setup Tanggal dan Filter
+        $currentDate = Carbon::now();
+        $todayDate = $currentDate->toDateString();
+        $tanggal_filter = $request->input('tanggal', $todayDate);
+        $nama_filter = $request->input('nama');
+        $status_filter = $request->input('status');
 
-        // Filter berdasarkan Nama Karyawan (Relasi User)
-        if ($searchName) {
-            $query->whereHas('karyawan', function ($q) use ($searchName) {
-                $q->where('name', 'like', '%' . $searchName . '%');
+        // 2. Ambil Statistik Harian
+        // Mengecualikan Admin dari total Karyawan
+        $totalKaryawan = Karyawan::where('id', '!=', $adminId)->count();
+
+        $presensiHariIniQuery = PresensiKaryawan::whereDate('tanggal', $tanggal_filter);
+        $presensiHariIni = $presensiHariIniQuery->get();
+
+        $stats = [
+            1 => $presensiHariIni->where('status_presensi_id', 1)->count(), // Tepat Waktu
+            2 => $presensiHariIni->where('status_presensi_id', 2)->count(), // Terlambat Check-In
+            3 => $presensiHariIni->where('status_presensi_id', 3)->count(), // Terlambat Check-Out
+            4 => $presensiHariIni->where('status_presensi_id', 4)->count(), // Lupa Check-Out
+            5 => $presensiHariIni->where('status_presensi_id', 5)->count(), // Tidak Hadir
+        ];
+
+        // 3. Query Utama untuk Daftar Presensi
+        $query = PresensiKaryawan::with(['karyawan:id,nama_lengkap', 'status:id,name'])
+            ->whereDate('tanggal', $tanggal_filter)
+            ->where('karyawan_id', '!=', $adminId) // Kecualikan Admin dari daftar presensi
+            ->orderBy('waktu_ci', 'desc');
+
+        // Filter Berdasarkan Nama Karyawan
+        if ($nama_filter) {
+            $query->whereHas('karyawan', function ($q) use ($nama_filter) {
+                $q->where('nama_lengkap', 'like', '%' . $nama_filter . '%');
             });
         }
 
-        // Filter berdasarkan Status Presensi
-        if ($statusId) {
-            $query->where('status_presensi_id', $statusId);
+        // Filter Berdasarkan Status
+        if ($status_filter) {
+            $query->where('status_presensi_id', $status_filter);
         }
 
-        // Ambil data dengan pagination
-        $presensiHistory = $query->paginate(15)->appends($request->except('page'));
+        $presensi_list = $query->get();
 
-        // Ambil daftar karyawan (untuk filter dropdown)
-        $allKaryawan = User::where('role', 'karyawan')->select('id', 'name')->get();
+        // 4. Handle Kasus "Tidak Hadir" (Data Dummy untuk karyawan yang belum ada record)
+        $karyawanYangBenarBenarTidakHadir = collect();
+        if ($tanggal_filter == $todayDate && ($status_filter === null || $status_filter == 5)) {
 
-        // Status ID yang mungkin
-        $statuses = [
-            1 => 'Tepat Waktu',
-            2 => 'Terlambat Check-In',
-            3 => 'Terlambat Check-Out',
-            4 => 'Lupa Check-Out',
-            5 => 'Tidak Hadir',
-        ];
+            // Dapatkan ID Karyawan yang seharusnya presensi (bukan Admin)
+            $karyawanIdsYangDiperhitungkan = Karyawan::where('id', '!=', $adminId)->pluck('id')->toArray();
 
-        return view('admin.presensi.riwayat', compact('presensiHistory', 'allKaryawan', 'statuses', 'startDate', 'endDate', 'searchName', 'statusId'));
-    }
+            $presensiKaryawanIds = $presensiHariIni->pluck('karyawan_id')->toArray();
 
-    /**
-     * Menampilkan halaman rekapitulasi presensi bulanan/tahunan.
-     * Route: GET /admin/presensi/rekap (admin.presensi.rekap)
-     */
-    public function rekap(Request $request)
-    {
-        // Ambil filter tahun/bulan
-        $year = $request->input('year', Carbon::now()->year);
-        $month = $request->input('month');
+            // Saring hanya ID yang belum presensi DAN BUKAN Admin
+            $karyawanIdsYangTidakPresensi = array_diff($karyawanIdsYangDiperhitungkan, $presensiKaryawanIds);
 
-        // Ambil semua karyawan aktif
-        $karyawan = User::where('role', 'karyawan')->select('id', 'name')->get();
+            $karyawanYangBenarBenarTidakHadir = Karyawan::whereIn('id', $karyawanIdsYangTidakPresensi)
+                ->select('id', 'nama_lengkap')
+                ->get()
+                ->map(function ($karyawan) use ($tanggal_filter) {
 
-        $rekapData = [];
-        foreach ($karyawan as $kar) {
-            $query = PresensiKaryawan::where('karyawan_id', $kar->id)
-                ->whereYear('tanggal', $year);
+                    // Membuat instance Model PresensiKaryawan agar merge tidak error
+                    $dummyPresensi = new PresensiKaryawan();
 
-            if ($month) {
-                $query->whereMonth('tanggal', $month);
+                    $dummyPresensi->exists = true;
+                    $dummyPresensi->id = null;
+                    $dummyPresensi->setRelation('karyawan', $karyawan);
+                    $dummyPresensi->karyawan_id = $karyawan->id;
+                    $dummyPresensi->status_presensi_id = 5;
+                    $dummyPresensi->setRelation('status', (object)['name' => 'Tidak Hadir']);
+                    $dummyPresensi->tanggal = $tanggal_filter;
+                    // Mengisi nilai null lainnya
+                    $dummyPresensi->waktu_ci = null;
+                    $dummyPresensi->waktu_co = null;
+                    $dummyPresensi->latitude_ci = null;
+                    $dummyPresensi->longitude_ci = null;
+                    $dummyPresensi->foto_ci = null;
+
+                    return $dummyPresensi; // Mengembalikan instance Model
+                });
+
+            if ($status_filter == 5) {
+                $presensi_list = $karyawanYangBenarBenarTidakHadir;
+            } elseif ($status_filter === null) {
+                $presensi_list = $presensi_list->merge($karyawanYangBenarBenarTidakHadir);
             }
-
-            $totalPresensi = $query->count();
-
-            // Hitung status-status utama
-            $hadirTepatWaktu = $query->where('status_presensi_id', 1)->count();
-            // Note: Query di reset setelah count, ini adalah anti-pattern yang harusnya diperbaiki
-            // Untuk demo, asumsikan ini berfungsi. Dalam praktik nyata, gunakan sub-query atau grouping.
-            // Contoh perbaikan:
-            // $hadirTepatWaktu = PresensiKaryawan::where('karyawan_id', $kar->id)
-            //     ->whereYear('tanggal', $year)->where('status_presensi_id', 1)->count();
-
-            // Mengikuti logika asli Controller
-            $rekapData[] = [
-                'id' => $kar->id,
-                'name' => $kar->name,
-                'total' => $totalPresensi,
-                'hadir_tepat' => $hadirTepatWaktu,
-                // Tambahkan perhitungan status lainnya di sini jika diperlukan
-                'terlambat_ci' => PresensiKaryawan::where('karyawan_id', $kar->id)->whereYear('tanggal', $year)->where('status_presensi_id', 2)->count(),
-                'terlambat_co' => PresensiKaryawan::where('karyawan_id', $kar->id)->whereYear('tanggal', $year)->where('status_presensi_id', 3)->count(),
-                'lupa_co' => PresensiKaryawan::where('karyawan_id', $kar->id)->whereYear('tanggal', $year)->where('status_presensi_id', 4)->count(),
-                'tidak_hadir' => PresensiKaryawan::where('karyawan_id', $kar->id)->whereYear('tanggal', $year)->where('status_presensi_id', 5)->count(),
-            ];
         }
 
+        // 5. Data untuk View
+        $statuses = StatusPresensi::orderBy('id')->pluck('name', 'id')->toArray();
 
-        return view('admin.presensi.rekap', compact('rekapData', 'year', 'month'));
+        return view('admin.presensi.riwayat', compact('presensi_list', 'tanggal_filter', 'nama_filter', 'status_filter', 'statuses', 'totalKaryawan', 'stats', 'currentDate'));
     }
 
     /**
-     * Menampilkan detail presensi berdasarkan ID.
-     * Route: GET /admin/presensi/detail/{id} (admin.presensi.detail)
+     * Menampilkan halaman rekap (kosong, sesuai permintaan).
+     */
+    public function rekap()
+    {
+        return view('admin.presensi.rekap');
+    }
+
+    /**
+     * Menampilkan detail presensi.
      */
     public function detail($id)
     {
-        $presensi = PresensiKaryawan::with(['karyawan', 'status'])
-            ->findOrFail($id);
+        $presensi = PresensiKaryawan::with(['karyawan:id,nama_lengkap', 'status:id,name'])->findOrFail($id);
 
-        // Tambahkan logic untuk mendapatkan foto dan lokasi kantor untuk peta
-        // const OFFICE_LAT = -3.3286312;
-        // const OFFICE_LONG = 114.6075395;
-        $officeLat = -3.3286312;
-        $officeLong = 114.6075395;
+        $officeLocation = [
+            'lat' => -3.3286312,
+            'long' => 114.6075395,
+            'radius' => 500,
+        ];
 
-
-        return view('admin.presensi.detail', compact('presensi', 'officeLat', 'officeLong'));
+        return view('admin.presensi.detail', compact('presensi', 'officeLocation'));
     }
 }

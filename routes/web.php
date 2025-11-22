@@ -44,9 +44,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [AdDashController::class, 'index'])->name('dashboard');
         Route::resource('karyawan', KaryawanController::class);
 
+        Route::get('/presensi', [AdPresensiController::class, 'index'])->name('presensi.index');
         Route::get('/presensi/rekap', [AdPresensiController::class, 'rekap'])->name('presensi.rekap');
-        Route::get('/presensi/detail', [AdPresensiController::class, 'detail'])->name('presensi.detail');
-        Route::resource('presensi', AdPresensiController::class);
+        Route::get('/presensi/detail/{id}', [AdPresensiController::class, 'detail'])->name('presensi.detail');
+        //Route::resource('presensi', AdPresensiController::class)->except(['show']);
 
         Route::get('/profile', [AdProfileController::class, 'index'])->name('profile.index');
         Route::put('/profile/update', [AdProfileController::class, 'update'])->name('profile.update');
