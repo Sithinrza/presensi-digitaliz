@@ -89,7 +89,7 @@ class Karyawan extends Model
 
     public function scopeIsKaryawan($query)
     {
-        
+
 
         // Contoh 2: Jika Karyawan yang 'presensi' memiliki status karyawan tertentu (misal: 'Aktif')
         return $query->where('status_karyawan', 'Aktif');
@@ -108,6 +108,12 @@ class Karyawan extends Model
             'id_jadwal_kerja'
         );
     }
+
+    public function jadwalKaryawan()
+{
+    return $this->hasOne(JadwalKaryawan::class, 'id_karyawan', 'id');
+}
+
 
    public function agendas(): BelongsToMany
     {

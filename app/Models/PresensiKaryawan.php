@@ -61,4 +61,9 @@ class PresensiKaryawan extends Model
         // Foreign key di tabel log_harians adalah 'presensi_id'
         return $this->hasMany(LogHarian::class, 'presensi_id', 'id');
     }
+
+     public function jadwalKaryawan()
+    {
+        return $this->belongsTo(JadwalKaryawan::class, 'karyawan_id', 'id_karyawan');
+    }
 }

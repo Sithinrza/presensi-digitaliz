@@ -17,7 +17,7 @@
                 <h2 class="text-xl font-bold">Presensi Karyawan</h2>
             </div>
 
-            {{-- STATISTIK DINAMIS --}}
+            {{-- STATISTIK DINAMIS (STATISTIK TETAP BERDASARKAN status_presensi_id LAMA) --}}
             <div class="mt-6 grid grid-cols-3 gap-3 text-center">
                 {{-- Total Karyawan --}}
                 <div class="bg-white p-2 rounded-xl shadow relative">
@@ -73,11 +73,6 @@
                             {{ \Carbon\Carbon::parse($tanggal_filter)->translatedFormat('l, d F Y') }}
                         </p>
                     </div>
-                    {{-- <a href="{{ route('admin.presensi.rekap') }}">
-                        <button class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700">
-                            Rekap
-                        </button>
-                    </a> --}}
                 </div>
 
                 {{-- FORM FILTER --}}
@@ -133,10 +128,12 @@
                 <div class="space-y-3">
                     @forelse ($presensi_list as $presensi)
                         @php
-                            $statusId = $presensi->status_presensi_id ?? 5;
-                            $statusName = $presensi->status->name ?? 'Tidak Hadir';
-                            // ✅ MENGGUNAKAN NAMA_LENGKAP
+                            // Ambil ID Status Check-In dan Check-Out yang sudah di-mapping di Controller
+                            $statusCiId = $presensi->status_ci_id ?? 5;
+                            $statusCoId = $presensi->status_co_id ?? 5;
+
                             $karyawanName = $presensi->karyawan->nama_lengkap ?? 'N/A';
+                            $isDummy = is_null($presensi->id);
 
                             // Logika Warna Pill
                             $classes = [
@@ -145,12 +142,26 @@
                                 3 => ['text' => 'text-orange-600', 'bg' => 'bg-orange-100'],
                                 4 => ['text' => 'text-purple-600', 'bg' => 'bg-purple-100'],
                                 5 => ['text' => 'text-red-600', 'bg' => 'bg-red-100'],
+                                6 => ['text' => 'text-gray-600', 'bg' => 'bg-gray-200'], // ID 6 untuk "Menunggu CO"
                             ];
-                            $style = $classes[$statusId] ?? $classes[5];
-                            $pill = "<span class='text-xs font-semibold {$style['text']} {$style['bg']} px-2 py-0.5 rounded-full'>{$statusName}</span>";
 
-                            // Cek apakah data ini dari DB atau data dummy "Tidak Hadir"
-                            $isDummy = is_null($presensi->id);
+                            // Tambahkan status baru untuk "Menunggu CO"
+                            $statuses[6] = 'Menunggu CO';
+
+                            // Fungsi untuk membuat Pill Status
+                            $makePill = function ($id, $label) use ($classes, $statuses) {
+                                $style = $classes[$id] ?? $classes[5];
+                                $name = $statuses[$id] ?? 'N/A';
+                                return "<span class='text-xs font-semibold {$style['text']} {$style['bg']} px-2 py-0.5 rounded-full'>{$name} ({$label})</span>";
+                            };
+
+                            // Buat Pill untuk Check-In (CI) dan Check-Out (CO)
+                            $pillCI = $makePill($statusCiId, 'CI');
+
+                            // Gunakan ID 6 untuk "Menunggu CO" jika status CO null
+                            $pillCO = $statusCoId === null ? $makePill(6, 'CO') : $makePill($statusCoId, 'CO');
+
+
                         @endphp
 
                         <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 space-y-3">
@@ -162,7 +173,29 @@
                                     </div>
                                     <div>
                                         <p class="font-bold text-gray-900">{{ $karyawanName }}</p>
-                                        {!! $pill !!}
+
+                                        {{-- 🚀 AREA TAMPILAN DUA STATUS --}}
+                                        <div class="flex flex-wrap gap-1 mt-0.5">
+                                            @if ($isDummy)
+                                                {{-- Jika dummy (Tidak Hadir Hari Ini) --}}
+                                                {!! $makePill(5, 'Harian') !!}
+                                            @else
+                                                {{-- Tampilkan Status Check-In --}}
+                                                @if ($presensi->waktu_ci)
+                                                    {!! $pillCI !!}
+                                                @else
+                                                    {{-- Tampilkan Lupa CI jika tidak ada CI sama sekali --}}
+                                                    {!! $makePill(5, 'CI') !!}
+                                                @endif
+
+                                                {{-- Tampilkan Status Check-Out --}}
+                                                @if ($presensi->waktu_ci)
+                                                    {{-- Hanya tampilkan CO jika sudah Check-In --}}
+                                                    {!! $pillCO !!}
+                                                @endif
+                                            @endif
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -173,7 +206,7 @@
                                         <p class="text-xs text-gray-500">Check-Out</p>
                                     </div>
                                 @elseif ($presensi->waktu_ci)
-                                     <div class="text-right">
+                                    <div class="text-right">
                                         <p class="text-sm font-bold text-gray-800">{{ \Carbon\Carbon::parse($presensi->waktu_ci)->format('H:i') }}</p>
                                         <p class="text-xs text-indigo-500 font-semibold">Check-In</p>
                                     </div>

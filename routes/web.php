@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\AdAgendaController;
 use App\Http\Controllers\Admin\AdDailyReportController;
 use App\Http\Controllers\Admin\AdDashController;
+use App\Http\Controllers\Admin\AdJadwalController;
+use App\Http\Controllers\Admin\AdJadwalPenetapanController;
 use App\Http\Controllers\Admin\AdLogHarianController;
 use App\Http\Controllers\Admin\AdPresensiController;
 use App\Http\Controllers\Admin\AdProfileController;
@@ -58,6 +60,11 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('agenda', AdAgendaController::class);
 
         Route::get('/report', [AdDailyReportController::class, 'index'])->name('report.index');
+
+        Route::resource('jadwal', AdJadwalController::class);
+        Route::resource('penetapan', AdJadwalPenetapanController::class);
+       // Route::put('/penetapan', [AdJadwalPenetapanController::class, 'update'])->name('jadwal.penetapan.edit');
+     //   Route::get('admin/penetapan', [AdJadwalController::class, 'index'])->name('admin.penetapan.index');
 
     });
 
