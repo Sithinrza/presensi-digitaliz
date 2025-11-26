@@ -77,27 +77,46 @@ class Karyawan extends Model
         return $this->belongsTo(PendidikanTerakhir::class);
     }
 
-   public function presensiKaryawans()
+    public function presensiKaryawans()
     {
         // foreign key di tabel presensi_karyawans adalah 'karyawan_id'
         return $this->hasMany(\App\Models\PresensiKaryawan::class, 'karyawan_id');
     }
-    public function statusPresensi()
+
+    // 🚨 PERBAIKAN: Tambahkan relasi presensiHariIni() yang dibutuhkan Controller Admin
+    public function presensiHariIni()
     {
-        return $this->belongsTo(StatusPresensi::class);
+        // Digunakan untuk eager loading data presensi spesifik (sesuai tanggal)
+        return $this->hasOne(\App\Models\PresensiKaryawan::class, 'karyawan_id', 'id');
     }
 
-    public function jadwalKerja()
+
+    public function scopeIsKaryawan($query)
     {
-        return $this->belongsToMany(
-            JadwalKerja::class,
-            'jadwal_pegawai',
-            'id_karyawan',
-            'id_jadwal_kerja'
-        );
+        return $query->where('status_karyawan', 'Aktif');
     }
 
-   public function agendas(): BelongsToMany
+    /* * PERHATIAN: Relasi ini (jadwalKerja) dinonaktifkan sementara karena
+     * logika Controller menggunakan jadwalKaryawan() untuk mengambil jadwal hari ini.
+    */
+    // public function jadwalKerja()
+    // {
+    //     return $this->belongsToMany(
+    //         JadwalKerja::class,
+    //         'jadwal_pegawai',
+    //         'id_karyawan',
+    //         'id_jadwal_kerja'
+    //     );
+    // }
+
+    // Relasi ke Model perantara JadwalKaryawan
+    public function jadwalKaryawan()
+    {
+        return $this->hasOne(JadwalKaryawan::class, 'id_karyawan', 'id');
+    }
+
+
+    public function agendas(): BelongsToMany
     {
         return $this->belongsToMany(Agenda::class, 'agenda_karyawan', 'karyawan_id', 'agenda_id');
     }
