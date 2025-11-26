@@ -3,7 +3,7 @@
         Jadwal
     </x-slot:title>
 
-    <div class="relative min-h-screen pb-24 bg-gray-100"> 
+    <div class="relative min-h-screen pb-24 bg-gray-100">
         <div class="bg-indigo-950 p-4 pt-8 pb-24 -mt-1 rounded-t-[3rem] relative z-10"></div>
         <main class="p-4 -mt-20 relative z-10 space-y-6">
             <section class="bg-white p-5 rounded-2xl shadow-lg flex justify-center">
@@ -33,8 +33,8 @@
                                     </div>
 
                                     {{-- KONTEN UTAMA --}}
-                                    <div class="flex-grow min-w-0"> 
-                                        
+                                    <div class="flex-grow min-w-0">
+
                                         {{-- Header: Judul & Waktu --}}
                                         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
                                             <h3 class="font-bold text-gray-800 text-lg leading-tight truncate pr-2">
@@ -116,7 +116,7 @@
                         // Format Waktu
                         let mulai = agenda.waktu_mulai.substring(0, 5);
                         let selesai = agenda.waktu_selesai.substring(0, 5);
-                        
+
                         // Cek Null
                         let lokasi = agenda.lokasi_alamat ? agenda.lokasi_alamat : 'Lokasi belum diset';
                         let ruang = agenda.ruang ? agenda.ruang : 'Ruang Umum';
@@ -140,7 +140,7 @@
                         agendaList.innerHTML += `
                             <div class="bg-white rounded-2xl p-4 mb-4 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 group animate-fade-in">
                                 <div class="flex gap-4 items-start">
-                                    
+
                                     <div class="flex-shrink-0 w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24">
                                             <path fill="currentColor" d="M19 18H9a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h1v5l2-1.5L14 7V2h5a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2m-2 2v2H5a2 2 0 0 1-2-2V6h2v14z" stroke-width="0.5" stroke="currentColor"/>
@@ -148,7 +148,7 @@
                                     </div>
 
                                     <div class="flex-grow min-w-0">
-                                        
+
                                         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
                                             <h3 class="font-bold text-gray-800 text-lg leading-tight truncate pr-2">
                                                 ${agenda.judul}

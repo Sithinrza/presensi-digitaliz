@@ -79,6 +79,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/log-harian', [LogHarianController::class, 'store'])->name('log.store');
 
         Route::get('/agenda', [KarAgendaController::class, 'index'])->name('agenda.index');
+        Route::get('/agenda/by-date', [KarAgendaController::class, 'getAgendaByDate'])->name('karyawan.agenda.date');
 
         Route::get('/profile', [KarProfileController::class, 'index'])->name('profile.index');
         Route::put('/profile/update', [KarProfileController::class, 'update'])->name('profile.update');
