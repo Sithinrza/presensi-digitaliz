@@ -5,17 +5,53 @@
 
     <div class="relative min-h-screen pb-24">
         <main class="p-4 space-y-6">
-            <section class="bg-indigo-950 p-6 rounded-2xl shadow-lg text-center ">
-                <p class="mb-4 text-white">Anda belum presensi hari ini</p>
-                <button class="w-full bg-white text-indigo-950 font-semibold py-3 px-4 rounded-xl hover:bg-gray-200 transition">
-                    Presensi
+            {{-- 🚨 AREA STATUS PRESENSI UTAMA (Diperbarui) --}}
+            <section class="bg-indigo-950 p-6 rounded-2xl shadow-lg text-center">
+                @php
+                    // Ambil status dari presensiHariIni (asumsi Controller mengirimnya)
+                    $isCiDone = $presensiHariIni && $presensiHariIni->waktu_ci !== null;
+                    $isCoDone = $presensiHariIni && $presensiHariIni->waktu_co !== null;
+                    $isToday = \Carbon\Carbon::now()->toDateString() == \Carbon\Carbon::parse($todayDate)->toDateString();
+
+                    $statusMessage = 'Status Presensi';
+                    $buttonText = 'Presensi';
+                    $buttonDisabled = false;
+
+                    if (!$isWorkingDay) {
+                        $statusMessage = 'Hari ini adalah HARI LIBUR / Tidak ada jadwal.';
+                        $buttonText = 'Libur';
+                        $buttonDisabled = true;
+                    } elseif ($isCoDone) {
+                        $statusMessage = '✅ Anda sudah Check-In dan Check-Out hari ini.';
+                        $buttonText = 'Selesai';
+                        $buttonDisabled = true;
+                    } elseif ($isCiDone) {
+                        $statusMessage = '⏳ Anda sudah Check-In. Silakan lakukan Check-Out.';
+                        $buttonText = 'Check-Out';
+                    } else {
+                        // Belum CI, hari kerja
+                        $statusMessage = 'Anda belum Presensi hari ini.';
+                        $buttonText = 'Check-In';
+                    }
+                @endphp
+
+                <p class="mb-4 text-white font-medium text-sm">{{ $statusMessage }}</p>
+
+                <button
+                    onclick="window.location.href='{{ route('karyawan.presensi.index') }}'"
+                    class="w-full bg-white text-indigo-950 font-semibold py-3 px-4 rounded-xl transition
+                    {{ $buttonDisabled ? 'bg-gray-300 text-gray-700 cursor-not-allowed' : 'hover:bg-gray-200' }}"
+                    {{ $buttonDisabled ? 'disabled' : '' }}
+                >
+                    {{ $buttonText }}
                 </button>
             </section>
+            {{-- AKHIR AREA STATUS PRESENSI UTAMA --}}
 
             <section class="bg-white p-5 rounded-2xl shadow-lg">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-800">Agenda Hari Ini</h2>
-                    
+
                     {{-- Tombol Lihat Semua mengarah ke halaman agenda lengkap --}}
                     <a href="{{ route('karyawan.agenda.index') }}" class="flex items-center space-x-1 text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -33,7 +69,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-950 shrink-0" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
                             </svg>
-                            
+
                             {{-- Judul Agenda (Dinamis) --}}
                             <p class="text-sm font-medium text-gray-700 line-clamp-1">
                                 {{ $agenda->judul }}
@@ -48,7 +84,7 @@
                 </div>
             </section>
 
-            <section class="bg-white p-5 rounded-2xl shadow-lg flex items-center justify-between">
+             <section class="bg-white p-5 rounded-2xl shadow-lg flex items-center justify-between">
                 <div>
                     <h2 class="text-lg font-bold text-gray-800">Daily Report</h2>
                     <p class="text-xs text-gray-500">Rangkum aktifitas hari ini</p>
@@ -60,53 +96,40 @@
                 </a>
             </section>
 
-             <section class="bg-white p-5 rounded-2xl shadow-lg">
-                 <div class="flex items-center justify-between mb-4">
+              <section class="bg-white p-5 rounded-2xl shadow-lg">
+                  <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-gray-800">Log Aktivitas Hari Ini</h2>
-                    <button class="flex items-center space-x-1 text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                         </svg>
+                    {{-- Tombol Detail mengarah ke halaman Log Aktivitas lengkap --}}
+                    <a href="{{ route('karyawan.log.index') }}" class="flex items-center space-x-1 text-xs text-gray-500 font-medium bg-gray-100 px-2 py-1 rounded-md hover:bg-gray-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
                         <span>Detail</span>
-                    </button>
+                    </a>
                 </div>
-                 <div class="space-y-4">
-                     <div class="flex items-center space-x-3">
-                         <div class="bg-gray-100 p-2 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                         </div>
-                         <div>
-                            <p class="text-sm font-medium text-gray-800">Membuat Halaman Login da...</p>
-                            <p class="text-xs text-gray-500">26 menit yang lalu</p>
-                         </div>
-                     </div>
-                     <div class="flex items-center space-x-3">
-                         <div class="bg-gray-100 p-2 rounded-full">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                         </div>
-                         <div>
-                            <p class="text-sm font-medium text-gray-800">Rapat dengan TIM</p>
-                            <p class="text-xs text-gray-500">1 jam yang lalu</p>
-                         </div>
-                     </div>
-                     <div class="flex items-center space-x-3">
-                         <div class="bg-gray-100 p-2 rounded-full">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                         </div>
-                         <div>
-                            <p class="text-sm font-medium text-gray-800">Mentoring anak magang</p>
-                            <p class="text-xs text-gray-500">2 jam yang lalu</p> {{-- Asumsi waktu --}}
-                         </div>
-                     </div>
-                 </div>
-             </section>
+                   <div class="space-y-4">
+                        @forelse($logAktivitasHariIni as $log)
+                          <div class="flex items-center space-x-3">
+                              <div class="bg-gray-100 p-2 rounded-full">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                              </div>
+                              <div>
+                                  {{-- ASUMSI: Kolom aktivitas bernama 'catatan_log' --}}
+                                  <p class="text-sm font-medium text-gray-800 line-clamp-1">{{ $log->catatan_log ?? 'Aktivitas Tercatat' }}</p>
+                                  <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($log->created_at)->diffForHumans() }}</p>
+                              </div>
+                          </div>
+                        @empty
+                          <div class="text-center p-4 text-gray-400 italic text-sm border border-dashed border-gray-200 rounded-lg">
+                              Belum ada log aktivitas hari ini.
+                          </div>
+                        @endforelse
+                   </div>
+               </section>
 
         </main>
     </div>
+
 </x-karyawan-layout>

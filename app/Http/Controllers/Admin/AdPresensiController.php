@@ -23,69 +23,50 @@ class AdPresensiController extends Controller
 
         // 1. Setup Tanggal dan Filter
         $currentDate = Carbon::now();
-        // 🚨 PERBAIKAN: Ubah $todayDate menjadi objek Carbon di awal, lalu ubah ke string hanya saat butuh
         $todayCarbon = $currentDate->copy()->startOfDay();
-        $todayDate = $todayCarbon->toDateString();
+        $todayDate = $todayCarbon->toDateString(); // String format YYYY-MM-DD
 
         $tanggal_filter = $request->input('tanggal', $todayDate);
         $nama_filter = $request->input('nama');
         $status_filter = $request->input('status');
 
-        // 🚨 PERBAIKAN: Konversi $tanggal_filter menjadi objek Carbon untuk perbandingan yang andal
         $filterCarbon = Carbon::parse($tanggal_filter)->startOfDay();
 
+        // 2. Ambil Data Karyawan Penuh (Inisialisasi)
+        $karyawanIdsYangDiperhitungkan = Karyawan::where('id', '!=', $adminId)->pluck('id')->toArray();
+        $totalKaryawan = count($karyawanIdsYangDiperhitungkan);
 
-        // 2. Ambil Statistik Harian
-        $totalKaryawan = Karyawan::where('id', '!=', $adminId)->count();
-        $presensiHariIniQuery = PresensiKaryawan::whereDate('tanggal', $tanggal_filter);
-        $presensiHariIni = $presensiHariIniQuery->get();
-
-        $stats = [
-            1 => $presensiHariIni->where('status_presensi_id', 1)->count(), // Tepat Waktu
-            2 => $presensiHariIni->where('status_presensi_id', 2)->count(), // Terlambat Check-In
-            3 => $presensiHariIni->where('status_presensi_id', 3)->count(), // Terlambat Check-Out
-            4 => $presensiHariIni->where('status_presensi_id', 4)->count(), // Lupa Check-Out
-            5 => $presensiHariIni->where('status_presensi_id', 5)->count(), // Tidak Hadir
-        ];
-
-        // 3. Query Utama untuk Daftar Presensi
-        // PENTING: Eager Load relasi jadwal untuk menghindari N+1 problem dan mendapatkan jam kerja
-        $query = PresensiKaryawan::with([
-            'karyawan:id,nama_lengkap',
-            'status:id,name',
+        // 3. Query Utama: Mulai dari Karyawan, Left Join Presensi
+        $presensi_list_query = Karyawan::with([
+            'presensiHariIni' => function ($query) use ($tanggal_filter) {
+                $query->whereDate('tanggal', $tanggal_filter);
+            },
             'jadwalKaryawan.jadwalKerja.detailJadwals'
         ])
-            ->whereDate('tanggal', $tanggal_filter)
-            ->where('karyawan_id', '!=', $adminId)
-            ->orderBy('waktu_ci', 'desc');
+            ->where('id', '!=', $adminId);
 
-        // Filter Berdasarkan Nama Karyawan
+        // Filter Berdasarkan Nama Karyawan (diterapkan di query Karyawan)
         if ($nama_filter) {
-            $query->whereHas('karyawan', function ($q) use ($nama_filter) {
-                $q->where('nama_lengkap', 'like', '%' . $nama_filter . '%');
-            });
+            $presensi_list_query->where('nama_lengkap', 'like', '%' . $nama_filter . '%');
         }
 
-        // Filter Berdasarkan Status (Terapkan filter ke status RINGKASAN yang sudah ada di DB)
-        if ($status_filter) {
-            $query->where('status_presensi_id', $status_filter);
-        }
+        $presensi_list_existing = $presensi_list_query->get();
 
-        $presensi_list = $query->get();
 
-        // ⚠️ START PERBAIKAN: Menambahkan Status CI dan CO secara Terpisah DENGAN PENGECKAN JAM KERJA
-        $presensi_list = $presensi_list->map(function ($presensi) use ($tanggal_filter, $currentDate, $filterCarbon, $todayCarbon) {
+        // ⚠️ START MAPPING STATUS CI/CO YANG AKURAT (Applied to ALL employees)
+        $presensi_list_mapped = $presensi_list_existing->map(function ($karyawan) use ($tanggal_filter, $currentDate, $filterCarbon, $todayCarbon) {
 
-            // 0. Ambil Detail Jadwal Hari Ini
+            $presensi = $karyawan->presensiHariIni ?? new PresensiKaryawan();
+
+            // Logika Jadwal
             $jamMasukSeharusnya = null;
             $jamPulangSeharusnya = null;
             $hariIni = Carbon::parse($tanggal_filter)->translatedFormat('l');
+            $ciToleranceMinutes = 10;
+            $coToleranceMinutes = 60;
 
-            $jadwalKaryawan = $presensi->jadwalKaryawan;
-
-            if ($jadwalKaryawan && $jadwalKaryawan->jadwalKerja) {
-                // Mencari detail jadwal untuk hari ini
-                $detailJadwal = $jadwalKaryawan->jadwalKerja->detailJadwals
+            if ($karyawan->jadwalKaryawan && $karyawan->jadwalKaryawan->jadwalKerja) {
+                $detailJadwal = $karyawan->jadwalKaryawan->jadwalKerja->detailJadwals
                     ->where('hari', $hariIni)
                     ->first();
 
@@ -95,111 +76,133 @@ class AdPresensiController extends Controller
                 }
             }
 
-            // 1. Logika Status Check-In (CI)
+            // --- INI ADALAH NILAI DEFAULT SEMENTARA (NETRAL) ---
+            $presensi->status_ci_id = null;
+            $presensi->status_co_id = null;
+            $presensi->status_presensi_id = null;
+
+            // --- LOGIKA HANYA BERJALAN JIKA ADA WAKTU CI ---
             if ($presensi->waktu_ci) {
 
+                // 1. Logika Status Check-In (CI)
                 if ($jamMasukSeharusnya) {
                     $presensiCiTime = Carbon::parse($presensi->waktu_ci);
                     $jadwalCiTime = Carbon::parse($tanggal_filter . ' ' . $jamMasukSeharusnya);
+                    $ciToleranceTime = $jadwalCiTime->copy()->addMinutes($ciToleranceMinutes);
 
-                    // Jika waktu Check-In LEBIH DARI jam masuk seharusnya
-                    if ($presensiCiTime->greaterThan($jadwalCiTime)) {
-                        $presensi->status_ci_id = 2; // Terlambat Check-In
-                    } else {
-                        $presensi->status_ci_id = 1; // Tepat Waktu
-                    }
+                    $presensi->status_ci_id = $presensiCiTime->greaterThan($ciToleranceTime) ? 2 : 1; // 1 atau 2
                 } else {
-                    // Jika jadwal tidak ditemukan, fallback ke status yang disimpan di DB saat CI
-                    $presensi->status_ci_id = in_array($presensi->status_presensi_id, [2, 3]) ? 2 : 1;
+                    $presensi->status_ci_id = in_array($presensi->status_presensi_id, [2, 3, 4]) ? 2 : 1;
                 }
-            } else {
-                $presensi->status_ci_id = 5; // Tidak Hadir / Lupa CI
-            }
 
-            // 2. Logika Status Check-Out (CO)
-            if (is_null($presensi->waktu_co) && $presensi->waktu_ci) {
-                // Kasus Karyawan sudah Check-In tapi belum Check-Out
+                // 2. Logika Status Check-Out (CO)
+                if (is_null($presensi->waktu_co)) {
+                    if ($jamPulangSeharusnya) {
+                        $jamPulangHariIni = Carbon::parse($tanggal_filter . ' ' . $jamPulangSeharusnya);
 
-                if ($jamPulangSeharusnya) {
-                    $jamPulangHariIni = Carbon::parse($tanggal_filter . ' ' . $jamPulangSeharusnya);
-
-                    // 🚨 PERBAIKAN: Gunakan Carbon::lessThan() untuk perbandingan tanggal yang akurat
-                    if ($filterCarbon->lessThan($todayCarbon)) {
-                        // Jika tanggalnya SUDAH LEWAT (Pasti Lupa CO)
-                        $presensi->status_co_id = 4; // Lupa Check-Out
-                    } elseif ($filterCarbon->equalTo($todayCarbon)) {
-                        // Jika tanggalnya HARI INI
-                        if ($currentDate->greaterThan($jamPulangHariIni)) {
-                            // Jika jam sekarang SUDAH MELEWATI jam pulang
-                            $presensi->status_co_id = 4; // Lupa Check-Out
+                        if ($filterCarbon->lessThan($todayCarbon)) {
+                            $presensi->status_co_id = 4; // Lupa CO (Tanggal Lewat)
+                        } elseif ($filterCarbon->equalTo($todayCarbon)) {
+                            $hardCutoff = Carbon::parse($tanggal_filter . ' ' . $jamPulangSeharusnya)->addMinutes($coToleranceMinutes);
+                            if ($currentDate->greaterThan($hardCutoff)) { // Jika lewat jam pulang + toleransi
+                                $presensi->status_co_id = 4; // Lupa CO
+                            }
                         } else {
-                            // Jika jam sekarang BELUM MELEWATI jam pulang
-                            $presensi->status_co_id = null; // Menunggu CO
+                            $presensi->status_co_id = null; // Tanggal di masa depan
                         }
                     } else {
-                         $presensi->status_co_id = null; // Belum final (Tanggal di masa depan)
+                        $presensi->status_co_id = null;
                     }
-                } else {
-                    // Jika jadwal tidak ditemukan, dan belum CO, set ke null (Menunggu CO)
-                     $presensi->status_co_id = null;
-                }
-            } elseif ($presensi->waktu_co) {
-                // Kasus Karyawan sudah Check-Out (Cek keterlambatan CO)
-                $presensiCoTime = Carbon::parse($presensi->waktu_co);
-                $jadwalCoTime = Carbon::parse($tanggal_filter . ' ' . $jamPulangSeharusnya);
+                } elseif ($presensi->waktu_co) {
+                    $presensiCoTime = Carbon::parse($presensi->waktu_co);
+                    $jadwalCoTime = Carbon::parse($tanggal_filter . ' ' . $jamPulangSeharusnya);
+                    $toleranceCoTime = $jadwalCoTime->copy()->addMinutes($coToleranceMinutes);
 
-                if ($jamPulangSeharusnya && $presensiCoTime->greaterThan($jadwalCoTime)) {
-                     $presensi->status_co_id = 3; // Terlambat Check-Out
-                } else {
-                    $presensi->status_co_id = 1; // Tepat Waktu
+                    $presensi->status_co_id = ($jamPulangSeharusnya && $presensiCoTime->greaterThan($toleranceCoTime)) ? 3 : 1; // 3 atau 1
                 }
+
+                // 3. Update status_presensi_id (Status Ringkasan Akhir)
+
+                if ($presensi->status_co_id == 4) {
+                     $statusRingkasan = 4; // Lupa CO (Prioritas Tertinggi)
+                } elseif ($presensi->status_co_id == 3) {
+                     $statusRingkasan = 3; // Terlambat CO
+                } elseif ($presensi->status_ci_id == 2) {
+                     $statusRingkasan = 2; // Terlambat CI
+                } elseif ($presensi->status_ci_id == 1 && $presensi->status_co_id === 1) {
+                     $statusRingkasan = 1; // Tepat Waktu (Hanya jika CI=1 DAN CO=1)
+                } else {
+                     $statusRingkasan = $presensi->status_ci_id; // Default, misal Tepat Waktu jika CI=1
+                }
+
+                $presensi->status_presensi_id = $statusRingkasan;
             } else {
-                 $presensi->status_co_id = 5; // Tidak Hadir/N/A (Jika tidak CI dan tidak CO)
+                // 🚨 LOGIKA TIDAK ADA CI
+
+                $isPassedCutoff = false;
+                if ($jamPulangSeharusnya) {
+                    $jamPulangHariIni = Carbon::parse($tanggal_filter . ' ' . $jamPulangSeharusnya);
+                    $toleranceCoTime = $jamPulangHariIni->copy()->addMinutes($coToleranceMinutes);
+
+                    // Pengecekan HARI INI dan SUDAH LEWAT batas CO
+                    if ($filterCarbon->equalTo($todayCarbon) && $currentDate->greaterThan($toleranceCoTime)) {
+                        $isPassedCutoff = true;
+                    }
+                }
+
+                if ($filterCarbon->lessThan($todayCarbon) || $isPassedCutoff) {
+                    // Jika tanggal sudah lewat ATAU sudah lewat batas waktu CO hari ini -> FINAL TIDAK HADIR
+                    $presensi->status_ci_id = 5;
+                    $presensi->status_co_id = 5;
+                    $presensi->status_presensi_id = 5;
+                } else {
+                    // Jika tanggal HARI INI dan BELUM melewati batas CO -> BELUM PRESENSI (NULL)
+                    $presensi->status_ci_id = null;
+                    $presensi->status_co_id = null;
+                    $presensi->status_presensi_id = null;
+                }
             }
 
-            return $presensi;
+            // Pasang kembali objek presensi yang sudah di-mapping ke objek karyawan
+            $karyawan->presensi_detail = $presensi;
+
+            return $karyawan;
         });
-        // ⚠️ END PERBAIKAN
+        // ⚠️ END MAPPING
 
-        // 4. Handle Kasus "Tidak Hadir" (Data Dummy)
-        $karyawanYangBenarBenarTidakHadir = collect();
-        if ($tanggal_filter == $todayDate && ($status_filter === null || $status_filter == 5)) {
-            $karyawanIdsYangDiperhitungkan = Karyawan::where('id', '!=', $adminId)->pluck('id')->toArray();
-            $presensiKaryawanIds = $presensiHariIni->pluck('karyawan_id')->toArray();
-            $karyawanIdsYangTidakPresensi = array_diff($karyawanIdsYangDiperhitungkan, $presensiKaryawanIds);
+        // 4. Menerapkan Filter Status dan Menghitung Statistik
+        $presensi_list = $presensi_list_mapped; // Daftar karyawan lengkap
 
-            $karyawanYangBenarBenarTidakHadir = Karyawan::whereIn('id', $karyawanIdsYangTidakPresensi)
-                ->select('id', 'nama_lengkap')
-                ->get()
-                ->map(function ($karyawan) use ($tanggal_filter) {
-                    $dummyPresensi = new PresensiKaryawan();
-                    $dummyPresensi->exists = true;
-                    $dummyPresensi->id = null;
-                    $dummyPresensi->setRelation('karyawan', $karyawan);
-                    $dummyPresensi->karyawan_id = $karyawan->id;
-                    $dummyPresensi->status_presensi_id = 5;
-                    $dummyPresensi->setRelation('status', (object)['name' => 'Tidak Hadir']);
-                    $dummyPresensi->tanggal = $tanggal_filter;
-                    // --- Status CI/CO untuk Dummy ---
-                    $dummyPresensi->status_ci_id = 5;
-                    $dummyPresensi->status_co_id = 5;
-                    // ... Mengisi nilai null lainnya ...
-                    $dummyPresensi->waktu_ci = null;
-                    $dummyPresensi->waktu_co = null;
-                    $dummyPresensi->latitude_ci = null;
-                    $dummyPresensi->longitude_ci = null;
-                    $dummyPresensi->foto_ci = null;
+        // Filter status hanya diterapkan di akhir
+        if ($status_filter) {
+            $presensi_list = $presensi_list->filter(function($karyawan) use ($status_filter) {
+                // Khusus filter Terlambat CI, cari status_ci_id = 2
+                if ($status_filter == 2) {
+                    return $karyawan->presensi_detail->status_ci_id == 2;
+                }
+                // Khusus filter Tidak Hadir, cari status_presensi_id = 5
+                if ($status_filter == 5) {
+                    return $karyawan->presensi_detail->status_presensi_id == 5;
+                }
 
-                    return $dummyPresensi;
-                });
-
-            if ($status_filter == 5) {
-                $presensi_list = $karyawanYangBenarBenarTidakHadir;
-            } elseif ($status_filter === null) {
-                // Gabungkan data presensi (yang sudah di-map) dengan data dummy
-                $presensi_list = $presensi_list->merge($karyawanYangBenarBenarTidakHadir);
-            }
+                // Untuk status lain (1, 3, 4, 6), gunakan status ringkasan
+                return $karyawan->presensi_detail->status_presensi_id == $status_filter;
+            });
         }
+
+        // 🚨 FINAL PERBAIKAN: Filter Semua harus menampilkan SEMUA KARYAWAN (termasuk yang NULL statusnya)
+
+        // 🚨 HITUNG STATISTIK DARI $presensi_list_mapped LENGKAP
+        // Kita hitung ID 5 (Tidak Hadir) dan ID 99 (Belum Ada Aktivitas) sebagai status final
+        $stats = [
+            1 => $presensi_list_mapped->where('presensi_detail.status_presensi_id', 1)->count(),
+            2 => $presensi_list_mapped->where('presensi_detail.status_ci_id', 2)->count(), // CI Murni
+            3 => $presensi_list_mapped->where('presensi_detail.status_presensi_id', 3)->count(),
+            4 => $presensi_list_mapped->where('presensi_detail.status_presensi_id', 4)->count(),
+            // 🚨 PENTING: Hitung ID 5 (TIDAK HADIR FINAL) dan ID NULL (BELUM CI)
+            5 => $presensi_list_mapped->where('presensi_detail.status_presensi_id', 5)->count(),
+        ];
+
 
         // 5. Data untuk View
         $statuses = StatusPresensi::orderBy('id')->pluck('name', 'id')->toArray();

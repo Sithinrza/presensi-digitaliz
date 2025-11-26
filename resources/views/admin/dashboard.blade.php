@@ -7,25 +7,25 @@
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-white p-4 h-20 rounded-xl shadow relative flex items-end">
                     <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white font-bold text-sm border-2 border-indigo-950">
-                        {{ $totalKaryawan }}
+                        {{ $stats['totalKaryawan'] }}
                     </span>
                     <p class="font-semibold text-gray-800">Total Karyawan</p>
                 </div>
                 <div class="bg-white p-4 h-20 rounded-xl shadow relative flex items-end">
                     <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white font-bold text-sm border-2 border-indigo-950">
-                        33
+                        {{ $stats['hadirHariIni'] }}
                     </span>
                     <p class="font-semibold text-gray-800">Hadir Hari ini</p>
                 </div>
                 <div class="bg-white p-4 h-20 rounded-xl shadow relative flex items-end">
                     <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-yellow-500 text-white font-bold text-sm border-2 border-indigo-950">
-                        4
+                        {{ $stats['terlambat'] }}
                     </span>
                     <p class="font-semibold text-gray-800">Terlambat</p>
                 </div>
                 <div class="bg-white p-4 h-20 rounded-xl shadow relative flex items-end">
                     <span class="absolute -top-3 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white font-bold text-sm border-2 border-indigo-950">
-                        3
+                        {{ $stats['reportBaru'] }}
                     </span>
                     <p class="font-semibold text-gray-800">Laporan Report Baru</p>
                 </div>
@@ -44,7 +44,7 @@
                         <span class="text-xs font-semibold text-gray-700 mt-1">Agenda</span>
                     </a>
                     <a href="{{ route('admin.presensi.index') }}" class="flex flex-col items-center justify-center p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition aspect-square">
-                         <svg class="w-8 h-8 mb-1 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                           <svg class="w-8 h-8 mb-1 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0a9 9 0 0 1 18 0Z"/>
                         </svg>
                         <span class="text-xs font-semibold text-gray-700 mt-1">Riwayat Presensi</span>

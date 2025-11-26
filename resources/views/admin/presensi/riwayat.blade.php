@@ -17,7 +17,7 @@
                 <h2 class="text-xl font-bold">Presensi Karyawan</h2>
             </div>
 
-            {{-- STATISTIK DINAMIS (STATISTIK TETAP BERDASARKAN status_presensi_id LAMA) --}}
+            {{-- STATISTIK DINAMIS --}}
             <div class="mt-6 grid grid-cols-3 gap-3 text-center">
                 {{-- Total Karyawan --}}
                 <div class="bg-white p-2 rounded-xl shadow relative">
@@ -93,6 +93,7 @@
                         <button type="submit" name="status" value="" class="px-3 py-1 text-xs {{ $status_filter == null ? 'bg-indigo-600 text-white' : 'text-gray-700 bg-gray-100' }} rounded-full whitespace-nowrap hover:bg-gray-200">Semua</button>
 
                         @foreach ($statuses as $id => $name)
+                            @if ($id < 5) {{-- Tampilkan Tepat Waktu, Terlambat CI, Terlambat CO, Lupa CO --}}
                             @php
                                 $class = $statusClasses[$id] ?? $statusClasses[null];
                                 $isActive = $status_filter == $id;
@@ -102,7 +103,19 @@
                                 {{ $isActive ? 'bg-indigo-600 text-white' : $class['text'] . ' ' . $class['bg'] . ' hover:' . $class['bg'] . '/80' }}">
                                 {{ $name }}
                             </button>
+                            @endif
                         @endforeach
+                         {{-- Tombol Tidak Hadir (ID 5) --}}
+                        @php
+                            $class = $statusClasses[5];
+                            $isActive = $status_filter == 5;
+                        @endphp
+                        <button type="submit" name="status" value="5"
+                            class="px-3 py-1 text-xs whitespace-nowrap rounded-full font-semibold
+                            {{ $isActive ? 'bg-indigo-600 text-white' : $class['text'] . ' ' . $class['bg'] . ' hover:' . $class['bg'] . '/80' }}">
+                            Tidak Hadir
+                        </button>
+
                     </div>
 
                     {{-- Input Pencarian Nama & Tanggal --}}
@@ -126,14 +139,20 @@
 
                 {{-- DAFTAR PRESENSI --}}
                 <div class="space-y-3">
-                    @forelse ($presensi_list as $presensi)
+                    {{-- Kita me-loop objek KARYAWAN sekarang, bukan objek presensi --}}
+                    @forelse ($presensi_list as $karyawan)
                         @php
-                            // Ambil ID Status Check-In dan Check-Out yang sudah di-mapping di Controller
-                            $statusCiId = $presensi->status_ci_id ?? 5;
-                            $statusCoId = $presensi->status_co_id ?? 5;
+                            $presensi = $karyawan->presensi_detail; // Data presensi yang sudah di-map (atau default status NULL/5)
 
-                            $karyawanName = $presensi->karyawan->nama_lengkap ?? 'N/A';
-                            $isDummy = is_null($presensi->id);
+                            // Gunakan variabel dari objek presensi_detail
+                            $statusCiId = $presensi->status_ci_id;
+                            $statusCoId = $presensi->status_co_id;
+                            $karyawanName = $karyawan->nama_lengkap ?? 'N/A';
+                            // Tentukan apakah statusnya netral/kosong (NULL)
+                            $isNetral = is_null($presensi->status_presensi_id);
+                            $waktu_ci = $presensi->waktu_ci ? \Carbon\Carbon::parse($presensi->waktu_ci)->format('H:i') : '--';
+                            $waktu_co = $presensi->waktu_co ? \Carbon\Carbon::parse($presensi->waktu_co)->format('H:i') : '--';
+
 
                             // Logika Warna Pill
                             $classes = [
@@ -142,11 +161,8 @@
                                 3 => ['text' => 'text-orange-600', 'bg' => 'bg-orange-100'],
                                 4 => ['text' => 'text-purple-600', 'bg' => 'bg-purple-100'],
                                 5 => ['text' => 'text-red-600', 'bg' => 'bg-red-100'],
-                                6 => ['text' => 'text-gray-600', 'bg' => 'bg-gray-200'], // ID 6 untuk "Menunggu CO"
+                                6 => ['text' => 'text-gray-600', 'bg' => 'bg-gray-200'],
                             ];
-
-                            // Tambahkan status baru untuk "Menunggu CO"
-                            $statuses[6] = 'Menunggu CO';
 
                             // Fungsi untuk membuat Pill Status
                             $makePill = function ($id, $label) use ($classes, $statuses) {
@@ -155,11 +171,13 @@
                                 return "<span class='text-xs font-semibold {$style['text']} {$style['bg']} px-2 py-0.5 rounded-full'>{$name} ({$label})</span>";
                             };
 
+                            // Tampilan untuk status netral
+                            $pillNetral = "<span class='text-xs font-semibold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full'>Belum Presensi</span>";
+
                             // Buat Pill untuk Check-In (CI) dan Check-Out (CO)
                             $pillCI = $makePill($statusCiId, 'CI');
-
-                            // Gunakan ID 6 untuk "Menunggu CO" jika status CO null
-                            $pillCO = $statusCoId === null ? $makePill(6, 'CO') : $makePill($statusCoId, 'CO');
+                            // 🚨 Perbaikan: Jika status CO adalah null, tampilkan sebagai Belum CO (netral)
+                            $pillCO = $statusCoId === null ? "<span class='text-xs font-semibold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full'>Belum CO</span>" : $makePill($statusCoId, 'CO');
 
 
                         @endphp
@@ -176,22 +194,16 @@
 
                                         {{-- 🚀 AREA TAMPILAN DUA STATUS --}}
                                         <div class="flex flex-wrap gap-1 mt-0.5">
-                                            @if ($isDummy)
-                                                {{-- Jika dummy (Tidak Hadir Hari Ini) --}}
-                                                {!! $makePill(5, 'Harian') !!}
+                                            @if ($isNetral)
+                                                {{-- Jika status NULL, tampilkan netral --}}
+                                                {!! $pillNetral !!}
                                             @else
                                                 {{-- Tampilkan Status Check-In --}}
-                                                @if ($presensi->waktu_ci)
-                                                    {!! $pillCI !!}
-                                                @else
-                                                    {{-- Tampilkan Lupa CI jika tidak ada CI sama sekali --}}
-                                                    {!! $makePill(5, 'CI') !!}
-                                                @endif
+                                                {!! $pillCI !!}
 
-                                                {{-- Tampilkan Status Check-Out --}}
+                                                {{-- Tampilkan Status Check-Out hanya jika sudah CI --}}
                                                 @if ($presensi->waktu_ci)
-                                                    {{-- Hanya tampilkan CO jika sudah Check-In --}}
-                                                    {!! $pillCO !!}
+                                                     {!! $pillCO !!}
                                                 @endif
                                             @endif
                                         </div>
@@ -202,18 +214,18 @@
                                 {{-- Waktu Presensi --}}
                                 @if ($presensi->waktu_co)
                                     <div class="text-right">
-                                        <p class="text-sm font-bold text-gray-800">{{ \Carbon\Carbon::parse($presensi->waktu_co)->format('H:i') }}</p>
+                                        <p class="text-sm font-bold text-gray-800">{{ $waktu_co }}</p>
                                         <p class="text-xs text-gray-500">Check-Out</p>
                                     </div>
                                 @elseif ($presensi->waktu_ci)
                                     <div class="text-right">
-                                        <p class="text-sm font-bold text-gray-800">{{ \Carbon\Carbon::parse($presensi->waktu_ci)->format('H:i') }}</p>
+                                        <p class="text-sm font-bold text-gray-800">{{ $waktu_ci }}</p>
                                         <p class="text-xs text-indigo-500 font-semibold">Check-In</p>
                                     </div>
                                 @else
                                     <div class="text-right">
                                         <p class="text-xs text-gray-400">--</p>
-                                        <p class="text-xs text-gray-500">Waktu</p>
+                                        <p class="text-xs text-gray-500">Belum Presensi</p>
                                     </div>
                                 @endif
                             </div>
@@ -225,7 +237,8 @@
                                     <span>{{ $presensi->latitude_ci ? 'Lokasi Tersedia' : 'Lokasi Tidak Tersedia' }}</span>
                                 </div>
 
-                                @if (!$isDummy)
+                                {{-- Tombol Detail hanya muncul jika ada ID presensi yang valid --}}
+                                @if ($presensi->id)
                                     <a href="{{ route('admin.presensi.detail', $presensi->id) }}" class="flex items-center space-x-2 text-sm text-gray-600 font-medium px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
                                             <path d="M5 7h1a2 2 0 0 0 2-2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2"/>

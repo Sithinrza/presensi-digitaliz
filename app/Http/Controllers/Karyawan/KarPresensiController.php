@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Karyawan;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request; // PASTIKAN INI ADA!
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\PresensiKaryawan;
@@ -15,6 +15,10 @@ use Carbon\Carbon;
 
 class KarPresensiController extends Controller
 {
+    // KONSTANTA TOLERANSI (Di luar method index/store)
+    private const CI_TOLERANCE_MINUTES = 60; // Toleransi Check-In: 60 menit
+    private const CO_TOLERANCE_MINUTES = 60; // Toleransi Check-Out: 60 menit (Sudah ada di kode Anda)
+
     /**
      * Menampilkan halaman utama presensi (Webcam) dan memuat data riwayat/status.
      * Route: GET /karyawan/presensi (karyawan.presensi.index)
@@ -61,31 +65,7 @@ class KarPresensiController extends Controller
 
         // --- KRITIS: 3. LOGIKA ASUMSI STATUS SETELAH JAM KERJA BERAKHIR ---
 
-        // $assumptionError = null;
-
-        // if ($isWorkingDay && $shiftEnd) {
-        //     // Batas Potong Keras (Hard Cutoff): Shift_End + 1 jam toleransi
-        //     $hardCutoffTime = $shiftEnd->copy()->addHours(1);
-
-        //     if ($currentTime->greaterThan($hardCutoffTime)) {
-
-        //         if (!$presensiHariIni) {
-        //             // Skenario A: Sudah lewat jam pulang + 1 jam, tapi BELUM CI
-        //             $isCiDone = true;
-        //             $isCoDone = true; // Paksa tombol jadi 'Selesai' / Non-aktif
-        //             $assumptionError = 'Tidak Hadir. Waktu Check-In terlewat.';
-
-        //         } elseif (!$isCoDone) {
-        //             // Skenario B: Ada CI tapi BELUM CO (Setelah jam pulang + 1 jam)
-        //             $isCoDone = true; // Paksa tombol jadi 'Selesai' / Non-aktif
-        //             $assumptionError = 'Lupa Check-Out. Batas Check-Out terlewat.';
-        //         }
-
-        //         // Catatan: Status ID 4 atau 5 akan dikerjakan oleh CRON JOB (dimalam hari).
-        //     }
-        // }
-        // // --- AKHIR LOGIKA ASUMSI STATUS ---
-
+        // Kode ini dinonaktifkan (dikomen) di versi Anda. Biarkan tetap dikomen.
 
         // --- 4. AMBIL RIWAYAT (Untuk Dashboard) ---
         $history = PresensiKaryawan::with('status')
@@ -102,7 +82,7 @@ class KarPresensiController extends Controller
      * Menyimpan data presensi (CI atau CO) ke database.
      * Route: POST /karyawan/presensi (karyawan.presensi.store)
      */
-      public function store(Request $request)
+     public function store(Request $request)
     {
         // 1. Setup Data Waktu & Karyawan
         $karyawanId = Auth::id() ?? 99;
@@ -179,8 +159,12 @@ class KarPresensiController extends Controller
         if (!$presensiHariIni) {
             // --- LOGIKA CHECK-IN (CI) ---
 
+            // 🚀 PERBAIKAN: Hitung batas waktu Check-In dengan toleransi
+            $toleranceStart = $shiftStart->copy()->addMinutes(self::CI_TOLERANCE_MINUTES); // Tambahkan 10 menit toleransi
+
             // Status Awal: Terlambat Check-In (2) atau Tepat Waktu (1)
-            $statusId = $currentTime->greaterThan($shiftStart) ? 2 : 1;
+            // Bandingkan currentTime dengan batas toleransi, BUKAN shiftStart
+            $statusId = $currentTime->greaterThan($toleranceStart) ? 2 : 1;
 
             $presensi = PresensiKaryawan::create([
                 'karyawan_id' => $karyawanId,
@@ -195,8 +179,8 @@ class KarPresensiController extends Controller
         } elseif ($presensiHariIni && is_null($presensiHariIni->waktu_co)) {
             // --- LOGIKA CHECK-OUT (CO) ---
 
-            // Toleransi Check-Out: Shift_End + 60 Menit
-            $toleranceEnd = $shiftEnd->copy()->addMinutes(60);
+            // Toleransi Check-Out: Shift_End + 60 Menit (Menggunakan konstanta)
+            $toleranceEnd = $shiftEnd->copy()->addMinutes(self::CO_TOLERANCE_MINUTES);
 
             // VALIDASI WAKTU CO: Block jika Check-Out terlalu cepat (sebelum shiftEnd)
             if ($currentTime->lessThan($shiftEnd)) {
