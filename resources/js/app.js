@@ -48,31 +48,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // kalender karyawan
 document.addEventListener("DOMContentLoaded", function () {
-    flatpickr("#kalender-karyawan", {
+
+    // ====== Inisialisasi Kalender (WAJIB AGAR TAMPIL) ======
+    const fp = flatpickr("#kalender-karyawan", {
         inline: true,
         locale: "id",
-        dateFormat: "d/m/Y",
+        dateFormat: "Y-m-d",
         defaultDate: "today",
-
-        onChange: function(selectedDates) {
-
-            if (selectedDates.length === 0) return;
-
-            // Format ke YYYY-MM-DD agar sesuai dengan database & controller
-            const date = selectedDates[0];
-            const formatted =
-                date.getFullYear() + "-" +
-                String(date.getMonth() + 1).padStart(2, "0") + "-" +
-                String(date.getDate()).padStart(2, "0");
-
-            console.log("Tanggal dikirim ke API:", formatted);
-
-            // panggil fungsi yang sudah kamu buat sebelumnya
-            onDateClick(formatted);
+        onChange: function(selectedDates, dateStr) {
+            // panggil AJAX ketika tanggal diklik
+            onDateClick(dateStr);  
         }
     });
-});
 
+});
 
 import Swal from 'sweetalert2'; 
 

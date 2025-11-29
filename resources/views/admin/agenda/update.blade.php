@@ -373,5 +373,21 @@
                 'peserta_karyawan_hidden'
             );
         });
+        document.addEventListener('DOMContentLoaded', function () {
+
+                attachFormSubmitConfirm(
+                    'edit-agenda-form',
+                    'Ubah Data?',
+                    'Apakah Anda yakin ingin mengubah data ini?'
+                );
+
+                // (Script alert session Anda)
+                @if (session('success'))
+                    showSessionAlert({ success: "{{ session('success') }}" });
+                @endif
+                @if (session('error'))
+                    showSessionAlert({ error: "{{ session('error') }}" });
+                @endif
+            });
     </script>
 </x-admin-layout>

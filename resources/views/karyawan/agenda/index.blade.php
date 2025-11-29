@@ -11,6 +11,7 @@
                     <div id="kalender-karyawan"></div>
                 </div>
             </section>
+
             <section class="space-y-3">
                 <h2 class="text-lg font-bold text-gray-800 px-1">Agenda Hari Ini</h2>
                 {{-- Memanggil data dari controller --}}
