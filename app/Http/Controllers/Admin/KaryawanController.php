@@ -127,7 +127,7 @@ class KaryawanController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            dd("Transaksi Gagal! Error: " . $e->getMessage(), $e->getTrace());
+           // dd("Transaksi Gagal! Error: " . $e->getMessage(), $e->getTrace());
             // return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
             //              ->withInput();
         }

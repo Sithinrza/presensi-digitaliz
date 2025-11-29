@@ -2,7 +2,7 @@
     <x-slot:title>
         Jadwal
     </x-slot:title>
-
+    
     <div class="relative min-h-screen pb-24 bg-gray-100"> 
         <div class="bg-indigo-950 p-4 pt-8 pb-24 -mt-1 rounded-t-[3rem] relative z-10"></div>
         <main class="p-4 -mt-20 relative z-10 space-y-6">
@@ -11,6 +11,7 @@
                     <div id="kalender-karyawan"></div>
                 </div>
             </section>
+
             <section class="space-y-3">
                 <h2 class="text-lg font-bold text-gray-800 px-1">Agenda Hari Ini</h2>
                 {{-- Memanggil data dari controller --}}

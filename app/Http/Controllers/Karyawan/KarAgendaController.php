@@ -30,28 +30,28 @@ class KarAgendaController extends Controller
     }
 
 
-    // public function getAgendaByDate(Request $request)
-    // {
-    //     // 🔍 Debugging — untuk cek tanggal dan hasil query
-    //     Log::info("AJAX DATE:", [$request->date]);
+    public function getAgendaByDate(Request $request)
+    {
+        // 🔍 Debugging — untuk cek tanggal dan hasil query
+        Log::info("AJAX DATE:", [$request->date]);
 
-    //     $date = $request->date;
+        $date = $request->date;
 
-    //     if (!$date) {
-    //         return response()->json(['error' => 'Tanggal tidak ditemukan'], 400);
-    //     }
+        if (!$date) {
+            return response()->json(['error' => 'Tanggal tidak ditemukan'], 400);
+        }
 
-    //     $karyawan = Auth::user()->karyawan;
+        $karyawan = Auth::user()->karyawan;
 
-    //     $agenda = Agenda::whereHas('karyawans', function ($query) use ($karyawan) {
-    //             $query->where('karyawan_id', $karyawan->id);
-    //         })
-    //         ->whereDate('tanggal_agenda', $date)
-    //         ->orderBy('waktu_mulai')
-    //         ->get();
+        $agenda = Agenda::whereHas('karyawans', function ($query) use ($karyawan) {
+                $query->where('karyawan_id', $karyawan->id);
+            })
+            ->whereDate('tanggal_agenda', $date)
+            ->orderBy('waktu_mulai')
+            ->get();
 
-    //     Log::info("AGENDA:", $agenda->toArray());
+        Log::info("AGENDA:", $agenda->toArray());
 
-    //     return response()->json($agenda);
-    // }
+        return response()->json($agenda);
+    }
 }

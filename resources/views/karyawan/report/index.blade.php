@@ -18,12 +18,13 @@
         </header>
 
         <main class="p-4 -mt-10 relative z-20 space-y-6">
-            <section class="bg-white p-5 rounded-xl shadow-lg">
+            <section class="bg-white p-5 rounded-xl shadow-lg relative z-30">
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
 
                     {{-- Ganti action form ke route index Anda --}}
                     <form action="{{ route('karyawan.report.index') }}" method="GET" id="filter-form" class="w-full md:flex-1 order-2 md:order-1">
-                        <label for="filter_tanggal" class="block mb-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        @csrf
+                        <label for="filter_tanggal" class="block mb-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider relative z-30">
                             Filter Tanggal
                         </label>
                         <div class="relative">
