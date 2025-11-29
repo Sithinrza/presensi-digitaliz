@@ -30,10 +30,13 @@ class KarAgendaController extends Controller
     }
 
 
-    public function getAgendaByDate(Request $request)
+    // ============================
+    //  AJAX: ambil agenda by date
+    // ============================
+     public function getAgendaByDate(Request $request)
     {
         // 🔍 Debugging — untuk cek tanggal dan hasil query
-        Log::info("AJAX DATE:", [$request->date]);
+        \Log::info("AJAX DATE:", [$request->date]);
 
         $date = $request->date;
 
@@ -50,7 +53,8 @@ class KarAgendaController extends Controller
             ->orderBy('waktu_mulai')
             ->get();
 
-        Log::info("AGENDA:", $agenda->toArray());
+        // 🔍 Debugging hasil query:
+        \Log::info("AGENDA:", $agenda->toArray());
 
         return response()->json($agenda);
     }
