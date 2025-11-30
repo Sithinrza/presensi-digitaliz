@@ -63,8 +63,8 @@
             </div>
 
             <div class="mt-auto p-6">
-            {{-- Form ini akan mengirimkan permintaan POST ke rute 'logoutt' --}}
-                <form method="POST" action="{{ route('logoutt') }}">
+          
+                <form method="POST" action="{{ route('logout') }}">
 
                     {{-- WAJIB: Menyertakan CSRF token untuk keamanan --}}
                     @csrf

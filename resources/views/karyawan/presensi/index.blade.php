@@ -272,7 +272,14 @@
                                     </div>
                                     @endif
                                 </div>
+
                             </div>
+                            <div>
+                                    <a href="{{ route('karyawan.presensi.riwayat', $presensi->id) }}"
+                                    class="inline-flex items-center px-3 py-1 bg-indigo-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                        Detail
+                                    </a>
+                                </div>
                         </div>
                     @empty
                         <div class="text-center p-5 text-gray-500 bg-gray-50 rounded-lg">
@@ -287,13 +294,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            //maps
             // --- VARIABEL GEOFENCE ---
-           const OFFICE_LAT = -3.2289087 // GIBS;
-           // const OFFICE_LAT = -3.3286312;
+            const OFFICE_LAT = -3.2289087 // GIBS;
+          // const OFFICE_LAT = -3.3286345; // wls;
             //const OFFICE_LAT = -3.2759928; //rumahku
-           const OFFICE_LONG = 114.5962882; // GIBS
-          // const OFFICE_LONG = 114.6075395;
-          // const OFFICE_LONG = 114.5969432; //rumahku
+          const OFFICE_LONG = 114.5962882; // GIBS
+          // const OFFICE_LONG = 114.6074828; // wls
+          //const OFFICE_LONG = 114.5969432; //rumahku
             const MAX_DISTANCE_M = 500;
 
             const isCiDone = @json($isCiDone);

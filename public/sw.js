@@ -1,6 +1,11 @@
+const CACHE_NAME = "offline-v1";
+const filesToCache = [
+    '/',
+    '/offline.html'
+];
+
 const preLoad = function () {
-    return caches.open("offline").then(function (cache) {
-        // caching index and important routes
+    return caches.open(CACHE_NAME).then(function (cache) {
         return cache.addAll(filesToCache);
     });
 };
@@ -8,11 +13,6 @@ const preLoad = function () {
 self.addEventListener("install", function (event) {
     event.waitUntil(preLoad());
 });
-
-const filesToCache = [
-    '/',
-    '/offline.html'
-];
 
 const checkResponse = function (request) {
     return new Promise(function (fulfill, reject) {
@@ -27,20 +27,16 @@ const checkResponse = function (request) {
 };
 
 const addToCache = function (request) {
-    // Only cache http(s) requests
-    if (!request.url.startsWith('http')) {
-        return Promise.resolve();
-    }
-    return caches.open("offline").then(function (cache) {
+    if (!request.url.startsWith('http')) return Promise.resolve();
+    return caches.open(CACHE_NAME).then(function (cache) {
         return fetch(request).then(function (response) {
             return cache.put(request, response);
         });
     });
 };
 
-
 const returnFromCache = function (request) {
-    return caches.open("offline").then(function (cache) {
+    return caches.open(CACHE_NAME).then(function (cache) {
         return cache.match(request).then(function (matching) {
             if (!matching || matching.status === 404) {
                 return cache.match("offline.html");
@@ -52,10 +48,13 @@ const returnFromCache = function (request) {
 };
 
 self.addEventListener("fetch", function (event) {
-    event.respondWith(checkResponse(event.request).catch(function () {
-        return returnFromCache(event.request);
-    }));
-    if(!event.request.url.startsWith('http')){
+    event.respondWith(
+        checkResponse(event.request).catch(function () {
+            return returnFromCache(event.request);
+        })
+    );
+
+    if(event.request.url.startsWith('http')){
         event.waitUntil(addToCache(event.request));
     }
 });

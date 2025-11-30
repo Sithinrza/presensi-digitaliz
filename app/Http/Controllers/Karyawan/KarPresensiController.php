@@ -238,6 +238,21 @@ class KarPresensiController extends Controller
         return redirect()->route('karyawan.presensi.photo', ['id' => $presensi->id]);
     }
 
+   // app/Http/Controllers/Karyawan/KarPresensiController.php
+
+    public function show(PresensiKaryawan $presensi) // Menggunakan Route Model Binding
+    {
+        $karyawanId = Auth::id(); // Menggunakan Auth::id() langsung
+
+        // Otorisasi: Cek kepemilikan
+        if ($presensi->karyawan_id != $karyawanId) { // Menggunakan operator non-ketat (!=)
+            abort(403, 'Akses ditolak. Detail presensi ini bukan milik Anda.');
+        }
+
+        // Mengirim data ke view yang baru
+        // Pastikan model PresensiKaryawan memiliki relasi 'status'
+        return view('karyawan.presensi.riwayat', compact('presensi'));
+    }
     /**
      * Menampilkan halaman konfirmasi foto presensi.
      * Route: GET /karyawan/presensi/photo/{id} (karyawan.presensi.photo)

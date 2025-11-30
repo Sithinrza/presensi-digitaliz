@@ -24,17 +24,17 @@
     <div class="relative flex-grow pb-10">
         <header class="bg-indigo-950 p-4 pb-20 rounded-t-[3rem] shadow-lg relative z-10 text-center text-white">
             <div class="relative inline-block mb-3">
-                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg" 
-                    src="https://placehold.co/100x100" 
+                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg"
+                    src="https://placehold.co/100x100"
                     alt="Foto Profil">
 
                 <!-- Badge di pojok kanan bawah -->
                 <div class="absolute bottom-1 right-1 bg-white rounded-full p-[2px] shadow">
-                    <svg xmlns="http://www.w3.org/2000/svg" 
-                        class="h-4 w-4 text-green-500" 
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4 text-green-500"
                         viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" 
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                             clip-rule="evenodd" />
                     </svg>
                 </div>
@@ -77,7 +77,7 @@
                     <!-- Tanggal Lahir -->
                     <div class="relative">
                          <label class="block mb-0.5 text-xs font-medium text-gray-500">Tanggal Lahir</label>
-                         <input type="text" value="{{ old('tanggal_lahir', $karyawan->tanggal_lahir ? \Carbon\Carbon::parse($karyawan->tanggal_lahir)->format('d M Y') : '') }}" 
+                         <input type="text" value="{{ old('tanggal_lahir', $karyawan->tanggal_lahir ? \Carbon\Carbon::parse($karyawan->tanggal_lahir)->format('d M Y') : '') }}"
                          class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 cursor-default" readonly>
                          <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none top-5">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -87,22 +87,18 @@
                          </div>
                     </div>
                     <!-- Jenis Kelamin -->
-                    <div>
+                   <div>
                         <label class="block mb-0.5 text-xs font-medium text-gray-500">Jenis Kelamin</label>
-                        <input type="text" value="Laki-Laki" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-default" readonly>
+                        <input type="text" value="{{ $karyawan->jenis_kelamin ?? '-' }}" class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-default" readonly>
                     </div>
                     <!-- Agama -->
                     <div>
                         <label class="block mb-0.5 text-xs font-medium text-gray-500">Agama</label>
-                        {{-- Select dibuat terlihat seperti input readonly --}}
-                        <div class="relative">
-                             <select class="appearance-none bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-default" disabled>
-                                <option>Kristen Protestan</option>
-                            </select>
-                             <div class="absolute inset-y-0 end-0 flex items-center px-2 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                             </div>
-                        </div>
+                        <input type="text"
+                            {{-- Mengambil nama agama lewat relasi. Jika kosong tampilkan '-' --}}
+                            value="{{ $karyawan->agama->name ?? '-' }}"
+                            class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-default"
+                            readonly>
                     </div>
                     <!-- Alamat -->
                     <div>

@@ -1,17 +1,24 @@
 {
-    "name": "Laravel Package Tutorial",
-    "short_name": "LPT",
-    "start_url": "/index.php",
-    "background_color": "#6777ef",
-    "description": "Presensi Digitaliz",
-    "display": "fullscreen",
-    "theme_color": "#6777ef",
-    "icons": [
-        {
-            "src": "logo.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
-        }
-    ]
+  "name": "Presensi Digitaliz",
+  "short_name": "Digitaliz",
+  "id": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#232946",
+  "theme_color": "#232946",
+  "icons": [
+    {
+      "src": "/icons/digitaliz.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+
+    {
+        "src": "/icons/digitaliz.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "maskable"
+     }
+  ]
 }

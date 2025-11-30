@@ -221,6 +221,7 @@
             </button>
         </form>
     </main>
+    
     {{-- Di bagian bawah file tambah_karyawan.blade.php --}}
     @push('scripts')
         <script>
