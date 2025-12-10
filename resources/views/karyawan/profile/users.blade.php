@@ -14,8 +14,8 @@
             </div>
             <h1 class="text-xl font-bold">{{ Auth::user()->name }}</h1>
             <p class="text-sm text-indigo-300">
-                {{ optional(Auth::user()->roles->first())->name }} 
-                - 
+                {{ optional(Auth::user()->roles->first())->name }}
+                -
                 {{ data_get(Auth::user(), 'karyawan.jabatan.name') }}
             </p>
         </header>
@@ -67,8 +67,8 @@
             </div>
 
            <div class="mt-auto p-6">
-            {{-- Form ini akan mengirimkan permintaan POST ke rute 'logoutt' --}}
-            <form method="POST" action="{{ route('logoutt') }}">
+            
+            <form method="POST" action="{{ route('logout') }}">
 
                 {{-- WAJIB: Menyertakan CSRF token untuk keamanan --}}
                 @csrf
