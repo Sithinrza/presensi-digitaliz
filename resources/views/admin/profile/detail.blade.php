@@ -24,9 +24,20 @@
     <div class="relative flex-grow pb-10">
         <header class="bg-indigo-950 p-4 pb-20 rounded-t-[3rem] shadow-lg relative z-10 text-center text-white">
             <div class="relative inline-block mb-3">
-                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg"
-                    src="https://placehold.co/100x100"
-                    alt="Foto Profil">
+                @php
+                    // 1. Set gambar default
+                    // Gunakan inisial nama untuk placeholder yang lebih personal
+                    $initials = $karyawan->nama_lengkap ? substr($karyawan->nama_lengkap, 0, 1) : 'A';
+                    $fotoUrl = 'https://placehold.co/100x100?text=' . $initials; 
+                    
+                    // 2. Cek apakah ada foto di database (kolom 'foto_profil')
+                    if ($karyawan->foto_profil) {
+                        $fotoUrl = asset('storage/' . $karyawan->foto_profil);
+                    }
+                @endphp
+                <img class="w-24 h-24 rounded-full object-cover mx-auto mb-2 border-4 border-white shadow-lg" 
+                        src="{{ $fotoUrl }}" 
+                        alt="Foto Profil {{ $karyawan->nama_lengkap }}">
 
                 <!-- Badge di pojok kanan bawah -->
                 <div class="absolute bottom-1 right-1 bg-white rounded-full p-[2px] shadow">

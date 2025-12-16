@@ -25,13 +25,24 @@
         <main class="bg-white min-h-screen">
             <div class="p-4 space-y-3">
                 @forelse ($karyawans as $karyawan)
+                  @php
+                    // Default gambar jika tidak ada foto
+                    // Pastikan Anda punya gambar default di public/img/user.svg atau ganti ke placehold.co
+                    $fotoKaryawan = asset('img/user.svg'); 
+                    
+                    // Cek jika kolom 'foto_profil' ada isinya
+                    if ($karyawan->foto_profil) {
+                        $fotoKaryawan = asset('storage/' . $karyawan->foto_profil);
+                    }
+                  @endphp
+
                     <a href="{{ route('admin.karyawan.show', $karyawan->id) }}"
                     class="flex items-center justify-between p-4 bg-white rounded-xl shadow-md hover:bg-gray-50 transition active:scale-95">
 
                         <div class="flex items-center space-x-4">
-                            <img class="w-10 h-10 rounded-full object-cover bg-gray-200"
-                                src="{{-- $karyawan->foto_profil_url ?? --}} 'img/user.svg'"
-                                alt="Foto Profil {{ $karyawan->nama_lengkap }}">
+                            <img class="w-10 h-10 rounded-full object-cover bg-gray-200 border border-gray-300"
+                             src="{{ $fotoKaryawan }}"
+                             alt="Foto Profil {{ $karyawan->nama_lengkap }}">
                             <div>
                                 <p class="font-semibold text-gray-800">{{ $karyawan->nama_lengkap }}</p>
                                 <p class="text-sm text-gray-500">{{ $karyawan->jabatan?->name ?? 'Jabatan Belum Diatur' }}</p>

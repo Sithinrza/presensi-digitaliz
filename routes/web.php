@@ -58,6 +58,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('penetapan', AdJadwalPenetapanController::class);
        // Route::put('/penetapan', [AdJadwalPenetapanController::class, 'update'])->name('jadwal.penetapan.edit');
      //   Route::get('admin/penetapan', [AdJadwalController::class, 'index'])->name('admin.penetapan.index');
+        Route::put('/profile/foto', [AdProfileController::class, 'updateFoto'])
+        ->name('profile.update.foto');
 
     });
 
@@ -87,6 +89,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('presensi/riwayat/{presensi}', [KarPresensiController::class, 'show'])->name('presensi.riwayat');
 
         Route::resource('report', KarDailyReportController::class)->except(['create', 'show']);
+        
+        Route::put('/profile/foto', [KarProfileController::class, 'updateFoto'])
+        ->name('profile.update.foto'); 
+        // Nama otomatis menjadi: 'karyawan.' + 'profile.update.foto' = 'karyawan.profile.update.foto'
 
     });
 

@@ -4,16 +4,55 @@
     </x-slot:title>
     <div class="relative min-h-screen flex flex-col">
         <header class="bg-indigo-950 p-4 pb-16 rounded-t-[2.5rem] shadow-lg relative z-10 text-center text-white">
-            <div class="relative inline-block mb-2">
-                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg" src="https://placehold.co/100x100" alt="Foto Profil">
-                <button class="profile-edit-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+            <div class="relative inline-block mb-2 group">
+                
+                {{-- 1. LOGIKA UNTUK MENAMPILKAN FOTO PROFIL --}}
+                @php
+                    // Gambar Default
+                    $fotoUrl = 'https://placehold.co/100x100?text=Admin'; 
+                    
+                    // Cek relasi karyawan dan kolom foto_profil
+                    // Menggunakan 'data_get' agar aman jika relasi karyawan null
+                    $pathFoto = data_get(Auth::user(), 'karyawan.foto_profil');
+                    
+                    if ($pathFoto) {
+                        $fotoUrl = asset('storage/' . $pathFoto);
+                    }
+                @endphp
+
+                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg transition-transform transform group-hover:scale-105" 
+                     src="{{ $fotoUrl }}" 
+                     alt="Foto Profil">
+
+                {{-- 2. TOMBOL UNTUK MENGGANTI FOTO --}}
+                {{-- Saat diklik, ini akan memicu input file di bawah --}}
+                <button type="button" 
+                        onclick="document.getElementById('input-foto-admin').click()"
+                        class="profile-edit-button absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md border border-gray-200 hover:bg-gray-100 transition text-gray-600 hover:text-indigo-600 cursor-pointer"
+                        title="Ganti Foto Profil">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                     </svg>
                 </button>
+
+                {{-- 3. FORM UPLOAD TERSEMBUNYI --}}
+                {{-- Form ini tidak terlihat, tapi bekerja di latar belakang --}}
+                {{-- Pastikan Anda telah membuat route 'admin.profile.update.foto' di routes/web.php dan Controller yang menanganinya --}}
+                <form id="form-ganti-foto-admin" action="{{ route('admin.profile.update.foto') }}" method="POST" enctype="multipart/form-data" class="hidden">
+                    @csrf
+                    @method('PUT')
+                    {{-- onchange="submit()" artinya saat file dipilih, form langsung dikirim --}}
+                    {{-- Gunakan nama 'foto_profil' sesuai dengan kolom di database Anda --}}
+                    <input type="file" name="foto_profil" id="input-foto-admin" accept="image/jpeg,image/png,image/jpg" onchange="document.getElementById('form-ganti-foto-admin').submit()">
+                </form>
             </div>
+
             <h1 class="text-xl font-bold">{{ Auth::user()->name }}</h1>
-            <p class="text-sm text-indigo-300">Karyawan - UI/UX Designer</p>
+            <p class="text-sm text-indigo-300">
+                {{ optional(Auth::user()->roles->first())->name }}
+                -
+                {{ data_get(Auth::user(), 'karyawan.jabatan.name', '-') }}
+            </p>
         </header>
 
         <main class="flex-grow p-4 -mt-8 relative z-20 space-y-6">

@@ -5,18 +5,43 @@
     <div class="relative min-h-screen flex flex-col">
         <header class="bg-indigo-950 p-4 pb-16 rounded-t-[2.5rem] shadow-lg relative z-10 text-center text-white">
             <div class="relative inline-block mb-2">
-                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg" src="https://placehold.co/100x100" alt="Foto Profil">
-                <button class="profile-edit-button">
+                
+                {{-- 1. LOGIKA MENAMPILKAN FOTO --}}
+                @php
+                    $fotoUrl = 'https://placehold.co/100x100?text=User'; // Default
+                    if (Auth::user()->karyawan && Auth::user()->karyawan->foto_profil) {
+                        $fotoUrl = Storage::url(Auth::user()->karyawan->foto_profil);
+                    }
+                @endphp
+
+                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg" 
+                     src="{{ $fotoUrl }}" 
+                     alt="Foto Profil">
+
+                {{-- 2. TOMBOL EDIT (TRIGGER) --}}
+                {{-- Saat diklik, ini akan memanggil input file tersembunyi di bawah --}}
+                <button type="button" onclick="document.getElementById('input-foto').click()" 
+                        class="profile-edit-button absolute bottom-0 right-0 bg-white p-1.5 rounded-full shadow-md border border-gray-200 hover:bg-gray-100 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                     </svg>
                 </button>
+
+                {{-- 3. FORM TERSEMBUNYI --}}
+                <form id="form-ganti-foto" action="{{ route('karyawan.profile.update.foto') }}" method="POST" enctype="multipart/form-data" class="hidden">
+                    @csrf
+                    @method('PUT')
+                    {{-- onchange="this.form.submit()" artinya saat file dipilih, langsung upload --}}
+                    <input type="file" name="foto" id="input-foto" accept="image/*" onchange="document.getElementById('form-ganti-foto').submit()">
+                </form>
+
             </div>
+
             <h1 class="text-xl font-bold">{{ Auth::user()->name }}</h1>
             <p class="text-sm text-indigo-300">
                 {{ optional(Auth::user()->roles->first())->name }}
                 -
-                {{ data_get(Auth::user(), 'karyawan.jabatan.name') }}
+                {{ data_get(Auth::user(), 'karyawan.jabatan.name', '-') }}
             </p>
         </header>
 
