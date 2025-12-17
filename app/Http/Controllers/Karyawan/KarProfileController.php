@@ -120,4 +120,26 @@ class KarProfileController extends Controller
 
         return back()->with('error', 'Gagal mengupload foto.');
     }
+    public function deleteFoto()
+    {
+        $karyawan = Auth::user()->karyawan;
+
+        // Cek apakah user punya foto
+        if ($karyawan->foto_profil) {
+            // Hapus file fisik dari storage jika ada
+            if (\Storage::disk('public')->exists($karyawan->foto_profil)) {
+                \Storage::disk('public')->delete($karyawan->foto_profil);
+            }
+
+            // Set kolom foto_profil di database jadi null
+            $karyawan->update([
+                'foto_profil' => null
+            ]);
+
+            return back()->with('success', 'Foto profil berhasil dihapus.');
+        }
+
+        return back()->with('error', 'Tidak ada foto profil untuk dihapus.');
+    }
+
 }

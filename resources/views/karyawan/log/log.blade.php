@@ -45,65 +45,58 @@
                 </form>
             </section>
 
+            {{-- 2. DAFTAR AKTIVITAS HARI INI --}}
             <section>
                 <div class="flex items-center justify-between mb-4 px-1">
-                    <h2 class="text-lg font-bold text-gray-800">Aktivitas Hari Ini</h2>
-                    <div class="flex items-center space-x-1 text-xs text-gray-500 font-medium">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">...</svg>
-                        {{-- Tanggal Hari Ini (Variabel $today dari Controller) --}}
-                        <span>{{ \Carbon\Carbon::parse($today)->translatedFormat('l, d F Y') }}</span>
+                    <h2 class="text-lg font-bold text-gray-800">Riwayat Hari Ini</h2>
+                    <div class="flex items-center space-x-1 text-xs text-gray-500 font-medium bg-white px-3 py-1 rounded-full shadow-sm border border-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {{-- Pastikan controller mengirim variabel $today --}}
+                        <span>{{ \Carbon\Carbon::parse($today)->translatedFormat('d M Y') }}</span>
                     </div>
                 </div>
 
-                <div class="relative pl-8">
+                {{-- STYLE GARIS TIMELINE --}}
+                <div class="relative pl-4 space-y-4">
+                    {{-- Garis Vertikal --}}
+                    <div class="absolute left-[19px] top-2 bottom-4 w-0.5 bg-gray-200"></div>
 
-                    {{-- LOOP DATA LOG HARIAN --}}
                     @forelse ($logs as $log)
-                        <div class="timeline-item relative pb-6">
+                        <div class="relative pl-8 group">
+                            
+                            {{-- Titik Timeline (Dot) --}}
+                            <div class="absolute left-[13px] top-5 w-3.5 h-3.5 bg-white border-4 border-indigo-600 rounded-full z-10 group-hover:scale-110 transition-transform"></div>
 
-                             {{-- Perbaikan: CSS Timeline Dot --}}
-                            <style>
-                                /* Catatan: Style ini sebaiknya dipindah ke file app.css */
-                                .timeline-dot::before {
-                                    content: ''; position: absolute; left: -4px; top: 10px; width: 8px; height: 8px;
-                                    background-color: #312e81; border-radius: 9999px; transform: translateX(-100%); z-index: 10;
-                                }
-                                /* Style untuk garis (jika belum ada di app.css) */
-                                .relative.pl-8:before {
-                                    content: ''; position: absolute; left: 0; top: 0; width: 2px; height: 100%; background-color: #e5e7eb;
-                                }
-                            </style>
-                            <div class="timeline-dot"></div>
+                            {{-- Kartu Log --}}
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative">
+                                
+                                {{-- PERBAIKAN UTAMA: POSISI JAM --}}
+                                {{-- Jam ditaruh di dalam kartu (pojok kanan atas), bukan di luar --}}
+                                <div class="flex justify-between items-start gap-4 mb-2">
+                                    {{-- Teks Log --}}
+                                    <p class="text-sm text-gray-700 leading-relaxed font-medium break-words">
+                                        {{ $log->catatan_log }}
+                                    </p>
 
-                            {{-- Waktu Log Dicatat (created_at) --}}
-                            <div class="absolute left-0 top-3 text-xs font-semibold text-gray-500 -translate-x-full pr-2">
-                                {{ \Carbon\Carbon::parse($log->created_at)->format('H:i') }}
-                            </div>
-
-                            {{-- Konten Log --}}
-                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 ml-4">
-                                @php
-                                    // Pisahkan log berdasarkan baris baru untuk membuat daftar (jika log multi-baris)
-                                    $log_lines = explode("\n", $log->catatan_log);
-                                @endphp
-
-                                @if (count($log_lines) > 1)
-                                    {{-- Jika log punya lebih dari 1 baris, tampilkan sebagai list --}}
-                                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
-                                        @foreach ( $log_lines as $line)
-                                            @if (trim($line) !== '') <li>{{ trim($line) }}</li> @endif
-                                        @endforeach
-                                    </ul>
-                                @else
-                                    {{-- Jika hanya satu baris, tampilkan sebagai paragraf --}}
-                                    <p class="text-sm text-gray-700">{{ $log->catatan_log }}</p>
-                                @endif
+                                    {{-- Jam --}}
+                                    <span class="flex-shrink-0 text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md border border-indigo-100">
+                                        {{ \Carbon\Carbon::parse($log->created_at)->format('H:i') }}
+                                    </span>
+                                </div>
+                                
                             </div>
                         </div>
                     @empty
-                        <div class="p-4 text-center text-gray-500 bg-white rounded-lg shadow-md border border-gray-200">
-                            <p>Anda belum mencatat aktivitas hari ini.</p>
-                            <p class="text-xs mt-2">Pastikan sudah melakukan presensi Check-In.</p>
+                        <div class="text-center py-10 px-4 bg-white rounded-xl border border-dashed border-gray-300 ml-4">
+                            <div class="inline-flex items-center justify-center w-12 h-12 bg-gray-50 rounded-full mb-3 text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                            </div>
+                            <p class="text-gray-500 text-sm font-medium">Belum ada aktivitas.</p>
+                            <p class="text-gray-400 text-xs mt-1">Catat pekerjaan Anda hari ini.</p>
                         </div>
                     @endforelse
 
