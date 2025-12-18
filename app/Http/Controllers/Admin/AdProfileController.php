@@ -90,4 +90,35 @@ class AdProfileController extends Controller
             return back()->with('error', 'Gagal menyimpan perubahan: ' . $e->getMessage())->withInput();
         }
     }
+
+    public function updateFoto(Request $request)
+    {
+        // 1. Validasi (Pastikan name di form adalah 'foto_profil')
+        $request->validate([
+            'foto_profil' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', 
+        ]);
+
+        $user = Auth::user();
+        $karyawan = $user->karyawan; // Asumsi admin juga punya data di tabel karyawans
+
+        if ($request->hasFile('foto_profil')) {
+            
+            // 2. Hapus foto lama jika ada
+            if ($karyawan->foto_profil && Storage::disk('public')->exists($karyawan->foto_profil)) {
+                Storage::disk('public')->delete($karyawan->foto_profil);
+            }
+
+            // 3. Simpan foto baru ke folder 'public/fotos'
+            $path = $request->file('foto_profil')->store('fotos', 'public');
+
+            // 4. Update database
+            $karyawan->update([
+                'foto_profil' => $path
+            ]);
+
+            return back()->with('success', 'Foto profil admin berhasil diperbarui!');
+        }
+
+        return back()->with('error', 'Gagal mengupload foto.');
+    }
 }

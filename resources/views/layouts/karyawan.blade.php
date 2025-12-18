@@ -18,7 +18,7 @@
 <body class="bg-gray-100">
 
     <main class="pb-24"> <!-- padding-bottom agar konten tidak tertutup nav -->
-        @unless (Route::is('karyawan.log.index', 'karyawan.profile.index'))
+        @unless (Route::is('karyawan.log.index', 'karyawan.profile.index', 'karyawan.presensi.riwayat', 'karyawan.profile.detail'))
             {{-- Panggil partial navigasi admin DI DALAM @unless --}}
             @include('layouts.partials.karyawannavtop')
         @endunless

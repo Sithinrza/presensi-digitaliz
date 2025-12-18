@@ -91,4 +91,55 @@ class KarProfileController extends Controller
             return back()->with('error', 'Gagal menyimpan perubahan: ' . $e->getMessage())->withInput();
         }
     }
+    public function updateFoto(Request $request)
+    {
+        $request->validate([
+            'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Maksimal 2MB
+        ]);
+
+        $user = Auth::user();
+        $karyawan = $user->karyawan;
+
+        if ($request->hasFile('foto')) {
+            
+            // 1. Hapus foto lama jika ada (dan bukan default/placeholder)
+            if ($karyawan->foto && Storage::disk('public')->exists($karyawan->foto)) {
+                Storage::disk('public')->delete($karyawan->foto_profil);
+            }
+
+            // 2. Simpan foto baru
+            $path = $request->file('foto')->store('fotos', 'public');
+
+            // 3. Update database
+            $karyawan->update([
+                'foto_profil' => $path
+            ]);
+
+            return back()->with('success', 'Foto profil berhasil diperbarui!');
+        }
+
+        return back()->with('error', 'Gagal mengupload foto.');
+    }
+    public function deleteFoto()
+    {
+        $karyawan = Auth::user()->karyawan;
+
+        // Cek apakah user punya foto
+        if ($karyawan->foto_profil) {
+            // Hapus file fisik dari storage jika ada
+            if (\Storage::disk('public')->exists($karyawan->foto_profil)) {
+                \Storage::disk('public')->delete($karyawan->foto_profil);
+            }
+
+            // Set kolom foto_profil di database jadi null
+            $karyawan->update([
+                'foto_profil' => null
+            ]);
+
+            return back()->with('success', 'Foto profil berhasil dihapus.');
+        }
+
+        return back()->with('error', 'Tidak ada foto profil untuk dihapus.');
+    }
+
 }

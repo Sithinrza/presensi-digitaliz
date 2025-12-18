@@ -23,10 +23,26 @@
     @endif
     <div class="relative flex-grow pb-10">
         <header class="bg-indigo-950 p-4 pb-20 rounded-t-[3rem] shadow-lg relative z-10 text-center text-white">
+            <a href="{{ route('admin.profile.index') }}" class="absolute top-6 left-6 p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition backdrop-blur-sm shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+            </a>
             <div class="relative inline-block mb-3">
-                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg"
-                    src="https://placehold.co/100x100"
-                    alt="Foto Profil">
+                @php
+                    // 1. Set gambar default
+                    // Gunakan inisial nama untuk placeholder yang lebih personal
+                    $initials = $karyawan->nama_lengkap ? substr($karyawan->nama_lengkap, 0, 1) : 'A';
+                    $fotoUrl = 'https://placehold.co/100x100?text=' . $initials; 
+                    
+                    // 2. Cek apakah ada foto di database (kolom 'foto_profil')
+                    if ($karyawan->foto_profil) {
+                        $fotoUrl = asset('storage/' . $karyawan->foto_profil);
+                    }
+                @endphp
+                <img class="w-24 h-24 rounded-full object-cover mx-auto mb-2 border-4 border-white shadow-lg" 
+                        src="{{ $fotoUrl }}" 
+                        alt="Foto Profil {{ $karyawan->nama_lengkap }}">
 
                 <!-- Badge di pojok kanan bawah -->
                 <div class="absolute bottom-1 right-1 bg-white rounded-full p-[2px] shadow">

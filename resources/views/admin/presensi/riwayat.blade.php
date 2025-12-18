@@ -193,6 +193,13 @@
                             // 🚨 Perbaikan: Jika status CO adalah null, tampilkan sebagai Belum CO (netral)
                             $pillCO = $statusCoId === null ? "<span class='text-xs font-semibold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full'>Belum CO</span>" : $makePill($statusCoId, 'CO');
 
+                            // ---- LOGIKA FOTO PROFIL ----
+                            $initials = $karyawan->nama_lengkap ? substr($karyawan->nama_lengkap, 0, 1) : 'U';
+                            $fotoUrl = 'https://placehold.co/100x100?text=' . $initials; // Placeholder default
+
+                            if ($karyawan->foto_profil) {
+                                $fotoUrl = asset('storage/' . $karyawan->foto_profil);
+                            }
 
                         @endphp
 
@@ -201,7 +208,7 @@
                                 <div class="flex items-center space-x-3">
                                     {{-- Avatar/Ikon --}}
                                     <div class="shrink-0 w-12 h-12 bg-black rounded-full flex items-center justify-center">
-                                         <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                         <img src="{{ $fotoUrl }}" alt="{{ $karyawanName }}" class="w-full rounded-full h-full object-cover">
                                     </div>
                                     <div>
                                         <p class="font-bold text-gray-900">{{ $karyawanName }}</p>

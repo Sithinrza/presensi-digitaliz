@@ -16,17 +16,25 @@ $jadwalIdSaatIni = old('id_jadwal_kerja');
 
 <div class="container mx-auto p-4 md:p-8">
 
-<header class="bg-indigo-950 p-6 pt-10 pb-28 rounded-b-3xl shadow-xl relative z-10 -mx-4 md:mx-0">
-    <div class="flex items-center space-x-4 text-white max-w-4xl mx-auto md:mx-0">
-        <a href="{{ route('admin.penetapan.index') }}" class="group p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all backdrop-blur-md border border-white/10 shadow-lg">
-            <i class="fa-solid fa-arrow-left text-lg group-hover:-translate-x-1 transition-transform"></i>
-        </a>
-        <div>
-            <h1 class="text-2xl font-bold tracking-tight">{{ $formTitle }}</h1>
-            <p class="text-indigo-200 text-sm mt-0.5 font-medium">Atur karyawan dan template jadwal kerjanya.</p>
-        </div>
-    </div>
-</header>
+{{-- HEADER DENGAN TOMBOL BACK --}}
+        <header class="bg-indigo-950 p-6 pt-10 pb-28 rounded-b-3xl shadow-xl relative z-10 -mx-4 md:mx-0">
+            <div class="flex items-center space-x-4 text-white max-w-4xl mx-auto md:mx-0">
+                
+                {{-- [PERBAIKAN] TOMBOL BACK MENGGUNAKAN SVG (PASTI MUNCUL) --}}
+                <a href="{{ route('admin.penetapan.index') }}" 
+                   class="group p-3 bg-white/10 rounded-full hover:bg-white/20 transition-all border border-white/10 shadow-lg text-white flex items-center justify-center"
+                   title="Kembali">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </a>
+                
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">{{ $formTitle }}</h1>
+                    <p class="text-indigo-200 text-sm mt-0.5 font-medium">Atur karyawan dan template jadwal kerjanya.</p>
+                </div>
+            </div>
+        </header>
 
 <main class="px-4 -mt-20 relative z-20 max-w-4xl mx-auto">
 

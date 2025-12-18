@@ -21,14 +21,21 @@
 
                 <main class="p-6 max-h-[80vh] overflow-y-auto"> {{-- Buat konten bisa di-scroll --}}
                     <div class="flex flex-col items-center text-center mb-6">
-                        <div class="p-2 bg-gray-200 rounded-full mb-3">
-                            @if ($karyawan->user?->profile_photo_url)
-                                <img src="{{ $karyawan->user->profile_photo_url }}" alt="Foto" class="w-16 h-16 rounded-full object-cover">
-                            @else
-                                <svg class="h-8 w-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            @endif
+                        @php
+                            // Default gambar placeholder
+                            // Gunakan placehold.co dengan inisial nama jika ada, atau teks 'User'
+                            $initials = $karyawan->nama_lengkap ? substr($karyawan->nama_lengkap, 0, 1) : 'U';
+                            $fotoUrl = 'https://placehold.co/100x100?text=' . $initials; 
+
+                            // Cek jika ada foto di database
+                            if ($karyawan->foto_profil) {
+                                $fotoUrl = asset('storage/' . $karyawan->foto_profil);
+                            }
+                        @endphp
+                        <div class="p-1 bg-white border-2 border-indigo-100 rounded-full mb-3 shadow-sm">
+                            <img src="{{ $fotoUrl }}" 
+                                alt="Foto {{ $karyawan->nama_lengkap }}" 
+                                class="w-20 h-20 rounded-full object-cover">
                         </div>
                         <div class="flex items-center space-x-1">
                             <h3 class="text-xl font-bold text-gray-800">{{ $karyawan->nama_lengkap ?? '-' }}</h3>
