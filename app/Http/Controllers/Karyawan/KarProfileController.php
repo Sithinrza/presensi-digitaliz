@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Divisi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Karyawan; // Pastikan Anda sudah membuat model Karyawan
+use App\Models\Karyawan; 
 use App\Models\PendidikanTerakhir;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class KarProfileController extends Controller
 {
@@ -91,4 +92,5 @@ class KarProfileController extends Controller
             return back()->with('error', 'Gagal menyimpan perubahan: ' . $e->getMessage())->withInput();
         }
     }
+
 }

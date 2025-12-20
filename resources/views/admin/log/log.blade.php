@@ -70,11 +70,19 @@
 
                     @forelse ($groupedLogs as $karyawanId => $activities)
 
-                        {{-- Ambil detail Karyawan dari log pertama di grup --}}
                         @php
-                            // Amankan dari potensi error jika relasi null
+                            // Ambil data karyawan dari log pertama
                             $karyawan = $activities->first()->presensi->karyawan ?? null;
                             $karyawanName = $karyawan->user->name ?? 'Karyawan Tidak Dikenal';
+
+                            // --- LOGIKA FOTO PROFIL BARU ---
+                            $initials = $karyawanName ? substr($karyawanName, 0, 1) : 'U';
+                            $fotoUrl = 'https://placehold.co/100x100?text=' . $initials; // Default
+
+                            if ($karyawan && $karyawan->foto_profil) {
+                                $fotoUrl = asset('storage/' . $karyawan->foto_profil);
+                            }
+                            // -------------------------------
                         @endphp
 
                         {{-- START: KARTU BESAR UNTUK SATU KARYAWAN --}}
@@ -82,8 +90,10 @@
 
                             {{-- HEADER KARYAWAN --}}
                             <div class="flex items-center space-x-3 mb-4 pb-3 border-b border-gray-100">
-                                <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                                <svg class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border border-gray-200">
+                                    <img src="{{ $fotoUrl }}" 
+                                         alt="{{ $karyawanName }}" 
+                                         class="w-full h-full object-cover">
                                 </div>
                                 <h3 class="font-bold text-lg text-gray-900">{{ $karyawanName }}</h3>
                             </div>

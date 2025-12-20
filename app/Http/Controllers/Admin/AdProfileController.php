@@ -9,6 +9,7 @@ use App\Models\PendidikanTerakhir;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AdProfileController extends Controller
 {
@@ -73,7 +74,7 @@ class AdProfileController extends Controller
 
         DB::beginTransaction();
         try {
-      
+
             $karyawan->update([
                 'alamat' => $request->alamat,
                 'no_telepon' => $request->no_telepon,
@@ -90,4 +91,5 @@ class AdProfileController extends Controller
             return back()->with('error', 'Gagal menyimpan perubahan: ' . $e->getMessage())->withInput();
         }
     }
+
 }

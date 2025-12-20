@@ -127,9 +127,23 @@
                                 <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             </div>
                         </div>
-                        <input type="date" name="tanggal" value="{{ $tanggal_filter }}"
-                            onchange="this.form.submit()"
-                            class="px-3 py-2 text-sm border text-black border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 max-w-[120px] md:max-w-none">
+                            <div class="flex items-center space-x-0 border border-gray-300 rounded-lg p-0.5 max-w-[150px] md:max-w-none">
+                                    {{-- Tombol Panah KIRI (Tanggal Mundur) --}}
+                                <button type="button" onclick="changeDate(-1)" class="p-1 text-gray-600 hover:bg-gray-100 rounded-l-lg transition duration-150">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                                </button>
+
+                                {{-- Input Tanggal (Diperlukan untuk date picker dan data submit) --}}
+                                <input type="date" id="tanggal_input" name="tanggal" value="{{ $tanggal_filter }}"
+                                    onchange="this.form.submit()"
+                                    class="px-1 py-1 text-sm border-0 text-black text-center focus:ring-transparent focus:border-transparent max-w-[100px] md:max-w-[120px] bg-transparent">
+
+                                {{-- Tombol Panah KANAN (Tanggal Maju) --}}
+                                <button type="button" onclick="changeDate(1)" class="p-1 text-gray-600 hover:bg-gray-100 rounded-r-lg transition duration-150">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                </button>
+
+                            </div>
                         <button type="submit" class="p-2 bg-indigo-600 text-white rounded-lg">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                         </button>
@@ -179,6 +193,13 @@
                             // 🚨 Perbaikan: Jika status CO adalah null, tampilkan sebagai Belum CO (netral)
                             $pillCO = $statusCoId === null ? "<span class='text-xs font-semibold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full'>Belum CO</span>" : $makePill($statusCoId, 'CO');
 
+                            // ---- LOGIKA FOTO PROFIL ----
+                            $initials = $karyawan->nama_lengkap ? substr($karyawan->nama_lengkap, 0, 1) : 'U';
+                            $fotoUrl = 'https://placehold.co/100x100?text=' . $initials; // Placeholder default
+
+                            if ($karyawan->foto_profil) {
+                                $fotoUrl = asset('storage/' . $karyawan->foto_profil);
+                            }
 
                         @endphp
 
@@ -187,7 +208,7 @@
                                 <div class="flex items-center space-x-3">
                                     {{-- Avatar/Ikon --}}
                                     <div class="shrink-0 w-12 h-12 bg-black rounded-full flex items-center justify-center">
-                                         <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                         <img src="{{ $fotoUrl }}" alt="{{ $karyawanName }}" class="w-full rounded-full h-full object-cover">
                                     </div>
                                     <div>
                                         <p class="font-bold text-gray-900">{{ $karyawanName }}</p>
@@ -262,4 +283,36 @@
             </div>
         </main>
     </div>
+
+    <script>
+    // Ambil form dan input tanggal
+    const form = document.querySelector('form[action="{{ route('admin.presensi.index') }}"]');
+    const tanggalInput = document.getElementById('tanggal_input');
+
+    /**
+     * Mengubah tanggal dan mengirimkan form.
+     * @param {number} days - Jumlah hari untuk maju (+1) atau mundur (-1).
+     */
+    function changeDate(days) {
+        // Ambil tanggal saat ini dari input
+        const currentDateString = tanggalInput.value;
+        const currentDate = new Date(currentDateString + 'T00:00:00'); // Tambahkan T00:00:00 untuk menghindari masalah zona waktu
+
+        // Hitung tanggal baru
+        currentDate.setDate(currentDate.getDate() + days);
+
+        // Format tanggal baru menjadi YYYY-MM-DD
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(currentDate.getDate()).padStart(2, '0');
+
+        const newDateString = `${year}-${month}-${day}`;
+
+        // Set nilai baru ke input tanggal
+        tanggalInput.value = newDateString;
+
+        // Kirim form secara otomatis
+        form.submit();
+    }
+</script>
 </x-admin-layout>

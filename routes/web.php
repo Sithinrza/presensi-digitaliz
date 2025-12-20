@@ -8,21 +8,16 @@ use App\Http\Controllers\Admin\AdJadwalPenetapanController;
 use App\Http\Controllers\Admin\AdLogHarianController;
 use App\Http\Controllers\Admin\AdPresensiController;
 use App\Http\Controllers\Admin\AdProfileController;
-use App\Http\Controllers\Admin\AdReportController;
 use App\Http\Controllers\Admin\KaryawanController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Karyawan\KarAgendaController;
 use App\Http\Controllers\Karyawan\KarDailyReportController;
 use App\Http\Controllers\Karyawan\KarDashController;
-use App\Http\Controllers\Karyawan\KarJadwalController;
 use App\Http\Controllers\Karyawan\KarPresensiController;
 use App\Http\Controllers\Karyawan\KarProfileController;
-use App\Http\Controllers\Karyawan\KarReportController;
-use App\Http\Controllers\Karyawan\LogAkController;
 use App\Http\Controllers\Karyawan\LogHarianController;
-use App\Http\Controllers\WebcamController;
-use App\Models\Agenda;
+use App\Http\Controllers\ProfileFotoController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -31,11 +26,16 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/', [LoginController::class, 'index'])->name('login');
     Route::post('/login-proses', [LoginController::class, 'login'])->name('login.proses');
 });
-Route::get('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
-Route::post('/logoutt', [LoginController::class, 'logoutt'])->name('logoutt')->middleware('auth');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
 //role
 Route::middleware(['auth'])->group(function () {
+
+    Route::post('/profile/foto', [ProfileFotoController::class, 'update'])
+        ->name('profile.foto.update');
+
+    Route::delete('/profile/foto', [ProfileFotoController::class, 'delete'])
+        ->name('profile.foto.delete');
 
     //role admin
     Route::middleware(['role:admin'])
@@ -85,12 +85,12 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/profile/update', [KarProfileController::class, 'update'])->name('profile.update');
         Route::get('/profile/detail', [KarProfileController::class, 'detail'])->name('profile.detail');
 
-
         Route::get('/presensi', [KarPresensiController::class, 'index'])->name('presensi.index');
 
         Route::post('/presensi', [KarPresensiController::class, 'store'])->name('presensi.store');
 
         Route::get('/presensi/photo/{id}', [KarPresensiController::class, 'photo'])->name('presensi.photo');
+        Route::get('presensi/riwayat/{presensi}', [KarPresensiController::class, 'show'])->name('presensi.riwayat');
 
         Route::resource('report', KarDailyReportController::class)->except(['create', 'show']);
 

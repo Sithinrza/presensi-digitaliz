@@ -52,7 +52,9 @@
             align-items: flex-start; /* Konten dimulai dari atas */
         }
 
-        /* ❌ Menghapus semua custom CSS Select2 sebelumnya */
+        .filtered-hidden {
+            display: none !important;
+        }
     </style>
 
     <header class="bg-indigo-950 text-white shadow-lg sticky top-0 z-40">
@@ -199,14 +201,19 @@
                                 </div>
                                 <ul class="options-list" id="karyawanOptionsList">
                                     @foreach ($karyawans as $karyawan)
-                                        <li data-value="{{ $karyawan->id }}" data-text="{{ $karyawan->user->name ?? 'Tanpa Nama' }} @if ($karyawan->divisi) — {{ $karyawan->divisi->name }} @endif">
+                                        {{-- TAMBAHAN: data-divisi --}}
+                                        <li data-value="{{ $karyawan->id }}" 
+                                            data-divisi="{{ $karyawan->divisi_id }}" 
+                                            data-text="{{ $karyawan->user->name ?? 'Tanpa Nama' }} @if ($karyawan->divisi) — {{ $karyawan->divisi->name }} @endif">
+                                            
                                             <input type="checkbox" id="karyawan-checkbox-{{ $karyawan->id }}" value="{{ $karyawan->id }}"
-                                                   class="mr-2 rounded text-blue-600 focus:ring-blue-500"
-                                                   {{ in_array($karyawan->id, $selectedKaryawan) ? 'checked' : '' }}>
+                                                class="mr-2 rounded text-blue-600 focus:ring-blue-500"
+                                                {{ in_array($karyawan->id, $selectedKaryawan) ? 'checked' : '' }}>
+                                            
                                             <label for="karyawan-checkbox-{{ $karyawan->id }}" class="flex-grow">
                                                 {{ $karyawan->user->name ?? 'Tanpa Nama' }}
                                                 @if ($karyawan->divisi)
-                                                    — {{ $karyawan->divisi->name }}
+                                                    <span class="text-gray-400 text-xs">— {{ $karyawan->divisi->name }}</span>
                                                 @endif
                                             </label>
                                         </li>
@@ -270,130 +277,155 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Inisialisasi Flatpickr untuk Tanggal Agenda
-            flatpickr("#tanggal_agenda_input", {
-                // 💡 Format yang dikirimkan ke SERVER (M/D/Y) -> COCOK DENGAN VALIDASI CONTROLLER
-                dateFormat: "m/d/Y",
-
-                // Aktifkan Alternate Input
-                altInput: true,
-
-                // Format yang DILIHAT PENGGUNA (d M Y)
-                altFormat: "d M Y",
-
-                // Set defaultDate ke nilai M/D/Y yang ada di Blade (atau today)
-                defaultDate: "{{ old('tanggal_agenda', now()->format('m/d/Y')) }}",
-
-                allowInput: true,
-            });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Inisialisasi Flatpickr (Sama seperti sebelumnya)
+        flatpickr("#tanggal_agenda_input", {
+            dateFormat: "m/d/Y",
+            altInput: true,
+            altFormat: "d M Y",
+            defaultDate: "{{ old('tanggal_agenda', now()->format('m/d/Y')) }}",
+            allowInput: true,
         });
+    });
 
-        $(document).ready(function() {
-            // Fungsi untuk menginisialisasi custom multi-select
-            function initializeCustomMultiSelect(triggerId, panelId, searchInputId, optionsListId, hiddenSelectId) {
-                const $trigger = $(`#${triggerId}`);
-                const $panel = $(`#${panelId}`);
-                const $searchInput = $(`#${searchInputId}`);
-                const $optionsList = $(`#${optionsListId}`);
-                const $hiddenSelect = $(`#${hiddenSelectId}`);
-                const $summarySpan = $trigger.find('.trigger-summary');
-                const placeholder = $summarySpan.data('placeholder');
+    $(document).ready(function() {
+        // --- LOGIKA FILTER DIVISI KE KARYAWAN (BARU) ---
+        function syncKaryawanFilter() {
+            // 1. Ambil semua ID divisi yang sedang dicentang
+            let selectedDivisiIds = [];
+            $('#divisiOptionsList input[type="checkbox"]:checked').each(function() {
+                selectedDivisiIds.push($(this).val());
+            });
 
-                // FUNGSI: Update summary untuk menampilkan chips
-                function updateSummary() {
-                    const selectedOptions = $hiddenSelect.find('option:selected');
-                    $summarySpan.empty(); // Kosongkan ringkasan
-
-                    if (selectedOptions.length === 0) {
-                        // Tampilkan placeholder
-                        $summarySpan.html(`<span class="trigger-placeholder">${placeholder}</span>`);
-                        $trigger.removeClass('items-start').addClass('items-center');
+            // 2. Loop semua list karyawan
+            $('#karyawanOptionsList li').each(function() {
+                let empDivisiId = $(this).data('divisi'); // Ambil ID divisi karyawan
+                
+                // Jika tidak ada divisi yang dipilih, TAMPILKAN SEMUA karyawan
+                if (selectedDivisiIds.length === 0) {
+                    $(this).removeClass('filtered-hidden');
+                } 
+                // Jika ada divisi dipilih, cek apakah karyawan cocok
+                else {
+                    // Konversi ke string agar aman saat membandingkan
+                    if (selectedDivisiIds.includes(String(empDivisiId))) {
+                        $(this).removeClass('filtered-hidden');
                     } else {
-                        // Tampilkan chips
-                        selectedOptions.each(function() {
-                            const text = $(this).text().trim();
-                            // Chip HTML dengan styling Tailwind
-                            const chip = `<span class="inline-flex items-center text-sm font-medium bg-indigo-100 text-indigo-800 rounded px-2 py-0.5 mr-2 mb-0.5">
-                                            ${text}
-                                          </span>`;
-                            $summarySpan.append(chip);
-                        });
-                        $summarySpan.removeClass('trigger-placeholder');
-                        $trigger.removeClass('items-center').addClass('items-start');
+                        $(this).addClass('filtered-hidden');
+                        
+                        // OPSIONAL: Uncheck karyawan yang tersembunyi agar tidak ikut tersimpan?
+                        // $(this).find('input[type="checkbox"]').prop('checked', false); 
                     }
                 }
+            });
 
-                // Inisialisasi summary saat pertama kali dimuat
-                updateSummary();
+            // Update text summary di dropdown karyawan (agar jumlah chip/placeholder update jika ada yang di-uncheck)
+            // Kita panggil manual trigger change pada salah satu checkbox visible untuk memancing updateSummary
+            // Tapi karena updateSummary ada di scope lokal, kita biarkan dulu. 
+            // Jika Anda mengaktifkan fitur uncheck otomatis di atas, Anda perlu logika tambahan.
+        }
 
-                // Toggle panel ketika trigger diklik
-                $trigger.on('click', function(e) {
-                    e.stopPropagation();
-                    // Tutup panel lain yang mungkin terbuka
-                    $('.dropdown-panel').not($panel).addClass('hidden');
+        // Jalankan filter saat checkbox divisi berubah
+        $('#divisiOptionsList').on('change', 'input[type="checkbox"]', function() {
+            syncKaryawanFilter();
+        });
 
-                    $panel.toggleClass('hidden');
-                    $searchInput.focus();
-                });
+        // --- AKHIR LOGIKA FILTER ---
 
-                // Sembunyikan panel jika klik di luar
-                $(document).on('click', function(e) {
-                    if (!$panel.is(e.target) && $panel.has(e.target).length === 0 &&
-                        !$trigger.is(e.target) && $trigger.has(e.target).length === 0) {
-                        $panel.addClass('hidden');
-                    }
-                });
 
-                // Filter opsi ketika input pencarian berubah
-                $searchInput.on('keyup', function() {
-                    const searchTerm = $(this).val().toLowerCase();
-                    $optionsList.find('li').each(function() {
-                        const optionText = $(this).data('text').toLowerCase();
-                        if (optionText.includes(searchTerm)) {
-                            $(this).removeClass('hidden');
-                        } else {
-                            $(this).addClass('hidden');
-                        }
+        // Fungsi Generic Multi-Select (Sama seperti sebelumnya, tidak perlu diubah banyak)
+        function initializeCustomMultiSelect(triggerId, panelId, searchInputId, optionsListId, hiddenSelectId) {
+            const $trigger = $(`#${triggerId}`);
+            const $panel = $(`#${panelId}`);
+            const $searchInput = $(`#${searchInputId}`);
+            const $optionsList = $(`#${optionsListId}`);
+            const $hiddenSelect = $(`#${hiddenSelectId}`);
+            const $summarySpan = $trigger.find('.trigger-summary');
+            const placeholder = $summarySpan.data('placeholder');
+
+            function updateSummary() {
+                const selectedOptions = $hiddenSelect.find('option:selected');
+                $summarySpan.empty();
+
+                if (selectedOptions.length === 0) {
+                    $summarySpan.html(`<span class="trigger-placeholder">${placeholder}</span>`);
+                    $trigger.removeClass('items-start').addClass('items-center');
+                } else {
+                    selectedOptions.each(function() {
+                        const text = $(this).text().trim();
+                        // Kita potong text jika terlalu panjang (misal menghapus nama divisi di chip)
+                        const shortText = text.split('—')[0].trim(); 
+                        
+                        const chip = `<span class="inline-flex items-center text-sm font-medium bg-indigo-100 text-indigo-800 rounded px-2 py-0.5 mr-2 mb-0.5 border border-indigo-200">
+                                        ${shortText}
+                                      </span>`;
+                        $summarySpan.append(chip);
                     });
-                });
-
-                // Handle perubahan checkbox
-                $optionsList.on('change', 'input[type="checkbox"]', function() {
-                    const value = $(this).val();
-                    const isChecked = $(this).is(':checked');
-
-                    // Perbarui hidden <select>
-                    $hiddenSelect.find(`option[value="${value}"]`).prop('selected', isChecked);
-
-                    updateSummary();
-                });
-
-                // Sinkronisasi checkbox dengan selected di hidden select saat inisialisasi
-                $hiddenSelect.find('option').each(function() {
-                    const value = $(this).val();
-                    const isSelected = $(this).is(':selected');
-                    $optionsList.find(`input[type="checkbox"][value="${value}"]`).prop('checked', isSelected);
-                });
+                    $summarySpan.removeClass('trigger-placeholder');
+                    $trigger.removeClass('items-center').addClass('items-start');
+                }
             }
 
-            // Inisialisasi untuk Divisi
-            initializeCustomMultiSelect(
-                'dropdownDivisiTrigger',
-                'dropdownDivisiPanel',
-                'searchDivisiInput',
-                'divisiOptionsList',
-                'peserta_divisi_hidden'
-            );
+            updateSummary();
 
-            // Inisialisasi untuk Karyawan
-            initializeCustomMultiSelect(
-                'dropdownKaryawanTrigger',
-                'dropdownKaryawanPanel',
-                'searchKaryawanInput',
-                'karyawanOptionsList',
-                'peserta_karyawan_hidden'
-            );
-        });
-    </script>
+            $trigger.on('click', function(e) {
+                e.stopPropagation();
+                $('.dropdown-panel').not($panel).addClass('hidden');
+                $panel.toggleClass('hidden');
+                $searchInput.focus();
+            });
+
+            $(document).on('click', function(e) {
+                if (!$panel.is(e.target) && $panel.has(e.target).length === 0 &&
+                    !$trigger.is(e.target) && $trigger.has(e.target).length === 0) {
+                    $panel.addClass('hidden');
+                }
+            });
+
+            // Search Filter
+            $searchInput.on('keyup', function() {
+                const searchTerm = $(this).val().toLowerCase();
+                $optionsList.find('li').each(function() {
+                    const optionText = $(this).data('text').toLowerCase();
+                    
+                    // Logic: Hanya atur class 'hidden' (bawaan search). 
+                    // Class 'filtered-hidden' (bawaan divisi) tidak diganggu gugat.
+                    if (optionText.includes(searchTerm)) {
+                        $(this).removeClass('hidden');
+                    } else {
+                        $(this).addClass('hidden');
+                    }
+                });
+            });
+
+            $optionsList.on('change', 'input[type="checkbox"]', function() {
+                const value = $(this).val();
+                const isChecked = $(this).is(':checked');
+                $hiddenSelect.find(`option[value="${value}"]`).prop('selected', isChecked);
+                updateSummary();
+            });
+
+            $hiddenSelect.find('option').each(function() {
+                const value = $(this).val();
+                const isSelected = $(this).is(':selected');
+                $optionsList.find(`input[type="checkbox"][value="${value}"]`).prop('checked', isSelected);
+            });
+        }
+
+        // Inisialisasi
+        initializeCustomMultiSelect('dropdownDivisiTrigger', 'dropdownDivisiPanel', 'searchDivisiInput', 'divisiOptionsList', 'peserta_divisi_hidden');
+        initializeCustomMultiSelect('dropdownKaryawanTrigger', 'dropdownKaryawanPanel', 'searchKaryawanInput', 'karyawanOptionsList', 'peserta_karyawan_hidden');
+
+        // Panggil filter sekali saat load (untuk handle old input jika validasi gagal)
+        syncKaryawanFilter();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Script alert session (bawaan Anda)
+        // ... pastikan fungsi showSessionAlert ada jika dipakai ...
+        @if (session('success'))
+            // showSessionAlert({ success: "{{ session('success') }}" });
+        @endif
+    });
+</script>
 </x-admin-layout>

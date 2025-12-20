@@ -17,7 +17,20 @@
         </div>
     </header>
     <section class="bg-gray-150 text-white pt-8 pb-4 text-center">
-        <img class="w-24 h-24 rounded-full object-cover mx-auto mb-2 border-4 border-white shadow-lg" src="img/user.svg" alt="Foto Profil Abadi">
+        @php
+            // 1. Set gambar default
+            // Gunakan inisial nama untuk placeholder yang lebih personal
+            $initials = $karyawan->nama_lengkap ? substr($karyawan->nama_lengkap, 0, 1) : 'A';
+            $fotoUrl = 'https://placehold.co/100x100?text=' . $initials; 
+            
+            // 2. Cek apakah ada foto di database (kolom 'foto_profil')
+            if ($karyawan->foto_profil) {
+                $fotoUrl = asset('storage/' . $karyawan->foto_profil);
+            }
+        @endphp
+        <img class="w-24 h-24 rounded-full object-cover mx-auto mb-2 border-4 border-white shadow-lg" 
+                 src="{{ $fotoUrl }}" 
+                 alt="Foto Profil {{ $karyawan->nama_lengkap }}">
         <h1 class="text-xl font-bold text-black">{{ $karyawan->nama_lengkap }}</h1>
     </section>
     <main class="p-4 space-y-6 pb-24">
