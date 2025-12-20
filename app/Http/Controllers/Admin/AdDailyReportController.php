@@ -18,7 +18,6 @@ class AdDailyReportController extends Controller
             ->join('users', 'daily_reports.employee_id', '=', 'users.id')
             ->select('daily_reports.*');
 
-        // Filter Tanggal (Asumsi input Blade default YYYY-MM-DD)
         if ($tanggalFilter) {
             try {
                 $date = Carbon::createFromFormat('Y-m-d', $tanggalFilter);
@@ -26,7 +25,6 @@ class AdDailyReportController extends Controller
             } catch (\Exception $e) {}
         }
 
-        // Filter Pencarian Karyawan
         if ($searchKaryawan) {
             $reportsQuery->where(function ($query) use ($searchKaryawan) {
                 $query->where('users.name', 'like', '%' . $searchKaryawan . '%');

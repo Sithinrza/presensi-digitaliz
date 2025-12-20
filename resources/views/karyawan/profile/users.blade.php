@@ -6,21 +6,21 @@
     <div class="relative min-h-screen flex flex-col bg-gray-50">
         {{-- Header Profil --}}
         <header class="bg-indigo-950 p-4 pb-16 rounded-t-[2.5rem] shadow-lg relative z-10 text-center text-white">
-            
+
             <div class="relative inline-block mb-2 group">
                 {{-- 1. LOGIKA STATUS FOTO --}}
                 @php
                     $karyawan = Auth::user()->karyawan;
-                    $hasFoto = $karyawan && $karyawan->foto_profil; 
+                    $hasFoto = $karyawan && $karyawan->foto_profil;
                     $fotoUrl = $hasFoto ? asset('storage/' . $karyawan->foto_profil) : 'https://placehold.co/100x100?text=User';
                 @endphp
 
-                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg transition-transform transform group-hover:scale-105" 
-                     src="{{ $fotoUrl }}" 
+                <img class="w-24 h-24 rounded-full object-cover mx-auto border-4 border-white shadow-lg transition-transform transform group-hover:scale-105"
+                     src="{{ $fotoUrl }}"
                      alt="Foto Profil">
 
                 {{-- 2. TOMBOL INTERAKTIF --}}
-                <button type="button" 
+                <button type="button"
                         onclick="handleProfilePictureClick({{ $hasFoto ? 'true' : 'false' }})"
                         class="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md border border-gray-200 hover:bg-gray-100 transition text-gray-600 hover:text-indigo-600 cursor-pointer"
                         title="Kelola Foto Profil">
@@ -30,21 +30,25 @@
                 </button>
 
                 {{-- 3. FORM UPDATE (Hidden) --}}
-                <form id="form-ganti-foto" action="{{ route('karyawan.profile.update.foto') }}" method="POST" enctype="multipart/form-data" class="hidden">
+                <form id="form-ganti-foto" action="{{ route('profile.foto.update') }}" method="POST" enctype="multipart/form-data" class="hidden">
                     @csrf
-                    @method('PUT')
-                    <input type="file" name="foto" id="input-foto" accept="image/jpeg,image/png,image/jpg" onchange="document.getElementById('form-ganti-foto').submit()">
+
+                    <input type="file"
+                        name="foto_profil"
+                        id="input-foto"
+                        accept="image/jpeg,image/png,image/jpg"
+                        onchange="this.form.submit()">
                 </form>
 
                 {{-- 4. FORM DELETE (Hidden) --}}
-                <form id="form-hapus-foto" action="{{ route('karyawan.profile.delete.foto') }}" method="POST" class="hidden">
+                <form id="form-hapus-foto" action="{{ route('profile.foto.delete') }}" method="POST" class="hidden">
                     @csrf
                     @method('DELETE')
                 </form>
             </div>
 
             <h1 class="text-xl font-bold mt-2">{{ Auth::user()->name }}</h1>
-            
+
             <div class="flex items-center justify-center gap-2 text-sm text-indigo-200 mt-1">
                 <span class="bg-indigo-900/50 px-3 py-0.5 rounded-full border border-indigo-800">
                     {{ optional(Auth::user()->roles->first())->name ?? 'Karyawan' }}
@@ -57,7 +61,7 @@
 
         {{-- Konten Menu --}}
         <main class="flex-grow p-4 -mt-8 relative z-20 space-y-6">
-            
+
             {{-- Alert Notifikasi --}}
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl relative shadow-sm" role="alert">
@@ -146,7 +150,7 @@
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
             <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                 <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xs">
-                    
+
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 border-b border-gray-100 flex justify-between items-center">
                         <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Kelola Foto Profil</h3>
                         <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-500">
@@ -196,9 +200,9 @@
 
         <script>
             // --- Fungsi Modal & Logika ---
-            
+
             const modal = document.getElementById('modal-foto-profil');
-            
+
             function openModal() {
                 modal.classList.remove('hidden');
             }
@@ -225,7 +229,7 @@
             // Aksi Hapus Foto -> PAKE SWEETALERT DI SINI
             function triggerHapusFoto() {
                 // 1. Tutup modal pilihan dulu supaya bersih
-                closeModal(); 
+                closeModal();
 
                 // 2. Munculkan SweetAlert Konfirmasi
                 Swal.fire({

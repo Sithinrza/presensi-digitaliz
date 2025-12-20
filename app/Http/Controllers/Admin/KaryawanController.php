@@ -147,7 +147,6 @@ class KaryawanController extends Controller
 
     public function edit(Karyawan $karyawan)
     {
-        // 1. Ambil semua data master untuk dropdown (sama seperti fungsi create)
         $roles = Role::all();
         $agamas = Agama::all();
         $jabatans = Jabatan::all();
@@ -170,15 +169,11 @@ class KaryawanController extends Controller
 
   public function update(Request $request, Karyawan $karyawan)
     {
-        // 🚀 PERBAIKAN KRITIS UNTUK MENGHINDARI PERUBAHAN PASSWORD
-        // Jika form mengirimkan field user/password (baik disabled/readonly), kita abaikan di sini.
         $request->offsetUnset('email');
         $request->offsetUnset('password');
         $request->offsetUnset('role_name');
 
-        // 🚨 PERBAIKAN 1: Mengubah validasi ke format d M Y (sesuai output View Anda)
         $request->validate([
-            // Validasi lainnya...
             'tanggal_bergabung' => 'required|date_format:d M Y',
             'alamat' => 'required|string',
             'no_telepon' => 'required|string|max:20',
@@ -196,9 +191,6 @@ class KaryawanController extends Controller
 
             $tglBergabung = Carbon::createFromFormat('d M Y', $request->tanggal_bergabung)->format('Y-m-d');
 
-            // 🚨 LOGIKA UPDATE USER/ROLE DIHAPUS
-
-            // 2. UPDATE DATA KARYAWAN
             $karyawanData = [
                 'tanggal_bergabung' => $tglBergabung,
                 'no_telepon' => $request->no_telepon,

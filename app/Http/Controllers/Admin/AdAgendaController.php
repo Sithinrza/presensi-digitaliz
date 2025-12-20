@@ -12,9 +12,7 @@ use Carbon\Carbon;
 
 class AdAgendaController extends Controller
 {
-    /**
-     * Tampilkan halaman daftar agenda.
-     */
+
     public function index(Request $request){
         $filterDate = $request->input('tanggal');
 
@@ -45,9 +43,7 @@ class AdAgendaController extends Controller
         return view('admin.agenda.create', compact('divisis', 'karyawans'));
     }
 
-    /**
-     * Simpan agenda baru ke database.
-     */
+
     public function store(Request $request)
     {
         $request->validate([
@@ -60,7 +56,7 @@ class AdAgendaController extends Controller
             'lokasi_alamat' => 'nullable|string',
             'ruang' => 'nullable|string',
 
-            // Validasi untuk Peserta (Array ID)
+            // Validasi untuk Peserta (array ID)
             'peserta_karyawan' => 'nullable|array',
             'peserta_divisi' => 'nullable|array',
         ]);
@@ -93,19 +89,17 @@ class AdAgendaController extends Controller
                 $karyawanIds = $karyawanIds->merge($request->peserta_karyawan);
             }
 
-            // Ambil ID yang sudah dikumpulkan perorangan
+            // mengambil ID yang sudah dikumpulkan perorangan
             $excludedIds = $karyawanIds->unique()->all();
 
-            // 4. LOGIKA PENUGASAN PESERTA PER DIVISI (PRIORITAS 2: EXCLUDE YANG SUDAH DIPILIH)
             if ($request->has('peserta_divisi') && !empty($request->peserta_divisi)) {
                 $karyawanDivisiIds = Karyawan::whereIn('divisi_id', $request->peserta_divisi)
-                                             ->whereNotIn('id', $excludedIds) // <<< KRITIS: EXCLUDE KARYAWAN PERORANGAN
+                                             ->whereNotIn('id', $excludedIds)
                                              ->pluck('id');
 
                 $karyawanIds = $karyawanIds->merge($karyawanDivisiIds);
             }
 
-            // 5. Lampirkan (Attach) semua ID Karyawan ke Agenda (Tabel Pivot)
             if ($karyawanIds->isNotEmpty()) {
                 $agenda->karyawans()->sync($karyawanIds->unique()->all());
             }
@@ -124,22 +118,20 @@ class AdAgendaController extends Controller
 
     public function edit(Agenda $agenda)
     {
-        // 1. Ambil data master untuk dropdown
+        // dropdown data master
         $divisis = Divisi::all();
         // Load relasi user dan divisi untuk tampilan karyawan
         $karyawans = Karyawan::with('user', 'divisi')->get();
 
-        // 2. Ambil ID Karyawan yang sudah ditugaskan (untuk pre-select)
+        // pre-select id karyawan
         $selectedKaryawanIds = $agenda->karyawans->pluck('id')->toArray();
 
-        // 3. Cari Divisi unik dari Karyawan yang ditugaskan (untuk pre-select)
+        // Cari Divisi dari Karyawan yang ditugaskan (untuk pre-select)
         $selectedDivisiIds = Karyawan::whereIn('id', $selectedKaryawanIds)
                                      ->whereNotNull('divisi_id')
                                      ->pluck('divisi_id')
                                      ->unique()
                                      ->toArray();
-
-        // Catatan: Jika ada masalah relasi user di Blade, pastikan Model Karyawan memiliki relasi 'user'.
 
         return view('admin.agenda.update', compact(
             'agenda',
@@ -150,12 +142,9 @@ class AdAgendaController extends Controller
         ));
     }
 
-    /**
-     * Menyimpan perubahan Agenda (UPDATE).
-     */
+
     public function update(Request $request, Agenda $agenda)
     {
-        // 1. Validasi Data
 
         $request->merge([
             'waktu_mulai' => $request->waktu_mulai === '' ? null : $request->waktu_mulai,
@@ -170,9 +159,8 @@ class AdAgendaController extends Controller
 
             'lokasi_alamat' => 'nullable|string',
             'ruang' => 'nullable|string',
-            'catatan' => 'nullable|string', // Hanya menggunakan 'catatan'
+            'catatan' => 'nullable|string',
 
-            // Validasi Peserta
             'peserta_karyawan' => 'nullable|array',
             'peserta_divisi' => 'nullable|array',
         ]);
@@ -185,10 +173,9 @@ class AdAgendaController extends Controller
         DB::beginTransaction();
 
         try {
-            // KRITIS: Konversi format tanggal dari m/d/Y (input) ke Y-m-d (DB)
+
             $tanggal_agenda_db = Carbon::createFromFormat('m/d/Y', $request->tanggal_agenda)->format('Y-m-d');
 
-            // 1. Update Entri Agenda Utama
             $agenda->update([
                 'judul' => $request->judul,
                 'tanggal_agenda' => $tanggal_agenda_db,
@@ -197,29 +184,24 @@ class AdAgendaController extends Controller
                 'lokasi_alamat' => $request->lokasi_alamat,
                 'ruang' => $request->ruang,
                 'catatan' => $request->catatan,
-                // Kolom 'deskripsi' dihapus dari sini
             ]);
 
            $karyawanIds = collect([]);
 
-            // 3. LOGIKA PENUGASAN PESERTA PERORANGAN (PRIORITAS 1)
             if ($request->has('peserta_karyawan') && !empty($request->peserta_karyawan)) {
                 $karyawanIds = $karyawanIds->merge($request->peserta_karyawan);
             }
 
-            // Ambil ID yang sudah dikumpulkan perorangan
             $excludedIds = $karyawanIds->unique()->all();
 
-            // 4. LOGIKA PENUGASAN PESERTA PER DIVISI (PRIORITAS 2: EXCLUDE YANG SUDAH DIPILIH)
             if ($request->has('peserta_divisi') && !empty($request->peserta_divisi)) {
                 $karyawanDivisiIds = Karyawan::whereIn('divisi_id', $request->peserta_divisi)
-                                             ->whereNotIn('id', $excludedIds) // <<< KRITIS: EXCLUDE KARYAWAN PERORANGAN
+                                             ->whereNotIn('id', $excludedIds) 
                                              ->pluck('id');
 
                 $karyawanIds = $karyawanIds->merge($karyawanDivisiIds);
             }
 
-            // 5. Perbarui (Sync) tabel pivot
             $agenda->karyawans()->sync($karyawanIds->unique()->all());
 
             DB::commit();
@@ -238,10 +220,8 @@ class AdAgendaController extends Controller
         DB::beginTransaction();
 
         try {
-            // Hapus relasi pivot terlebih dahulu (Walaupun cascade delete di DB bisa mengurusnya, ini lebih aman di sisi aplikasi)
             $agenda->karyawans()->detach();
 
-            // Hapus agenda utama
             $agenda->delete();
 
             DB::commit();
@@ -250,7 +230,6 @@ class AdAgendaController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            // Jika Anda mengaktifkan throw $e; di sini, Anda akan melihat error database (e.g., foreign key violation)
             return back()->with('error', 'Gagal menghapus agenda: ' . $e->getMessage());
         }
     }

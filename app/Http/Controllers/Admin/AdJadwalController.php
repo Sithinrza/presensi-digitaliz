@@ -12,7 +12,6 @@ use Carbon\Carbon;
 
 class AdJadwalController extends Controller
 {
-    // LIST JADWAL
     public function index()
     {
         $jadwalKerjas = JadwalKerja::with('detailJadwals')->get();
@@ -29,8 +28,6 @@ class AdJadwalController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi
-       // dd($request->details);
 
        $request->validate([
             'name' => 'required|string|max:255|unique:jadwal_kerjas,name',
@@ -45,12 +42,10 @@ class AdJadwalController extends Controller
         try {
             DB::beginTransaction();
 
-            // SIMPAN TEMPLATE
             $jadwal = JadwalKerja::create([
                 'name' => $request->name
             ]);
 
-            // SIMPAN DETAIL
             foreach ($request->details as $detail) {
                 DetailJadwal::create([
                     'id_jadwal_kerja' => $jadwal->id,
