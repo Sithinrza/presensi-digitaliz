@@ -62,79 +62,125 @@
 
             <!-- Daftar Laporan -->
             <section class="bg-white p-4 rounded-2xl shadow-lg">
-                <div class="flex items-center justify-between mb-4 px-1">
-                    <h2 class="text-lg font-bold text-gray-800">
-                        Daftar Laporan
-                    </h2>
-                    <span class="text-sm font-medium text-gray-500">{{ $reports->total() }} Laporan</span>
-                </div>
+    <div class="flex items-center justify-between mb-4 px-1">
+        <h2 class="text-lg font-bold text-gray-800">
+            Daftar Laporan
+        </h2>
+        <span class="text-sm font-medium text-gray-500">
+            {{ $reports->total() }} Laporan
+        </span>
+    </div>
 
-                <!-- Kontainer Laporan -->
-                <div class="space-y-3">
+    <div class="space-y-3">
 
-                    @forelse ($reports as $report)
-                        @php
-                            // Ambil lampiran yang relevan
-                            $linkAttachment = $report->attachments->where('type', 'link')->first();
-                            $fileAttachment = $report->attachments->where('type', 'file')->first();
-                        @endphp
-                        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 space-y-3">
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-center space-x-3">
-                                    {{-- Tampilkan Avatar Karyawan --}}
-                                    <img src="{{ $report->employee->profile_photo_url ?? 'https://placehold.co/40x40' }}" class="w-10 h-10 rounded-full object-cover">
-                                    <div>
-                                        <p class="font-bold text-gray-900 text-sm">{{ $report->employee->name ?? 'N/A' }}</p>
-                                        <p class="text-xs font-semibold text-gray-700">{{ $report->title }}</p>
-                                    </div>
-                                </div>
-                                <div class="text-right flex-shrink-0 ml-2">
-                                    {{-- Tampilkan Waktu dan Tanggal --}}
-                                    <p class="text-sm font-bold text-gray-800">{{ $report->report_date->format('H:i') }}</p>
-                                    <p class="text-xs text-gray-500">{{ $report->report_date->isoFormat('D MMM YYYY') }}</p>
-                                </div>
-                            </div>
-                            <p class="text-sm text-gray-700 pl-12">{{ $report->description }}</p>
-                            <div class="flex items-center justify-between pl-12">
-                                <div class="flex items-center space-x-4">
+        @forelse ($reports as $report)
+            @php
+                $linkAttachment = $report->attachments->where('type', 'link')->first();
+                $fileAttachment = $report->attachments->where('type', 'file')->first();
+            @endphp
 
-                                    {{-- Link Attachment --}}
-                                    @if ($linkAttachment)
-                                        <a href="{{ $linkAttachment->url_or_path }}" target="_blank" class="text-xs text-blue-600 hover:underline inline-flex items-center space-x-1">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>
-                                            <span>Link Lampiran</span>
-                                        </a>
-                                    @endif
-
-                                    {{-- File Attachment --}}
-                                    @if ($fileAttachment)
-                                        <a href="{{ Storage::url($fileAttachment->url_or_path) }}" target="_blank" class="text-xs text-green-600 hover:underline inline-flex items-center space-x-1">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.122 2.122l7.81-7.81" /></svg>
-                                            <span>File: {{ $fileAttachment->filename }}</span>
-                                        </a>
-                                    @endif
-
-                                    @if (!$linkAttachment && !$fileAttachment)
-                                        <span class="text-xs text-gray-400 italic">Tidak ada lampiran</span>
-                                    @endif
-                                </div>
-                            </div>
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-200 space-y-3">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center space-x-3">
+                        <img src="{{ $report->employee->profile_photo_url ?? 'https://placehold.co/40x40' }}"
+                             class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm">
+                                {{ $report->employee->name ?? 'N/A' }}
+                            </p>
+                            <p class="text-xs font-semibold text-gray-700">
+                                {{ $report->title }}
+                            </p>
                         </div>
-                    @empty
-                        <div class="bg-transparent p-4 rounded-xl text-center text-gray-500 italic">
-                            Tidak ada laporan ditemukan untuk filter ini.
-                        </div>
-                    @endforelse
-
-                </div>
-
-                {{-- Pagination --}}
-                @if ($reports->hasPages())
-                    <div class="mt-6 flex justify-center">
-                        {{ $reports->links('pagination::tailwind') }}
                     </div>
-                @endif
-            </section>
+
+                    {{-- JAM, TANGGAL, STATUS --}}
+                    <div class="text-right flex-shrink-0 ml-2 space-y-1">
+                        <p class="text-sm font-bold text-gray-800">
+                            {{ $report->report_date->format('H:i') }}
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            {{ $report->report_date->isoFormat('D MMM YYYY') }}
+                        </p>
+
+                        {{-- DROPDOWN STATUS ADMIN --}}
+                        <form action="{{ route('admin.report.updateStatus', $report->id) }}"
+                              method="POST">
+                            @csrf
+                            @method('PATCH')
+
+                            <select name="status"
+                                onchange="this.form.submit()"
+                                class="
+                                    text-xs font-semibold rounded-full px-3 py-1
+                                    border
+                                    @if($report->status === 'pending')
+                                        bg-yellow-100 text-yellow-700 border-yellow-300
+                                    @elseif($report->status === 'approved')
+                                        bg-green-100 text-green-700 border-green-300
+                                    @else
+                                        bg-red-100 text-red-700 border-red-300
+                                    @endif
+                                ">
+                                <option value="pending" {{ $report->status === 'pending' ? 'selected' : '' }}>
+                                    Pending
+                                </option>
+                                <option value="approved" {{ $report->status === 'approved' ? 'selected' : '' }}>
+                                    Approved
+                                </option>
+                                <option value="rejected" {{ $report->status === 'rejected' ? 'selected' : '' }}>
+                                    Rejected
+                                </option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-700 pl-12">
+                    {{ $report->description }}
+                </p>
+
+                <div class="flex items-center justify-between pl-12">
+                    <div class="flex items-center space-x-4">
+
+                        @if ($linkAttachment)
+                            <a href="{{ $linkAttachment->url_or_path }}" target="_blank"
+                               class="text-xs text-blue-600 hover:underline inline-flex items-center space-x-1">
+                                <span>Link Lampiran</span>
+                            </a>
+                        @endif
+
+                        @if ($fileAttachment)
+                            <a href="{{ Storage::url($fileAttachment->url_or_path) }}" target="_blank"
+                               class="text-xs text-green-600 hover:underline inline-flex items-center space-x-1">
+                                <span>File: {{ $fileAttachment->filename }}</span>
+                            </a>
+                        @endif
+
+                        @if (!$linkAttachment && !$fileAttachment)
+                            <span class="text-xs text-gray-400 italic">
+                                Tidak ada lampiran
+                            </span>
+                        @endif
+
+                    </div>
+                </div>
+            </div>
+
+        @empty
+            <div class="bg-transparent p-4 rounded-xl text-center text-gray-500 italic">
+                Tidak ada laporan
+            </div>
+        @endforelse
+    </div>
+
+    @if ($reports->hasPages())
+        <div class="mt-6 flex justify-center">
+            {{ $reports->links('pagination::tailwind') }}
+        </div>
+    @endif
+</section>
+
         </main>
     </div>
 

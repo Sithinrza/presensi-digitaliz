@@ -16,6 +16,7 @@ class DailyReport extends Model
         'title',
         'description',
         'report_date',
+        'status',
     ];
 
     protected $casts = [

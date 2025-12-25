@@ -57,6 +57,7 @@ class KarDailyReportController extends Controller
             'title' => $request->judul,
             'description' => $request->deskripsi,
             'report_date' => now(),
+            'status' => 'pending',
         ]);
 
         if ($request->filled('link')) {
@@ -100,6 +101,7 @@ class KarDailyReportController extends Controller
         $report->update([
             'title' => $request->judul_edit,
             'description' => $request->deskripsi_edit,
+            'status' => 'pending', // ✅ RESET STATUS
         ]);
 
         if ($request->filled('link_edit')) {

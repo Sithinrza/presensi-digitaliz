@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('agenda', AdAgendaController::class);
 
         Route::get('/report', [AdDailyReportController::class, 'index'])->name('report.index');
+        Route::patch('/report/{id}/status', [AdDailyReportController::class, 'updateStatus'])->name('report.updateStatus');
 
         Route::resource('jadwal', AdJadwalController::class);
         Route::resource('penetapan', AdJadwalPenetapanController::class);
