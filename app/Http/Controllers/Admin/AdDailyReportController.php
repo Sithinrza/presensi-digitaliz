@@ -59,18 +59,24 @@ class AdDailyReportController extends Controller
     }
 
     public function updateStatus(Request $request, $id)
-{
-    $request->validate([
-        'status' => 'required|in:pending,approved,rejected',
-    ]);
+    {
+        // PERBAIKAN: Gunakan DailyReport, bukan Report
+        $report = DailyReport::findOrFail($id);
 
-    $report = DailyReport::findOrFail($id);
+        // Validasi input
+        $request->validate([
+            'status' => 'required|in:pending,approved,rejected',
+        ]);
 
-    $report->update([
-        'status' => $request->status,
-    ]);
+        // Update status
+        $report->status = $request->status;
+        
+        // Komentar (Aktifkan jika kolom database sudah ada)
+        // $report->admin_comment = $request->admin_comment; 
 
-    return back()->with('success', 'Status laporan diperbarui');
-}
+        $report->save();
+
+        return back()->with('success', 'Status laporan berhasil diperbarui!');
+    }
 
 }

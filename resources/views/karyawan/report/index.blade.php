@@ -1,372 +1,390 @@
-
 <x-karyawan-layout>
     <x-slot:title>
-        report
+        Laporan Saya
     </x-slot:title>
 
-    <div class="relative min-h-screen pb-24">
-        {{-- ... Header, Tombol Buat Laporan Baru (sama seperti sebelumnya) ... --}}
-        <header class="bg-indigo-950 p-4 pb-16 rounded-t-[2.5rem] shadow-lg relative z-10 -mt-1">
-            <div class="flex items-center space-x-3 text-white mb-4">
-                <a href="{{ route('karyawan.dashboard') }}" class="p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </a>
-                <h2 class="text-xl font-bold">Laporan Saya</h2>
+    <div class="relative min-h-screen bg-gray-50 pb-24 font-sans">
+        
+        {{-- Header Solid (Tanpa Gradasi) --}}
+        <header class="bg-indigo-950 pt-8 pb-28 rounded-b-[3rem] shadow-xl relative z-10">
+            <div class="relative container mx-auto px-6">
+                <div class="flex items-center justify-between text-white mb-2">
+                    <div class="flex items-center gap-4">
+                        <a href="{{ route('karyawan.dashboard') }}" class="group p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-300 border border-white/10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </a>
+                        <div>
+                            <h2 class="text-2xl font-bold tracking-tight">Laporan Harian</h2>
+                            <p class="text-indigo-200 text-sm">Kelola aktivitas kerja harianmu di sini.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
-        <main class="p-4 -mt-10 relative z-20 space-y-6">
-            <section class="bg-white p-5 rounded-xl shadow-lg relative z-30">
+        <main class="container mx-auto px-4 -mt-20 relative z-20 space-y-8">
+            
+            {{-- Bagian Filter & Tombol Tambah --}}
+            <section class="bg-white p-5 rounded-2xl shadow-lg border border-gray-100">
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
 
-                    {{-- Ganti action form ke route index Anda --}}
+                    {{-- Form Filter --}}
                     <form action="{{ route('karyawan.report.index') }}" method="GET" id="filter-form" class="w-full md:flex-1 order-2 md:order-1">
-                        @csrf
-                        <label for="filter_tanggal" class="block mb-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider relative z-30">
-                            Filter Tanggal
+                        <label for="filter_tanggal" class="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
+                            Pilih Tanggal
                         </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-indigo-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z"/>
-                                    <path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-                                </svg>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                <i class="fa-regular fa-calendar text-indigo-500"></i>
                             </div>
                             <input type="text" id="filter_tanggal" name="tanggal"
-                                class="bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full ps-10 p-2.5 transition-shadow duration-200 focus:shadow-md"
-                                placeholder="Pilih Tanggal"
-                                {{-- Isi dengan nilai filter saat ini --}}
+                                class="bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 block w-full ps-10 p-3 transition-all duration-200 hover:bg-white cursor-pointer shadow-sm"
+                                placeholder="Filter berdasarkan tanggal..."
                                 value="{{ $selected_date }}">
                         </div>
                     </form>
 
-                    <div class="w-full md:w-auto order-1 md:order-2">
-                        <div class="hidden md:block mb-1.5 text-xs">&nbsp;</div>
-
-                        {{-- Tombol 'Lihat Semua Laporan' yang menghilangkan filter tanggal --}}
+                    {{-- Tombol Aksi --}}
+                    <div class="w-full md:w-auto order-1 md:order-2 flex flex-col sm:flex-row gap-3">
                         @if ($selected_date && $selected_date !== 'all')
                             <a href="{{ route('karyawan.report.index', ['tanggal' => 'all']) }}"
-                                class="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-gray-600 text-white text-sm font-semibold py-2.5 px-5 rounded-lg shadow-md hover:bg-gray-700 active:scale-95 transition-all duration-200 mb-4 md:mb-0">
-                                <span>Lihat Semua Laporan</span>
+                                class="inline-flex items-center justify-center gap-2 bg-gray-100 text-gray-600 border border-gray-200 text-sm font-semibold py-3 px-5 rounded-xl hover:bg-gray-200 transition-all duration-200">
+                                <i class="fa-solid fa-rotate-left"></i> <span>Reset</span>
                             </a>
                         @endif
 
                         <button type="button" data-modal-target="tambah-laporan-modal" data-modal-toggle="tambah-laporan-modal"
-                            class="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-indigo-600 text-white text-sm font-semibold py-2.5 px-5 rounded-lg shadow-md hover:bg-indigo-700 active:scale-95 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                            <span>Buat Laporan Baru</span>
+                            class="inline-flex items-center justify-center gap-2 bg-indigo-600 text-white text-sm font-bold py-3 px-6 rounded-xl shadow-md hover:bg-indigo-700 hover:shadow-lg active:scale-95 transition-all duration-300">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Buat Laporan</span>
                         </button>
                     </div>
 
                 </div>
             </section>
 
+            {{-- Notifikasi Sukses --}}
             @if(session('success'))
-                {{-- Tambahkan notifikasi success --}}
-                <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50" role="alert">
-                    <span class="font-medium">Success!</span> {{ session('success') }}
-                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            icon: 'success', title: 'Berhasil!', text: "{{ session('success') }}",
+                            timer: 2000, showConfirmButton: false, toast: true, position: 'top-end'
+                        });
+                    });
+                </script>
             @endif
 
-            <section class="pb-4">
-                <div class="flex items-center justify-between mb-4 px-1">
-                    <h2 class="text-lg font-bold text-gray-800">
-                        Riwayat Laporan
-                    </h2>
-                     <span class="text-sm font-medium text-gray-500">{{ $reports->total() }} Laporan</span>
+            {{-- DAFTAR KARTU LAPORAN --}}
+            <section class="space-y-6">
+                <div class="flex items-center justify-between px-2 border-b border-gray-200 pb-2">
+                    <h2 class="text-xl font-bold text-gray-800 tracking-tight">Riwayat Aktivitas</h2>
+                    <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
+                        Total: {{ $reports->total() }}
+                    </span>
                 </div>
 
-                <div class="space-y-4">
+                <div class="grid grid-cols-1 gap-5"> 
+                @forelse ($reports as $report)
+                    @php
+                        $linkAttachment = $report->attachments->where('type', 'link')->first();
+                        $fileAttachment = $report->attachments->where('type', 'file')->first();
+                        
+                        // LOGIKA STATUS
+                        $statusColor = 'yellow';
+                        $statusIcon = 'fa-hourglass-half';
+                        $statusLabel = 'Menunggu';
+                        
+                        if($report->status == 'approved') {
+                            $statusColor = 'green';
+                            $statusIcon = 'fa-circle-check';
+                            $statusLabel = 'Diterima';
+                        } elseif($report->status == 'rejected') {
+                            $statusColor = 'red';
+                            $statusIcon = 'fa-circle-xmark';
+                            $statusLabel = 'Ditolak';
+                        }
+                    @endphp
 
-                    @forelse ($reports as $report)
-                        {{-- Card Laporan --}}
-                        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" data-report-id="{{ $report->id }}">
-                            <div class="p-4 space-y-3">
-                                <div class="flex items-start justify-between">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="flex-shrink-0 bg-indigo-100 text-indigo-700 p-2 rounded-lg">
-                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-bold text-gray-900 text-sm">{{ $report->title }}</p>
-                                            <p class="text-xs font-medium text-gray-500">{{ $report->report_date->isoFormat('dddd, D MMM YYYY - HH:mm') }}</p>
-                                        </div>
-                                    </div>
-                                        <div class="flex justify-end">
-                                        <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full
-                                            @if($report->status === 'pending')
-                                                bg-yellow-100 text-yellow-700
-                                            @elseif($report->status === 'approved')
-                                                bg-green-100 text-green-700
-                                            @else
-                                                bg-red-100 text-red-700
-                                            @endif
-                                        ">
-                                            {{ ucfirst($report->status) }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <p class="text-sm text-gray-700">{{ $report->description }}</p>
+                    {{-- CARD START --}}
+                    <div class="group relative bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
+                        
+                        {{-- Strip Warna Status --}}
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-{{ $statusColor }}-500 rounded-l-2xl"></div>
 
-                                {{-- Lampiran --}}
-                                <div class="space-y-2">
-                                    @php
-                                        $linkAttachment = $report->attachments->where('type', 'link')->first();
-                                        $fileAttachment = $report->attachments->where('type', 'file')->first();
-                                    @endphp
-
-                                    @if ($linkAttachment)
-                                        <a href="{{ $linkAttachment->url_or_path }}" target="_blank" class="text-xs text-blue-600 hover:underline inline-flex items-center space-x-1 p-2 bg-gray-50 rounded-md">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>
-                                            <span>Link: {{ Str::limit($linkAttachment->url_or_path, 30) }}</span>
-                                        </a>
-                                    @endif
-
-                                    @if ($fileAttachment)
-                                        <a href="{{ Storage::url($fileAttachment->url_or_path) }}" target="_blank" class="text-xs text-green-600 hover:underline inline-flex items-center space-x-1 p-2 bg-gray-50 rounded-md">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.122 2.122l7.81-7.81" /></svg>
-                                            <span>File: {{ $fileAttachment->filename }}</span>
-                                        </a>
-                                    @endif
-
-                                    @if (!$linkAttachment && !$fileAttachment)
-                                        <span class="text-xs text-gray-400 italic">Tidak ada lampiran</span>
-                                    @endif
+                        {{-- Header Card: Judul & Status --}}
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4 pl-2">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800 group-hover:text-indigo-700 transition-colors leading-snug">
+                                    {{ $report->title }}
+                                </h3>
+                                <div class="flex items-center gap-2 text-xs text-gray-500 font-medium mt-1">
+                                    <span class="flex items-center gap-1.5">
+                                        <i class="fa-regular fa-calendar text-indigo-400"></i>
+                                        {{ $report->report_date->isoFormat('dddd, D MMM YYYY') }}
+                                    </span>
+                                    <span class="text-gray-300">•</span>
+                                    <span class="flex items-center gap-1">
+                                        <i class="fa-regular fa-clock"></i>
+                                        {{ $report->report_date->format('H:i') }}
+                                    </span>
                                 </div>
                             </div>
+                            
+                            {{-- STATUS BADGE --}}
+                            <span class="self-start inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide bg-{{ $statusColor }}-50 text-{{ $statusColor }}-600 border border-{{ $statusColor }}-100">
+                                <i class="fa-solid {{ $statusIcon }}"></i> {{ $statusLabel }}
+                            </span>
+                        </div>
 
-                            {{-- Tombol CRUD (Update & Delete) --}}
-                            <div class="flex border-t border-gray-200 bg-gray-50">
-                                {{-- Tombol Edit: Tambahkan data-* untuk mengisi modal --}}
-                                <button type="button"
-                                    data-report-id="{{ $report->id }}"
-                                    data-title="{{ $report->title }}"
-                                    data-description="{{ $report->description }}"
-                                    data-link="{{ $linkAttachment->url_or_path ?? '' }}"
-                                    data-file-id="{{ $fileAttachment->id ?? '' }}"
-                                    data-file-name="{{ $fileAttachment->filename ?? '' }}"
-                                    data-modal-target="edit-laporan-modal" data-modal-toggle="edit-laporan-modal"
-                                    class="open-edit-modal flex-1 p-3 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors duration-200 inline-flex items-center justify-center space-x-1">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
-                                    <span>Edit</span>
-                                </button>
+                        {{-- Body: Deskripsi --}}
+                        <div class="mb-5 pl-2">
+                            <p class="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{{ $report->description }}</p>
+                        </div>
 
-                                {{-- Tombol Hapus: Tambahkan data-* untuk mengisi modal --}}
-                                <button type="button"
-                                    data-report-id="{{ $report->id }}"
-                                    data-modal-target="hapus-laporan-modal" data-modal-toggle="hapus-laporan-modal"
-                                    class="open-delete-modal flex-1 p-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors duration-200 inline-flex items-center justify-center space-x-1 border-l border-gray-200">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.144-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.057-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
-                                    <span>Hapus</span>
-                                </button>
+                        {{-- Komentar Admin --}}
+                        @if($report->admin_comment)
+                            <div class="mb-5 ml-2 relative overflow-hidden rounded-xl bg-red-50 border border-red-100 p-4">
+                                <div class="flex items-start gap-3">
+                                    <i class="fa-solid fa-comment-dots text-red-400 mt-1"></i>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-0.5">Catatan Admin:</p>
+                                        <p class="text-sm text-gray-800 font-medium italic">"{{ $report->admin_comment }}"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Footer: Attachments & Actions --}}
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-50 pt-4 mt-2 pl-2">
+                            
+                            {{-- Attachments --}}
+                            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                                @if ($linkAttachment)
+                                    <a href="{{ $linkAttachment->url_or_path }}" target="_blank" 
+                                       class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-lg text-xs font-semibold hover:bg-blue-100 transition-colors">
+                                        <i class="fa-brands fa-figma"></i> Link
+                                    </a>
+                                @endif
+                                @if ($fileAttachment)
+                                    <a href="{{ Storage::url($fileAttachment->url_or_path) }}" target="_blank" 
+                                       class="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 border border-green-100 rounded-lg text-xs font-semibold hover:bg-green-100 transition-colors">
+                                        <i class="fa-solid fa-paperclip"></i> File
+                                    </a>
+                                @endif
+                                @if (!$linkAttachment && !$fileAttachment)
+                                    <span class="text-xs text-gray-400 flex items-center gap-1.5 px-2 py-1">
+                                        <i class="fa-solid fa-ban opacity-50"></i> Tidak ada lampiran
+                                    </span>
+                                @endif
                             </div>
 
+                            {{-- Action Buttons --}}
+                            <div class="flex items-center gap-2 self-end sm:self-auto">
+                                @if($report->status == 'pending')
+                                    <button type="button" 
+                                        data-report-id="{{ $report->id }}"
+                                        data-title="{{ $report->title }}"
+                                        data-description="{{ $report->description }}"
+                                        data-link="{{ $linkAttachment->url_or_path ?? '' }}"
+                                        data-file-id="{{ $fileAttachment->id ?? '' }}"
+                                        data-file-name="{{ $fileAttachment->filename ?? '' }}"
+                                        data-modal-target="edit-laporan-modal" data-modal-toggle="edit-laporan-modal" 
+                                        class="open-edit-modal flex items-center justify-center w-9 h-9 text-gray-400 bg-gray-50 rounded-lg hover:text-indigo-600 hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all duration-200"
+                                        title="Edit Laporan">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    
+                                    {{-- TOMBOL HAPUS (DIPERBAIKI) --}}
+                                    <button type="button" 
+                                        data-delete-url="{{ route('karyawan.report.destroy', $report->id) }}"
+                                        data-title="{{ $report->title }}"
+                                        class="btn-delete flex items-center justify-center w-9 h-9 text-gray-400 bg-gray-50 rounded-lg hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-all duration-200"
+                                        title="Hapus Laporan">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                @else
+                                    <div class="flex items-center gap-1.5 text-xs font-medium text-gray-400 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 cursor-not-allowed opacity-70">
+                                        <i class="fa-solid fa-lock text-[10px]"></i>
+                                        <span>Terkunci</span>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
-                    @empty
-                        <div class="bg-white p-6 rounded-xl text-center text-gray-500 italic shadow-lg border border-gray-200">
-                            Tidak ada laporan
+                    </div>
+                @empty
+                    <div class="flex flex-col items-center justify-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa-regular fa-folder-open text-3xl text-gray-300"></i>
                         </div>
-                    @endforelse
-
+                        <h3 class="text-gray-900 font-bold text-lg mb-1">Belum ada laporan</h3>
+                        <p class="text-gray-500 text-sm mb-6">Mulai buat laporan harianmu sekarang.</p>
+                    </div>
+                @endforelse
                 </div>
 
                 @if ($reports->hasPages())
-                    <div class="mt-6 flex justify-center">
+                    <div class="mt-8">
                         {{ $reports->links('pagination::tailwind') }}
-
                     </div>
                 @endif
-
             </section>
         </main>
     </div>
-
-    <div id="tambah-laporan-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow">
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                    <h3 class="text-lg font-semibold text-gray-900">
-                        Buat Laporan Harian Baru
-                    </h3>
-                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="tambah-laporan-modal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
-                        <span class="sr-only">Tutup modal</span>
+    
+    {{-- Modal Create --}}
+    <div id="tambah-laporan-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur-sm bg-gray-900/30">
+        <div class="relative p-4 w-full max-w-lg max-h-full">
+            <div class="relative bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+                <div class="flex items-center justify-between p-5 border-b border-gray-100 bg-gray-50">
+                    <h3 class="text-lg font-bold text-gray-800">Buat Laporan Baru</h3>
+                    <button type="button" class="text-gray-400 bg-transparent hover:bg-white hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="tambah-laporan-modal">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                     </button>
                 </div>
-                {{-- Ganti action form ke route store --}}
-                <form action="{{ route('karyawan.report.store') }}" method="POST" enctype="multipart/form-data" class="p-4 md:p-5 space-y-4">
+                <form id="create-form" action="{{ route('karyawan.report.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
                     @csrf
                     <div>
-                        <label for="judul" class="block mb-2 text-sm font-medium text-gray-900">Judul Laporan</label>
-                        <input type="text" name="judul" id="judul" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5" placeholder="Contoh: Desain Halaman Login" required value="{{ old('judul') }}"/>
-                        @error('judul') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block mb-1.5 text-sm font-bold text-gray-700">Judul Laporan</label>
+                        <input type="text" name="judul" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3" placeholder="Contoh: Desain Login Page" required>
                     </div>
                     <div>
-                        <label for="deskripsi" class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
-                        <textarea id="deskripsi" name="deskripsi" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Jelaskan apa yang Anda kerjakan..." required>{{ old('deskripsi') }}</textarea>
-                        @error('deskripsi') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block mb-1.5 text-sm font-bold text-gray-700">Deskripsi</label>
+                        <textarea name="deskripsi" rows="4" class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" required></textarea>
                     </div>
-                    <div>
-                        <label for="link" class="block mb-2 text-sm font-medium text-gray-900">Lampiran Tautan (Opsional)</label>
-                        <input type="url" name="link" id="link" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5" placeholder="https://figma.com/..." value="{{ old('link') }}"/>
-                         @error('link') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-700">Link</label>
+                            <input type="url" name="link" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3">
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-700">File</label>
+                            <input class="block w-full text-sm text-gray-500 border border-gray-300 rounded-xl cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2.5 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" name="file" type="file">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-900" for="file_input">Lampiran File (Opsional)</label>
-                        <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" id="file_input" name="file" type="file">
-                        @error('file') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                    <div class="pt-2">
+                        <button type="submit" class="w-full text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 font-bold rounded-xl text-sm px-5 py-3.5 text-center shadow-lg transition-all">Simpan Laporan</button>
                     </div>
-
-                    <button type="submit" class="w-full text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Simpan Laporan</button>
                 </form>
             </div>
         </div>
-    </div>
+    </div> 
 
-    <div id="edit-laporan-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow">
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                    <h3 class="text-lg font-semibold text-gray-900">
-                        Edit Daily Report
-                    </h3>
-                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="edit-laporan-modal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
-                        <span class="sr-only">Tutup modal</span>
+    {{-- Modal Edit --}}
+    <div id="edit-laporan-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur-sm bg-gray-900/30">
+        <div class="relative p-4 w-full max-w-lg max-h-full">
+            <div class="relative bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+                <div class="flex items-center justify-between p-5 border-b border-gray-100 bg-gray-50">
+                    <h3 class="text-lg font-bold text-gray-800">Edit Laporan</h3>
+                    <button type="button" class="text-gray-400 bg-transparent hover:bg-white hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="edit-laporan-modal">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                     </button>
                 </div>
-
-                <form id="edit-form" method="POST" enctype="multipart/form-data" class="p-4 md:p-5 space-y-4">
-                    @csrf
-                    @method('PUT')
+                <form id="edit-form" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
+                    @csrf @method('PUT')
                     <input type="hidden" name="attachment_link_id" id="attachment_link_id_edit">
                     <input type="hidden" name="attachment_file_id" id="attachment_file_id_edit">
-
+                    
                     <div>
-                        <label for="judul_edit" class="block mb-2 text-sm font-medium text-gray-900">Judul Laporan</label>
-                        <input type="text" name="judul_edit" id="judul_edit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5" required />
+                        <label class="block mb-1.5 text-sm font-bold text-gray-700">Judul Laporan</label>
+                        <input type="text" name="judul_edit" id="judul_edit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3" required>
                     </div>
                     <div>
-                        <label for="deskripsi_edit" class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
-                        <textarea id="deskripsi_edit" name="deskripsi_edit" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" required></textarea>
+                        <label class="block mb-1.5 text-sm font-bold text-gray-700">Deskripsi</label>
+                        <textarea id="deskripsi_edit" name="deskripsi_edit" rows="4" class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-xl border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500" required></textarea>
                     </div>
-                    <div>
-                        <label for="link_edit" class="block mb-2 text-sm font-medium text-gray-900">Lampiran Tautan (Opsional)</label>
-                        <input type="url" name="link_edit" id="link_edit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5" placeholder="https://figma.com/..." />
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-700">Link</label>
+                            <input type="url" name="link_edit" id="link_edit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3">
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-sm font-bold text-gray-700">File</label>
+                            <input class="block w-full text-sm text-gray-500 border border-gray-300 rounded-xl cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2.5 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" id="file_input_edit" name="file_edit" type="file">
+                            <p class="text-xs text-gray-500 mt-2">File saat ini: <span class="font-bold text-gray-700" id="current_file_name">Tidak Ada</span></p>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-900" for="file_input_edit">Ubah Lampiran File (Opsional)</label>
-                        <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" id="file_input_edit" name="file_edit" type="file">
-                        <p class="text-xs text-gray-500 mt-1">File saat ini: <span class="font-medium" id="current_file_name">Tidak Ada</span></p>
+                    <div class="pt-2">
+                        <button type="submit" class="w-full text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 font-bold rounded-xl text-sm px-5 py-3.5 text-center shadow-lg transition-all">Simpan Perubahan</button>
                     </div>
-
-                    <button type="submit" class="w-full text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Simpan Perubahan</button>
                 </form>
             </div>
         </div>
     </div>
+    
+    {{-- Form Hapus Global --}}
+    <form id="delete-form-global" action="" method="POST" style="display: none;">
+        @csrf @method('DELETE')
+    </form>
 
-    <div id="hapus-laporan-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow">
-                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="hapus-laporan-modal">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
-                    <span class="sr-only">Tutup modal</span>
-                </button>
-                <div class="p-4 md:p-5 text-center">
-                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                    </svg>
-                    <h3 class="mb-5 text-lg font-normal text-gray-500">Apakah Anda yakin ingin menghapus laporan ini?</h3>
-
-                    <form id="delete-form" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                            Ya, Hapus
-                        </button>
-                    </form>
-                    <button data-modal-hide="hapus-laporan-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100">
-                        Batal
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    {{-- Script --}}
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // --- Logika Flatpickr dan Filter Tanggal ---
+            
+            // --- 1. SETTING FLATPICKR (TETAP FORMAT d/m/Y sesuai permintaan) ---
             const filterInput = document.getElementById('filter_tanggal');
             const filterForm = document.getElementById('filter-form');
+            const initialDateValue = filterInput.getAttribute('value');
 
-            // Konfigurasi Flatpickr
-            flatpickr(filterInput, {
-                dateFormat: "d/m/Y", // Format yang akan dikirim ke server via input value
-                altInput: true,
-                altFormat: "j F Y", // Format tampilan
-                defaultDate: filterInput.value || null, // Gunakan nilai yang ada atau null (untuk 'Pilih Tanggal')
-                allowInput: true,
-
-                onClose: function(selectedDates, dateStr, instance) {
-                    // Cek jika nilai input diubah atau tanggal baru dipilih
-                    const initialValue = "{{ $selected_date }}";
-                    const isDateCleared = dateStr === "";
-
-                    if (isDateCleared && initialValue) {
-                        // Jika input dikosongkan, redirect ke 'all'
-                        window.location.href = "{{ route('karyawan.report.index', ['tanggal' => 'all']) }}";
-                    } else if (dateStr && dateStr !== initialValue) {
-                         // Jika tanggal dipilih/berubah, submit form
-                        filterForm.submit();
+            if(filterInput) {
+                flatpickr(filterInput, {
+                    dateFormat: "d/m/Y", // JANGAN DIUBAH (Sesuai Controller)
+                    altInput: true,          
+                    altFormat: "j F Y",      
+                    defaultDate: initialDateValue || null,
+                    onClose: function(selectedDates, dateStr) { 
+                        if (dateStr) filterForm.submit(); 
                     }
-                },
-                // Aktifkan tombol 'clear' Flatpickr (opsional, jika Anda ingin pengguna bisa menghapus filter tanpa klik 'Lihat Semua')
-                // wrap: true, // perlu elemen wrapper, atau custom HTML
-            });
+                });
+            }
 
-            // --- Logika Modal Edit (Mengisi data laporan ke modal) ---
+            // --- 2. MODAL EDIT ---
             document.querySelectorAll('.open-edit-modal').forEach(button => {
                 button.addEventListener('click', function() {
                     const reportId = this.dataset.reportId;
-                    const title = this.dataset.title;
-                    const description = this.dataset.description;
-                    const link = this.dataset.link;
-                    const fileId = this.dataset.fileId;
-                    const fileName = this.dataset.fileName;
-
-                    // Set action form untuk PUT
-                    const form = document.getElementById('edit-form');
-                    form.action = `/karyawan/report/${reportId}`; // Sesuaikan dengan URL route Anda
-
-                    // Isi form field
-                    document.getElementById('judul_edit').value = title;
-                    document.getElementById('deskripsi_edit').value = description;
-                    document.getElementById('link_edit').value = link;
-
-                    // Tampilkan file saat ini
-                    document.getElementById('current_file_name').textContent = fileName || 'Tidak Ada';
-
-                    // Simpan ID attachment (berguna jika Anda ingin menambahkan logika hapus file/link lama yang lebih spesifik)
-                    document.getElementById('attachment_file_id_edit').value = fileId;
+                    document.getElementById('edit-form').action = `/karyawan/report/${reportId}`;
+                    document.getElementById('judul_edit').value = this.dataset.title;
+                    document.getElementById('deskripsi_edit').value = this.dataset.description;
+                    document.getElementById('link_edit').value = this.dataset.link;
+                    document.getElementById('current_file_name').textContent = this.dataset.fileName || 'Tidak Ada';
+                    document.getElementById('attachment_file_id_edit').value = this.dataset.fileId;
                 });
             });
 
-            // --- Logika Modal Hapus (Mengisi action form) ---
-            document.querySelectorAll('.open-delete-modal').forEach(button => {
+            // --- 3. LOGIKA DELETE (DIPERBAIKI) ---
+            // Kita pakai Event Listener agar tidak error kena tanda petik di judul
+            document.querySelectorAll('.btn-delete').forEach(button => {
                 button.addEventListener('click', function() {
-                    const reportId = this.dataset.reportId;
-
-                    // Set action form untuk DELETE
-                    const form = document.getElementById('delete-form');
-                    form.action = `/karyawan/report/${reportId}`; // Sesuaikan dengan URL route Anda
+                    const deleteUrl = this.dataset.deleteUrl;
+                    const title = this.dataset.title;
+                    
+                    Swal.fire({
+                        title: 'Hapus Laporan?',
+                        html: `Anda yakin ingin menghapus laporan <br><strong>"${title}"</strong>?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#4f46e5',
+                        cancelButtonColor: '#ef4444',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true,
+                        customClass: { popup: 'rounded-2xl' }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.getElementById('delete-form-global');
+                            form.action = deleteUrl;
+                            form.submit();
+                        }
+                    });
                 });
             });
+
         });
     </script>
 </x-karyawan-layout>
