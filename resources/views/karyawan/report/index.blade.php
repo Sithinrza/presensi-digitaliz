@@ -96,6 +96,19 @@
                                             <p class="text-xs font-medium text-gray-500">{{ $report->report_date->isoFormat('dddd, D MMM YYYY - HH:mm') }}</p>
                                         </div>
                                     </div>
+                                        <div class="flex justify-end">
+                                        <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full
+                                            @if($report->status === 'pending')
+                                                bg-yellow-100 text-yellow-700
+                                            @elseif($report->status === 'approved')
+                                                bg-green-100 text-green-700
+                                            @else
+                                                bg-red-100 text-red-700
+                                            @endif
+                                        ">
+                                            {{ ucfirst($report->status) }}
+                                        </span>
+                                    </div>
                                 </div>
                                 <p class="text-sm text-gray-700">{{ $report->description }}</p>
 
@@ -151,10 +164,11 @@
                                     <span>Hapus</span>
                                 </button>
                             </div>
+
                         </div>
                     @empty
                         <div class="bg-white p-6 rounded-xl text-center text-gray-500 italic shadow-lg border border-gray-200">
-                            Tidak ada laporan ditemukan untuk filter ini.
+                            Tidak ada laporan
                         </div>
                     @endforelse
 
@@ -163,9 +177,10 @@
                 @if ($reports->hasPages())
                     <div class="mt-6 flex justify-center">
                         {{ $reports->links('pagination::tailwind') }}
-                        {{-- Sesuaikan dengan style pagination yang Anda gunakan --}}
+
                     </div>
                 @endif
+
             </section>
         </main>
     </div>
@@ -217,14 +232,14 @@
             <div class="relative bg-white rounded-lg shadow">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                     <h3 class="text-lg font-semibold text-gray-900">
-                        Edit Laporan Harian
+                        Edit Daily Report
                     </h3>
                     <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="edit-laporan-modal">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
                         <span class="sr-only">Tutup modal</span>
                     </button>
                 </div>
-                {{-- Ganti action form ke route update --}}
+
                 <form id="edit-form" method="POST" enctype="multipart/form-data" class="p-4 md:p-5 space-y-4">
                     @csrf
                     @method('PUT')
@@ -267,7 +282,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                     </svg>
                     <h3 class="mb-5 text-lg font-normal text-gray-500">Apakah Anda yakin ingin menghapus laporan ini?</h3>
-                    {{-- Ganti button menjadi form delete --}}
+
                     <form id="delete-form" method="POST" class="inline">
                         @csrf
                         @method('DELETE')

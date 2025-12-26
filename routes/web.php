@@ -17,6 +17,7 @@ use App\Http\Controllers\Karyawan\KarDashController;
 use App\Http\Controllers\Karyawan\KarPresensiController;
 use App\Http\Controllers\Karyawan\KarProfileController;
 use App\Http\Controllers\Karyawan\LogHarianController;
+use App\Http\Controllers\ProfileFotoController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -29,6 +30,12 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->midd
 
 //role
 Route::middleware(['auth'])->group(function () {
+
+    Route::post('/profile/foto', [ProfileFotoController::class, 'update'])
+        ->name('profile.foto.update');
+
+    Route::delete('/profile/foto', [ProfileFotoController::class, 'delete'])
+        ->name('profile.foto.delete');
 
     //role admin
     Route::middleware(['role:admin'])
@@ -53,13 +60,12 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('agenda', AdAgendaController::class);
 
         Route::get('/report', [AdDailyReportController::class, 'index'])->name('report.index');
+        Route::patch('/report/{id}/status', [AdDailyReportController::class, 'updateStatus'])->name('report.updateStatus');
 
         Route::resource('jadwal', AdJadwalController::class);
         Route::resource('penetapan', AdJadwalPenetapanController::class);
        // Route::put('/penetapan', [AdJadwalPenetapanController::class, 'update'])->name('jadwal.penetapan.edit');
      //   Route::get('admin/penetapan', [AdJadwalController::class, 'index'])->name('admin.penetapan.index');
-        Route::put('/profile/foto', [AdProfileController::class, 'updateFoto'])
-        ->name('profile.update.foto');
 
     });
 
@@ -79,12 +85,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/profile', [KarProfileController::class, 'index'])->name('profile.index');
         Route::put('/profile/update', [KarProfileController::class, 'update'])->name('profile.update');
         Route::get('/profile/detail', [KarProfileController::class, 'detail'])->name('profile.detail');
-        // [BARU] Update Foto Profil Karyawan
-        Route::put('/profile/foto', [KarProfileController::class, 'updateFoto'])->name('profile.update.foto');
-        
-        // [BARU] Hapus Foto Profil Karyawan
-        Route::delete('/profile/foto', [KarProfileController::class, 'deleteFoto'])->name('profile.delete.foto');
-
 
         Route::get('/presensi', [KarPresensiController::class, 'index'])->name('presensi.index');
 
@@ -94,10 +94,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('presensi/riwayat/{presensi}', [KarPresensiController::class, 'show'])->name('presensi.riwayat');
 
         Route::resource('report', KarDailyReportController::class)->except(['create', 'show']);
-        
-        Route::put('/profile/foto', [KarProfileController::class, 'updateFoto'])
-        ->name('profile.update.foto'); 
-        // Nama otomatis menjadi: 'karyawan.' + 'profile.update.foto' = 'karyawan.profile.update.foto'
 
     });
 
