@@ -197,7 +197,7 @@
                         <span class="sr-only">Tutup modal</span>
                     </button>
                 </div>
-                {{-- Ganti action form ke route store --}}
+                
                 <form action="{{ route('karyawan.report.store') }}" method="POST" enctype="multipart/form-data" class="p-4 md:p-5 space-y-4">
                     @csrf
                     <div>
