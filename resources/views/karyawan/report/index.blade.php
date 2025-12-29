@@ -4,8 +4,8 @@
     </x-slot:title>
 
     <div class="relative min-h-screen bg-gray-50 pb-24 font-sans">
-        
-        {{-- Header Solid (Tanpa Gradasi) --}}
+
+       
         <header class="bg-indigo-950 pt-8 pb-28 rounded-b-[3rem] shadow-xl relative z-10">
             <div class="relative container mx-auto px-6">
                 <div class="flex items-center justify-between text-white mb-2">
@@ -25,8 +25,8 @@
         </header>
 
         <main class="container mx-auto px-4 -mt-20 relative z-20 space-y-8">
-            
-            {{-- Bagian Filter & Tombol Tambah --}}
+
+
             <section class="bg-white p-5 rounded-2xl shadow-lg border border-gray-100">
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
 
@@ -46,7 +46,7 @@
                         </div>
                     </form>
 
-                    {{-- Tombol Aksi --}}
+
                     <div class="w-full md:w-auto order-1 md:order-2 flex flex-col sm:flex-row gap-3">
                         @if ($selected_date && $selected_date !== 'all')
                             <a href="{{ route('karyawan.report.index', ['tanggal' => 'all']) }}"
@@ -77,7 +77,7 @@
                 </script>
             @endif
 
-            {{-- DAFTAR KARTU LAPORAN --}}
+
             <section class="space-y-6">
                 <div class="flex items-center justify-between px-2 border-b border-gray-200 pb-2">
                     <h2 class="text-xl font-bold text-gray-800 tracking-tight">Riwayat Aktivitas</h2>
@@ -86,17 +86,17 @@
                     </span>
                 </div>
 
-                <div class="grid grid-cols-1 gap-5"> 
+                <div class="grid grid-cols-1 gap-5">
                 @forelse ($reports as $report)
                     @php
                         $linkAttachment = $report->attachments->where('type', 'link')->first();
                         $fileAttachment = $report->attachments->where('type', 'file')->first();
-                        
+
                         // LOGIKA STATUS
                         $statusColor = 'yellow';
                         $statusIcon = 'fa-hourglass-half';
                         $statusLabel = 'Menunggu';
-                        
+
                         if($report->status == 'approved') {
                             $statusColor = 'green';
                             $statusIcon = 'fa-circle-check';
@@ -108,13 +108,13 @@
                         }
                     @endphp
 
-                    {{-- CARD START --}}
+
                     <div class="group relative bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
-                        
-                        {{-- Strip Warna Status --}}
+
+
                         <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-{{ $statusColor }}-500 rounded-l-2xl"></div>
 
-                        {{-- Header Card: Judul & Status --}}
+
                         <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4 pl-2">
                             <div>
                                 <h3 class="text-lg font-bold text-gray-800 group-hover:text-indigo-700 transition-colors leading-snug">
@@ -132,7 +132,7 @@
                                     </span>
                                 </div>
                             </div>
-                            
+
                             {{-- STATUS BADGE --}}
                             <span class="self-start inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide bg-{{ $statusColor }}-50 text-{{ $statusColor }}-600 border border-{{ $statusColor }}-100">
                                 <i class="fa-solid {{ $statusIcon }}"></i> {{ $statusLabel }}
@@ -159,17 +159,17 @@
 
                         {{-- Footer: Attachments & Actions --}}
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-50 pt-4 mt-2 pl-2">
-                            
+
                             {{-- Attachments --}}
                             <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                                 @if ($linkAttachment)
-                                    <a href="{{ $linkAttachment->url_or_path }}" target="_blank" 
+                                    <a href="{{ $linkAttachment->url_or_path }}" target="_blank"
                                        class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 border border-blue-100 rounded-lg text-xs font-semibold hover:bg-blue-100 transition-colors">
                                         <i class="fa-brands fa-figma"></i> Link
                                     </a>
                                 @endif
                                 @if ($fileAttachment)
-                                    <a href="{{ Storage::url($fileAttachment->url_or_path) }}" target="_blank" 
+                                    <a href="{{ Storage::url($fileAttachment->url_or_path) }}" target="_blank"
                                        class="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 border border-green-100 rounded-lg text-xs font-semibold hover:bg-green-100 transition-colors">
                                         <i class="fa-solid fa-paperclip"></i> File
                                     </a>
@@ -181,24 +181,24 @@
                                 @endif
                             </div>
 
-                            {{-- Action Buttons --}}
+
                             <div class="flex items-center gap-2 self-end sm:self-auto">
                                 @if($report->status == 'pending')
-                                    <button type="button" 
+                                    <button type="button"
                                         data-report-id="{{ $report->id }}"
                                         data-title="{{ $report->title }}"
                                         data-description="{{ $report->description }}"
                                         data-link="{{ $linkAttachment->url_or_path ?? '' }}"
                                         data-file-id="{{ $fileAttachment->id ?? '' }}"
                                         data-file-name="{{ $fileAttachment->filename ?? '' }}"
-                                        data-modal-target="edit-laporan-modal" data-modal-toggle="edit-laporan-modal" 
+                                        data-modal-target="edit-laporan-modal" data-modal-toggle="edit-laporan-modal"
                                         class="open-edit-modal flex items-center justify-center w-9 h-9 text-gray-400 bg-gray-50 rounded-lg hover:text-indigo-600 hover:bg-indigo-50 border border-transparent hover:border-indigo-100 transition-all duration-200"
                                         title="Edit Laporan">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
-                                    
-                                    {{-- TOMBOL HAPUS (DIPERBAIKI) --}}
-                                    <button type="button" 
+
+
+                                    <button type="button"
                                         data-delete-url="{{ route('karyawan.report.destroy', $report->id) }}"
                                         data-title="{{ $report->title }}"
                                         class="btn-delete flex items-center justify-center w-9 h-9 text-gray-400 bg-gray-50 rounded-lg hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-all duration-200"
@@ -233,7 +233,7 @@
             </section>
         </main>
     </div>
-    
+
     {{-- Modal Create --}}
     <div id="tambah-laporan-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur-sm bg-gray-900/30">
         <div class="relative p-4 w-full max-w-lg max-h-full">
@@ -270,7 +270,7 @@
                 </form>
             </div>
         </div>
-    </div> 
+    </div>
 
     {{-- Modal Edit --}}
     <div id="edit-laporan-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur-sm bg-gray-900/30">
@@ -286,7 +286,7 @@
                     @csrf @method('PUT')
                     <input type="hidden" name="attachment_link_id" id="attachment_link_id_edit">
                     <input type="hidden" name="attachment_file_id" id="attachment_file_id_edit">
-                    
+
                     <div>
                         <label class="block mb-1.5 text-sm font-bold text-gray-700">Judul Laporan</label>
                         <input type="text" name="judul_edit" id="judul_edit" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3" required>
@@ -313,7 +313,7 @@
             </div>
         </div>
     </div>
-    
+
     {{-- Form Hapus Global --}}
     <form id="delete-form-global" action="" method="POST" style="display: none;">
         @csrf @method('DELETE')
@@ -326,7 +326,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            
+
             // --- 1. SETTING FLATPICKR (TETAP FORMAT d/m/Y sesuai permintaan) ---
             const filterInput = document.getElementById('filter_tanggal');
             const filterForm = document.getElementById('filter-form');
@@ -335,11 +335,11 @@
             if(filterInput) {
                 flatpickr(filterInput, {
                     dateFormat: "d/m/Y", // JANGAN DIUBAH (Sesuai Controller)
-                    altInput: true,          
-                    altFormat: "j F Y",      
+                    altInput: true,
+                    altFormat: "j F Y",
                     defaultDate: initialDateValue || null,
-                    onClose: function(selectedDates, dateStr) { 
-                        if (dateStr) filterForm.submit(); 
+                    onClose: function(selectedDates, dateStr) {
+                        if (dateStr) filterForm.submit();
                     }
                 });
             }
@@ -363,7 +363,7 @@
                 button.addEventListener('click', function() {
                     const deleteUrl = this.dataset.deleteUrl;
                     const title = this.dataset.title;
-                    
+
                     Swal.fire({
                         title: 'Hapus Laporan?',
                         html: `Anda yakin ingin menghapus laporan <br><strong>"${title}"</strong>?`,
