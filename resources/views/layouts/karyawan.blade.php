@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -18,7 +19,8 @@
 <body class="bg-gray-100">
 
     <main class="pb-24"> <!-- padding-bottom agar konten tidak tertutup nav -->
-        @unless (Route::is('karyawan.log.index', 'karyawan.profile.index', 'karyawan.presensi.riwayat', 'karyawan.profile.detail'))
+        @unless (Route::is('karyawan.log.index', 'karyawan.profile.index', 
+        'karyawan.presensi.riwayat', 'karyawan.profile.detail', 'karyawan.report.index'))
             {{-- Panggil partial navigasi admin DI DALAM @unless --}}
             @include('layouts.partials.karyawannavtop')
         @endunless
