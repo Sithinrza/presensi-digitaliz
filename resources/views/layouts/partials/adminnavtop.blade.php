@@ -14,17 +14,19 @@
                 <img class="w-10 h-10 rounded-full object-cover border border-gray-200 shadow-sm transition-transform group-hover:scale-105"
                      src="{{ $fotoProfil }}"
                      alt="Foto Profil">
-                     <h1 class="text-gray-800 font-bold text-sm leading-tight">{{ Auth::user()->name }}</h1>
-                     <p class="text-xs text-gray-500">{{ Auth::user()->karyawan?->divisi?->name }}</p>
-                {{-- <div class="text-left hidden md:block">
-                    <p class="text-xs text-gray-500">
-                        {{
-                            Auth::user()->karyawan?->divisi?->name
-                            ?? Auth::user()->roles->first()?->name
-                            ?? '-'
-                        }}
-                    </p>
-                </div> --}}
+
+                     {{-- WRAPPER TEKS: Agar Nama & Divisi jadi Atas-Bawah --}}
+                    <div class="flex flex-col items-start justify-center">
+                        {{-- Nama User --}}
+                        <span class="text-gray-800 font-bold text-sm leading-tight line-clamp-1">
+                            {{ Auth::user()->name }}
+                        </span>
+                        
+                        {{-- Divisi --}}
+                        <span class="text-xs text-gray-500 font-medium leading-tight">
+                            {{ Auth::user()->karyawan?->divisi?->name ?? 'Karyawan' }}
+                        </span>
+                    </div>
             </button>
 
             <div id="user-dropdown" class="hidden absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 transform origin-top-left transition-all duration-200">
