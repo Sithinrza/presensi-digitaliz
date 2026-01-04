@@ -15,12 +15,16 @@
 <body class="bg-gray-100">
 
     <main class="pb-24"> <!-- padding-bottom agar konten tidak tertutup nav -->
-        @unless (Route::is('admin.karyawan.index', 'admin.karyawan.create', 'admin.karyawan.edit', 'admin.profile.index', 'admin.agenda.index', 'admin.agenda.create', 'admin.log.index', 'admin.profile.detail', 'admin.profile.users'))
+        @unless (Route::is('admin.karyawan.index', 'admin.karyawan.create', 
+        'admin.karyawan.edit', 'admin.profile.index', 'admin.agenda.index', 
+        'admin.agenda.create', 'admin.log.index', 'admin.profile.detail', 
+        'admin.profile.users', 'admin.report.index'))
             @include('layouts.partials.adminnavtop')
         @endunless
         {{ $slot }}
 
-        @unless (Route::is('admin.karyawan.show'))
+        @unless (Route::is('admin.karyawan.show', 'admin.report.index',
+        'admin.agenda.index', 'admin.presensi.index', 'admin.log.index', 'admin.penetapan.index'))
             {{-- Panggil partial navigasi admin DI DALAM @unless --}}
             @include('layouts.partials.adminnav')
         @endunless
