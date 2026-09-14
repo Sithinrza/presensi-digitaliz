@@ -6,7 +6,6 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
     <style>
-        /* KRITIS: CSS untuk menimpa dimensi internal Webcam.js */
         #my_camera video, #my_camera canvas {
             width: 100% !important;
             height: 100% !important;
@@ -44,7 +43,6 @@
 
         <main class="p-4 space-y-6">
 
-            {{-- AREA PESAN FLASH --}}
             @if (session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                     {{ session('success') }}
@@ -84,7 +82,6 @@
                         @endif
                     </div>
 
-                    {{-- PESAN JIKA SUDAH CHECK IN/OUT --}}
                     @if (isset($assumptionError) && $assumptionError)
                         @php
                             $errorClass = (Str::contains($assumptionError, 'Tidak Hadir')) ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700';
@@ -95,7 +92,6 @@
                         </div>
                     @endif
 
-                    {{-- PESAN JIKA SUDAH CHECK IN/OUT (Database Status) --}}
                     @if ($isCoDone && !isset($assumptionError))
                         <div class="p-4 bg-green-100 text-green-700 rounded-lg font-semibold mb-4">
                             ✅ Anda sudah Check-In dan Check-Out hari ini.
@@ -108,12 +104,10 @@
                     @endif
 
 
-                    {{-- PETA LEAFLET --}}
                     <div class="max-w-sm mx-auto mb-4">
                         <div id="live-map" style="height: 200px; z-index: 10; border-radius: 0.5rem; display: none;"></div>
                     </div>
 
-                    {{-- AREA STATUS LOKASI & GPS RETRY --}}
                     <div class="flex items-center justify-center space-x-1 text-sm text-gray-500 mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
                         <span id="location-text">Mencari lokasi...</span>
@@ -136,11 +130,9 @@
                                 </div>
                             @endif
 
-                                                        {{-- Container Kamera Live Feed --}}
                             <div id="my_camera" style="display: none;"
                                 class="w-full mx-auto bg-gray-200 rounded-xl overflow-hidden shadow-inner aspect-[3/4] max-w-md"></div>
 
-                            {{-- Container Hasil Foto Jepretan --}}
                             <div id="results" style="display: none;"
                                 class="w-full mx-auto rounded-xl overflow-hidden shadow-lg aspect-[3/4] max-w-md"></div>
 
@@ -243,7 +235,6 @@
 
                                         @endif
 
-                                        {{-- Logika untuk status sedang berjalan (jika belum ada CO) --}}
 
                                     </div>
                                 </div>
@@ -295,14 +286,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             //maps
-            // --- VARIABEL GEOFENCE ---
-            const OFFICE_LAT = -3.2289087 // GIBS;
-          // const OFFICE_LAT = -3.3286345; // wls;
-            //const OFFICE_LAT = -3.2759928; //rumahku
-          const OFFICE_LONG = 114.5962882; // GIBS
-          // const OFFICE_LONG = 114.6074828; // wls
-          //const OFFICE_LONG = 114.5969432; //rumahku
-            const MAX_DISTANCE_M = 500;
+            const OFFICE_LAT = -3.3286345; // wls;
+            const OFFICE_LONG = 114.6074828; // wls
+            const MAX_DISTANCE_M = 5000;
 
             const isCiDone = @json($isCiDone);
             const isCoDone = @json($isCoDone);
@@ -331,7 +317,6 @@
             let userMarker;
             let geofenceCircle;
 
-            // --- FUNGSI UTILITY: HITUNG JARAK (HAVERSINE) ---
             function calculateDistance(lat1, lon1, lat2, lon2) {
                 const R = 6371e3;
                 const φ1 = lat1 * Math.PI / 180;
@@ -450,9 +435,7 @@
                     updateSubmitButtonStatus();
                 }
             }
-            // --- END FUNGSI GPS/Maps ---
 
-            // FUNGSI KRITIS: Mengoreksi Dimensi Kamera (Solusi untuk bug zoom)
             function correctWebcamScale() {
                 const video = document.querySelector('#my_camera video');
 
@@ -461,7 +444,6 @@
                     const desiredRatio = 3 / 4; // Coba rasio 4:3 (3/4)
                     const desiredHeight = containerWidth * desiredRatio;
 
-                    // Paksa dimensi video/canvas sesuai container untuk mencegah zoom
                     video.style.width = containerWidth + 'px';
                     video.style.height = desiredHeight + 'px';
 
@@ -471,13 +453,11 @@
                          canvas.style.height = desiredHeight + 'px';
                     }
                 } else {
-                    // Jika elemen belum dimuat, coba lagi setelah jeda
                     setTimeout(correctWebcamScale, 100);
                 }
             }
 
 
-            // Mulai pemantauan lokasi saat halaman dimuat
             if (isWorkingDay && !isCoDone) {
                 startWatchingLocation();
             } else {
@@ -486,13 +466,11 @@
 
             retryLocationBtn.addEventListener('click', startWatchingLocation);
 
-            // --- 4. EVENT LISTENER: AKTIVASI KAMERA (Awal) ---
             if(activateCameraBtn) {
                 activateCameraBtn.addEventListener('click', startCameraSession);
             }
 
 
-            // FUNGSI INTI UNTUK MEMULAI/MENGULANG KAMERA
             function startCameraSession() {
                 photoResultDiv.style.display = 'none';
                 retakePhotoBtn.style.display = 'none';
@@ -501,14 +479,12 @@
                 cameraFeedDiv.style.display = 'block';
                 Webcam.attach( '#my_camera' );
 
-                // KRITIS: Panggil fungsi koreksi dimensi setelah attach selesai
                 setTimeout(correctWebcamScale, 500);
 
                 takePhotoButton.style.display = 'block';
             }
 
 
-            // --- 5. EVENT LISTENER: AMBIL FOTO (SOLUSI STABIL) ---
             takePhotoButton.addEventListener('click', function() {
                 Webcam.snap( function(data_uri) {
 
@@ -518,7 +494,6 @@
                     cameraFeedDiv.style.display = 'none';
                     takePhotoButton.style.display = 'none';
 
-                    // 3. Tampilkan pratinjau hasil foto (Metode Inject Stabil)
                     photoResultDiv.style.display = 'none';
                     photoResultDiv.innerHTML = '';
 
@@ -528,7 +503,6 @@
                     photoResultDiv.style.display = 'block';
                     retakePhotoBtn.style.display = 'block';
 
-                    // Mengisi SRC gambar setelah jeda (KRITIS untuk mobile rendering)
                     setTimeout(() => {
                         const previewImg = document.getElementById('preview-snapshot');
                         if (previewImg) {
@@ -536,16 +510,14 @@
                         }
                     }, 100);
 
-                    // 4. Update status dan tombol submit
                     isPhotoTaken = true;
                     updateSubmitButtonStatus();
                 } );
             });
 
-            // --- 6. EVENT LISTENER: FOTO ULANG (RETAKE) ---
             retakePhotoBtn.addEventListener('click', startCameraSession);
 
-            // --- Logika Waktu dan Tanggal (Opsional) ---
+
             const updateTimeAndDate = () => {
                 const now = new Date();
                 const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -556,12 +528,11 @@
             updateTimeAndDate();
             setInterval(updateTimeAndDate, 1000);
 
-            // Konfigurasi Webcam (Mengurangi ukuran data untuk stabilitas)
             Webcam.set({
-                width: 320, // Ukuran rendering internal yang lebih kecil
+                width: 320,
                 height: 426,
-                image_format: 'jpeg', // Menggunakan JPEG (lebih kecil dari PNG)
-                jpeg_quality: 70,     // Kualitas 70%
+                image_format: 'jpeg',
+                jpeg_quality: 70,
                 flip_horiz: true,
                 image_mode: 'canvas',
             });

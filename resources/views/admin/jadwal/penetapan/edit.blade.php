@@ -100,7 +100,7 @@ $jadwalIdSaatIni = $penetapan->id_jadwal_kerja;
                 </div>
             </section>
 
-            <section>
+            {{-- <section>
                 <h3 class="text-sm font-bold text-gray-700 mb-3">Preview Jadwal Mingguan:</h3>
 
                 <div id="jadwal-detail-preview" class="border border-gray-200 rounded-2xl overflow-hidden bg-white min-h-[200px] flex items-center justify-center text-gray-400">
@@ -111,7 +111,7 @@ $jadwalIdSaatIni = $penetapan->id_jadwal_kerja;
                     <i class="fa-solid fa-info-circle mr-1 text-indigo-400"></i>
                     <span class="font-semibold">Catatan:</span> Pembagian GIBS/Wetland (seperti yang ada di template HTML) perlu logika penyimpanan yang lebih kompleks di Controller/Database. Untuk saat ini, hanya template jadwal (jam masuk/pulang) yang disimpan.
                 </div>
-            </section>
+            </section> --}}
 
         </div>
 
