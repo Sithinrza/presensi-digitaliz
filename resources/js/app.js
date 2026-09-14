@@ -49,21 +49,20 @@ document.addEventListener("DOMContentLoaded", function () {
 // kalender karyawan
 document.addEventListener("DOMContentLoaded", function () {
 
-    // ====== Inisialisasi Kalender (WAJIB AGAR TAMPIL) ======
     const fp = flatpickr("#kalender-karyawan", {
         inline: true,
         locale: "id",
         dateFormat: "Y-m-d",
         defaultDate: "today",
         onChange: function(selectedDates, dateStr) {
-            // panggil AJAX ketika tanggal diklik
-            onDateClick(dateStr);  
+
+            onDateClick(dateStr);
         }
     });
 
 });
 
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('form[data-confirm]').forEach(form => {
@@ -119,7 +118,7 @@ $('#formTambahAgenda').on('submit', function(e) {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            this.submit(); // lanjut submit form
+            this.submit(); 
         }
     });
 });

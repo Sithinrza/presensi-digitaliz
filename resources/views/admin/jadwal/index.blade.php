@@ -43,7 +43,7 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider">Karyawan</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider">ID</th>
+                            {{-- <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider">ID</th> --}}
                             <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider">Jadwal Aktif</th>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider">Ditetapkan Sejak</th>
                             <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-indigo-900 uppercase tracking-wider">Aksi</th>
@@ -78,9 +78,9 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                                {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
                                     #{{ $penetapan->id_karyawan }}
-                                </td>
+                                </td> --}}
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if ($penetapan->jadwalKerja)
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 border border-indigo-200">
@@ -177,9 +177,9 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider">ID</th>
+                            {{-- <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider">ID</th> --}}
                             <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider">Nama Template</th>
-                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider">Detail Waktu</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider"></th>
                             <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-indigo-900 uppercase tracking-wider">Dibuat Pada</th>
                             <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-indigo-900 uppercase tracking-wider">Aksi</th>
                         </tr>
@@ -187,37 +187,37 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse ($jadwalKerjas as $jadwal)
                             <tr class="hover:bg-indigo-50/30 transition-colors duration-150 group">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                                {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
                                     {{ $jadwal->id }}
-                                </td>
+                                </td> --}}
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-bold text-gray-800">{{ $jadwal->name }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                     <div class="flex flex-col gap-1">
 
-
+{{--
                                         @php
                                             $detail = $jadwal->detailJadwals ? $jadwal->detailJadwals->first() : null;
-                                        @endphp
+                                        @endphp --}}
 
                                         {{-- JAM MASUK --}}
-                                        <span class="flex items-center text-xs">
+                                        {{-- <span class="flex items-center text-xs">
                                             <svg class="w-4 h-4 text-emerald-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
                                             Masuk:
                                             <span class="font-medium ml-1">
                                                 {{ ($detail && $detail->jam_masuk) ? \Carbon\Carbon::parse($detail->jam_masuk)->format('H:i') : '-' }}
                                             </span>
-                                        </span>
+                                        </span> --}}
 
                                         {{-- JAM PULANG --}}
-                                        <span class="flex items-center text-xs">
+                                        {{-- <span class="flex items-center text-xs">
                                             <svg class="w-4 h-4 text-red-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                                             Pulang:
                                             <span class="font-medium ml-1">
                                                 {{ ($detail && $detail->jam_pulang) ? \Carbon\Carbon::parse($detail->jam_pulang)->format('H:i') : '-' }}
                                             </span>
-                                        </span>
+                                        </span> --}}
 
                                     </div>
                                 </td>

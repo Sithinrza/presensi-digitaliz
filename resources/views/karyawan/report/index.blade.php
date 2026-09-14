@@ -5,7 +5,7 @@
 
     <div class="relative min-h-screen bg-gray-50 pb-24 font-sans">
 
-       
+
         <header class="bg-indigo-950 pt-8 pb-28 rounded-b-[3rem] shadow-xl relative z-10">
             <div class="relative container mx-auto px-6">
                 <div class="flex items-center justify-between text-white mb-2">
@@ -95,16 +95,16 @@
                         // LOGIKA STATUS
                         $statusColor = 'yellow';
                         $statusIcon = 'fa-hourglass-half';
-                        $statusLabel = 'Menunggu';
+                        $statusLabel = 'Pending';
 
                         if($report->status == 'approved') {
                             $statusColor = 'green';
                             $statusIcon = 'fa-circle-check';
-                            $statusLabel = 'Diterima';
+                            $statusLabel = 'Approve';
                         } elseif($report->status == 'rejected') {
                             $statusColor = 'red';
                             $statusIcon = 'fa-circle-xmark';
-                            $statusLabel = 'Ditolak';
+                            $statusLabel = 'Reject';
                         }
                     @endphp
 

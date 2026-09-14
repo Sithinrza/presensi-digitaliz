@@ -16,22 +16,22 @@
 
 /* Style untuk tombol edit di foto profil */
 .profile-edit-button {
-    position: absolute; 
-    bottom: 0; 
-    right: 0; 
+    position: absolute;
+    bottom: 0;
+    right: 0;
     background-color: white;
-    border-radius: 50%; 
-    padding: 4px; 
+    border-radius: 50%;
+    padding: 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 1px solid #e5e7eb; /* gray-200 */
     transform: translate(10%, 10%);
-} 
+}
 
 .btn-indi{
     @apply w-full text-white bg-indigo-950 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-3 text-center transition ease-in-out duration-150;
 }
 
-//profile
+/* profile */
 .profile-verified-badge {
     position: absolute;
     bottom: 0;
@@ -43,7 +43,7 @@
     transform: translate(15%, 15%); /* Sedikit keluar */
 }
 
-//agenda karyawan
+/* //agenda karyawan */
  .flatpickr-calendar.inline {
             box-shadow: none !important;
             border: none !important;
@@ -67,7 +67,7 @@
 
 .swal2-popup .swal2-styled.swal2-confirm {
     /* Ganti warna default Flowbite/SweetAlert dengan warna indigo tema Anda.
-      !important mungkin diperlukan untuk meng-override style inline. 
+      !important mungkin diperlukan untuk meng-override style inline.
     */
     background-color: #312e81 !important; /* indigo-950 */
     color: #fff !important;

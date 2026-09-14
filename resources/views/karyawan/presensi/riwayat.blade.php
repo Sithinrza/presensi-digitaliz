@@ -115,10 +115,6 @@
                             'lat' => -3.3286345, //wls
                             'long' => 114.6074828, //wls
                             'radius' => 500, //wls
-
-                            // 'lat' => -3.2289087, //gibs
-                            // 'long' => 114.5962882, //gibs
-                            // 'radius' => 500, //gibs
                         ];
                     @endphp
 
